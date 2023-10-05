@@ -1,6 +1,6 @@
-package edu.vanier.template;
+package edu.vanier.waveSim;
 
-import edu.vanier.template.controllers.MainAppController;
+import edu.vanier.waveSim.controllers.MainAppController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
