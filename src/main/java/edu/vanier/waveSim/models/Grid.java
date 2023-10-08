@@ -5,59 +5,62 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
-import javafx.scene.paint.Color;
 import static javafx.scene.paint.Color.color;
 import javafx.stage.Stage;
 
 
-public class Grid extends Stage{
-    public GraphicsContext g;
-    Canvas canvas;
-    public GraphicsContext getG() {
-        return g;
+public class Grid{
+    //A grid is a 2-D array of pixels
+    //Set the number of pixels we want
+    // We want 100 for example
+    public int x;
+    public int y;
+    Pixel[][] canvas = new Pixel[x][y];
+    
+
+    public Grid() {
+        setX(100);
+        setY(100);
+        Pixel[][] canvas = new Pixel[100][100];
+        setCanvas(canvas);
     }
-    public void setG(GraphicsContext g) {
-        this.g = g;
+    
+    
+    public Grid(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
-    public Canvas getCanvas() {
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public Pixel[][] getCanvas() {
         return canvas;
     }
-    public void setCanvas(Canvas canvas) {
+
+    public void setCanvas(Pixel[][] canvas) {
         this.canvas = canvas;
     }
-    public Grid(Stage owner) {
-        setTitle("Grid");
-        initOwner(owner);
-        initComponents();
+    public Pixel getPix(int x, int y){
+        return this.canvas[x][y];
     }
-
-    private void initComponents() {
-        Group root = new Group();
-        canvas = new Canvas(1000, 1000);
-        g = canvas.getGraphicsContext2D();
-        
-        Scene scene = new Scene(root, 1000, 1000);
-        //The maximum x and y values for method colorPix() are therefore 100 both
-        setScene(scene);
-        
+    public void setPixel(int x, int y, Pixel pixel){
+        this.canvas[x][y].setColor(pixel.getColor());
+        this.canvas[x][y].setOn(pixel.isOn());
+        this.canvas[x][y].setSize(pixel.getSize());
     }
-    private void colorPix(int x, int y, Color color){
-        //The pixels have the dimensions set by height and width
-        // x and y correspond to the coordinates of the pixel you want to color
-        x=x*10+5;
-        y=y*10+5;
-        PixelWriter pw = g.getPixelWriter();
-        for(int i=0; i<5; i++){
-            //Assume that the dimensions of each pixel is 10*10
-            pw.setColor(x-i, y-i, color);
-            pw.setColor(x+i, y+i, color);
-        }
-    
-    }
-    
-
-    
-    
-    
     
 }
