@@ -13,51 +13,33 @@ public class Grid{
     //A grid is a 2-D array of pixels
     //Set the number of pixels we want
     // We want 100 for example
-    public int x;
-    public int y;
-    Pixel[][] canvas = new Pixel[x][y];
+    // The canvas has 400*500 pixels
+    // Each pixel = 10*10
+    GridPixel[][] canvas = new GridPixel[40][50];
     
 
     public Grid() {
-        setX(100);
-        setY(100);
-        Pixel[][] canvas = new Pixel[100][100];
+        GridPixel[][] canvas = new GridPixel[40][50];
+        for(int i=0; i<40; i++){
+            for(int j=0; j<50; j++){
+                canvas[i][j] = new GridPixel();
+            }
+        }
         setCanvas(canvas);
     }
     
     
-    public Grid(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public Pixel[][] getCanvas() {
+    public GridPixel[][] getCanvas() {
         return canvas;
     }
 
-    public void setCanvas(Pixel[][] canvas) {
+    public void setCanvas(GridPixel[][] canvas) {
         this.canvas = canvas;
     }
-    public Pixel getPix(int x, int y){
+    public GridPixel getPix(int x, int y){
         return this.canvas[x][y];
     }
-    public void setPixel(int x, int y, Pixel pixel){
+    public void setPixel(int x, int y, GridPixel pixel){
         this.canvas[x][y].setColor(pixel.getColor());
         this.canvas[x][y].setOn(pixel.isOn());
         this.canvas[x][y].setSize(pixel.getSize());

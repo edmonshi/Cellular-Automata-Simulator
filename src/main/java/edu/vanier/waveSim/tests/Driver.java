@@ -3,7 +3,7 @@ package edu.vanier.waveSim.tests;
 import edu.vanier.waveSim.controllers.MainAppController;
 import edu.vanier.waveSim.controllers.SimDriverController;
 import edu.vanier.waveSim.models.Grid;
-import edu.vanier.waveSim.models.Pixel;
+import edu.vanier.waveSim.models.GridPixel;
 import java.io.IOException;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -37,8 +37,25 @@ public class Driver extends Application {
             loader.setController(new SimDriverController());
             BorderPane root = loader.load();
             
+            // Creating grid
+            Grid grid = new Grid();
+            // Has height of 400 and a width of 500
+            GridPixel pixel = new GridPixel();
+            pixel.setColor(Color.CORAL);
+            pixel.setOn(true);
+            pixel.setSize(10);
+            grid.setPixel(3,3,pixel);
             //The center is the canvas. Just need to cast it.
             Canvas canvas = (Canvas) root.getCenter();
+            System.out.println(canvas.getHeight()+" "+canvas.getWidth());
+            for(int i = 0; i<grid.getCanvas().length; i++){
+                for(int j=0; j<grid.getCanvas()[0].length; j++){
+                    if(grid.getCanvas()[i][j].isOn()){
+                        //Paint a square of 10*10 in the canvas
+                        canvas.getGraphicsContext2D().fillRect(i*10, j*10, 10, 10);
+                    }
+                }
+            }
             for(int i=0; i<25; i++){
                 canvas.getGraphicsContext2D().getPixelWriter().setColor(i, i, Color.CYAN);
                 // Source to get the method of getGraphicsContext2D() tp paint in the canvas:

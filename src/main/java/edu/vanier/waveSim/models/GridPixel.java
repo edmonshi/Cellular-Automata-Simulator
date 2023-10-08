@@ -2,7 +2,7 @@ package edu.vanier.waveSim.models;
 
 import javafx.scene.paint.Color;
 
-public class Pixel {
+public class GridPixel{
     public boolean on;
     // Whether or not the pixel is currently activated
     public int size;
@@ -10,7 +10,7 @@ public class Pixel {
     public Color color;
     // The color of the pixel
 
-    public Pixel() {
+    public GridPixel() {
         // When you create a pixel, it is neutral and does not impact the animation
         // Need to activate it
         setOn(false);
@@ -18,7 +18,7 @@ public class Pixel {
         setColor(Color.WHITE);
     }
 
-    public Pixel(boolean on, int size, Color color) {
+    public GridPixel(boolean on, int size, Color color) {
         this.on = on;
         this.size = size;
         this.color = color;
