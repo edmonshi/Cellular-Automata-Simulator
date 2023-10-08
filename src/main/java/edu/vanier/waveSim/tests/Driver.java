@@ -37,7 +37,8 @@ public class Driver extends Application {
             loader.setController(new SimDriverController());
             BorderPane root = loader.load();
             
-            Canvas canvas  = new Canvas(400, 400);
+            //The center is the canvas. Just need to cast it.
+            Canvas canvas = (Canvas) root.getCenter();
             for(int i=0; i<25; i++){
                 canvas.getGraphicsContext2D().getPixelWriter().setColor(i, i, Color.CYAN);
                 // Source to get the method of getGraphicsContext2D() tp paint in the canvas:
