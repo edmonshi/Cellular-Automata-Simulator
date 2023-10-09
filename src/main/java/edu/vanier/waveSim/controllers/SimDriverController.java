@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Controller class of the MainApp's UI.
  *
- * @author frostybee
+ * @author 
  */
 public class SimDriverController {
 
