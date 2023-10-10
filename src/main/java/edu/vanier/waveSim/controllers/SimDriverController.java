@@ -107,9 +107,7 @@ public class SimDriverController {
      * @param y position y in pixels from top down
      * @return BorderPane
      */
-    public BorderPane colorCell(BorderPane root, int x, int y){
-        // Creating grid
-        Grid grid = new Grid();
+    public BorderPane colorCell(Grid grid, BorderPane root, int x, int y){
         // Has height of 400 and a width of 500
         GridPixel pixel = new GridPixel();
         pixel.setColor(Color.CORAL);
