@@ -1,16 +1,12 @@
 package edu.vanier.waveSim.tests;
 
 import edu.vanier.waveSim.controllers.SimDriverController;
-import edu.vanier.waveSim.models.Grid;
-import edu.vanier.waveSim.models.GridPixel;
 import java.io.IOException;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

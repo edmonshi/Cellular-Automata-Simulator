@@ -41,9 +41,24 @@ public class SimDriverController {
         // draw a line
         for(int i =0; i< SimCanvas.getHeight()-1; i++){
         colorCellWilliamVersion(SimCanvas, 30, i, Color.BLACK);
+        simStart(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight());
         }
         
         
+    }
+    
+    /**
+     * Simulation starting method.
+     * @param drawCanvas The Canvas on which to draw the simulation, must be accessible and not in another thread
+     * @param widthX The width of the canvas in pixels
+     * @param widthY The height of the canvas in 
+     */
+    public void simStart(Canvas drawCanvas, int widthX, int widthY){
+        System.out.println("STARTING THE SIMULATION");
+        int[][] current = new int[widthX][widthY];
+        int[][] next = new int[widthX][widthY];
+        
+        System.out.println("I'm not finished yet, this simulation ends here for now (sorry for the inconvenience)");
     }
     
     /**
@@ -59,7 +74,6 @@ public class SimDriverController {
         Graphics.setFill(color);
         System.out.println(xPos);
         System.out.println(yPos);
-//        Graphics.fillRect(xPos, yPos, 1, 1);
         Graphics.getPixelWriter().setColor(xPos, yPos, color);
     }
     
