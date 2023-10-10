@@ -21,6 +21,7 @@
          <children>
             <Button fx:id="btnTest" mnemonicParsing="false" text="Test 1 Point" />
             <Button fx:id="btnStop" mnemonicParsing="false" text="Stop" />
+            <Button fx:id="btnStart" mnemonicParsing="false" text="Start" />
          </children></VBox>
    </left>
 </BorderPane>

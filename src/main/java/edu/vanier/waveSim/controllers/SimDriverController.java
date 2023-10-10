@@ -30,6 +30,8 @@ public class SimDriverController {
     Button btnTest;
     @FXML
     Button btnStop;
+    @FXML
+    Button btnStart;
     
     @FXML
     public void initialize() {
@@ -44,6 +46,10 @@ public class SimDriverController {
          
         btnStop.setOnAction((event) -> {
             handleStopBtn(animation);
+        });
+        
+        btnStart.setOnAction((event) -> {
+            handleStartBtn(animation);
         });
         
     }
@@ -83,6 +89,11 @@ public class SimDriverController {
         animation.start();
         
         System.out.println("Simulation end");
+    }
+    
+    public void handleStartBtn(AnimTimer animation) {
+        System.out.println("Starting animation");
+        animation.start();
     }
     
     /**
