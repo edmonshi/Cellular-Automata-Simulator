@@ -1,8 +1,10 @@
 package edu.vanier.waveSim.controllers;
 
+import edu.vanier.waveSim.models.AnimTimer;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.Grid;
 import edu.vanier.waveSim.models.GridPixel;
+import edu.vanier.waveSim.models.SimLogic;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,40 +27,62 @@ public class SimDriverController {
     @FXML
     Canvas SimCanvas;
     @FXML
-    Button testButton;
+    Button btnTest;
+    @FXML
+    Button btnStop;
     
     @FXML
     public void initialize() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/basicCanvasTest.fxml"));
-        testButton.setOnAction((event) -> {
-            handleTestBtn();
+        // create simulation object
+        SimLogic simulation = new SimLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight());
+        AnimTimer animation = new AnimTimer(simulation);
+        
+        btnTest.setOnAction((event) -> {
+            handleTestBtn(simulation, animation);
         });
+         
+        btnStop.setOnAction((event) -> {
+            handleStopBtn(animation);
+        });
+        
     }
     
-    private void handleTestBtn(){
+    private void handleTestBtn(SimLogic simulation, AnimTimer animation){
         System.out.println("Test");
-        System.out.println(SimCanvas.getHeight());
-        // draw a line
-        for(int i =0; i< SimCanvas.getHeight()-1; i++){
-        colorCellWilliamVersion(SimCanvas, 30, i, Color.BLACK);
-        simStart(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight());
-        }
+        
+        simStartButton(simulation, animation);
         
         
+        // TODO make sure this is not commented in final build
+//        // draw a line
+//        for(int i =0; i< SimCanvas.getHeight()-1; i++){
+//        colorCellWilliamVersion(SimCanvas, 30, i, Color.BLACK);
+//        }
+    }
+    
+    private void handleStopBtn(AnimTimer animation) {
+        System.out.println("Stop button pressed");
+        animation.stop();
+        System.out.println("Animation stopped");
     }
     
     /**
      * Simulation starting method.
-     * @param drawCanvas The Canvas on which to draw the simulation, must be accessible and not in another thread
-     * @param widthX The width of the canvas in pixels
-     * @param widthY The height of the canvas in 
+     * 
+     * @param simulation SimLogic simulation object
+     * @param animation AnimTimer animation object to control timing
      */
-    public void simStart(Canvas drawCanvas, int widthX, int widthY){
+    public void simStartButton(SimLogic simulation, AnimTimer animation){
         System.out.println("STARTING THE SIMULATION");
-        int[][] current = new int[widthX][widthY];
-        int[][] next = new int[widthX][widthY];
         
-        System.out.println("I'm not finished yet, this simulation ends here for now (sorry for the inconvenience)");
+        simulation.setPoint(100, 100);
+        
+        simulation.setDamping(1);
+        
+        animation.start();
+        
+        System.out.println("Simulation end");
     }
     
     /**
@@ -69,11 +93,9 @@ public class SimDriverController {
      * @param yPos The y position from top right in pixels
      * @param color The color of the pixel using javaFX Color object
      */
-    public void colorCellWilliamVersion(Canvas canvas, int xPos, int yPos, Color color){
+    public static void colorCellWilliamVersion(Canvas canvas, int xPos, int yPos, Color color){
         GraphicsContext Graphics = canvas.getGraphicsContext2D();
         Graphics.setFill(color);
-        System.out.println(xPos);
-        System.out.println(yPos);
         Graphics.getPixelWriter().setColor(xPos, yPos, color);
     }
     
@@ -113,4 +135,5 @@ public class SimDriverController {
             return root;
         
     }
+
 }

@@ -19,7 +19,8 @@
    <left>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="testButton" mnemonicParsing="false" text="test" />
+            <Button fx:id="btnTest" mnemonicParsing="false" text="Test 1 Point" />
+            <Button fx:id="btnStop" mnemonicParsing="false" text="Stop" />
          </children></VBox>
    </left>
 </BorderPane>
