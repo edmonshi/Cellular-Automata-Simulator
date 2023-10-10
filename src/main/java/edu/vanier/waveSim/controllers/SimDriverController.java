@@ -1,24 +1,14 @@
 package edu.vanier.waveSim.controllers;
 
 import javafx.fxml.FXML;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import edu.vanier.waveSim.controllers.MainAppController;
-import edu.vanier.waveSim.controllers.SimDriverController;
 import edu.vanier.waveSim.models.Grid;
 import edu.vanier.waveSim.models.GridPixel;
-import java.io.IOException;
-import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.PixelWriter;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +21,55 @@ public class SimDriverController {
 
     private final static Logger logger = LoggerFactory.getLogger(MainAppController.class);
 
+//    get canvas from FXML
+    @FXML
+    Canvas SimCanvas;
+    @FXML
+    Button testButton;
+    
     @FXML
     public void initialize() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/basicCanvasTest.fxml"));
+        testButton.setOnAction((event) -> {
+            handleTestBtn();
+        });
     }
+    
+    private void handleTestBtn(){
+        System.out.println("Test");
+        System.out.println(SimCanvas.getHeight());
+        // draw a line
+        for(int i =0; i< SimCanvas.getHeight()-1; i++){
+        colorCellWilliamVersion(SimCanvas, 30, i, Color.BLACK);
+        }
+        
+        
+    }
+    
+    /**
+     * William's version of set color the way it makes sense for him.
+     * Is probably more efficient because it does not create new grids and does not return anything
+     * @param canvas The canvas object from FXML to write to
+     * @param xPos The x position from top right in pixels
+     * @param yPos The y position from top right in pixels
+     * @param color The color of the pixel using javaFX Color object
+     */
+    public void colorCellWilliamVersion(Canvas canvas, int xPos, int yPos, Color color){
+        GraphicsContext Graphics = canvas.getGraphicsContext2D();
+        Graphics.setFill(color);
+        System.out.println(xPos);
+        System.out.println(yPos);
+//        Graphics.fillRect(xPos, yPos, 1, 1);
+        Graphics.getPixelWriter().setColor(xPos, yPos, color);
+    }
+    
     //Cannot use PixelWriter without a surface to write on => Use fxml layout as that surface
     /**
-     * This method colors individual cells of the canvas contained in a fxml file.
-     * The canvas is assumed to be in the center.
+     * This method colors individual cells of the canvas contained in a fxml file.The canvas is assumed to be in the center.
+     * @param root root pane to color cells of
+     * @param x position x in pixels
+     * @param y position y in pixels from top down
+     * @return BorderPane
      */
     public BorderPane colorCell(BorderPane root, int x, int y){
         // Creating grid
