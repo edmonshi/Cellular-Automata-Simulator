@@ -1,4 +1,4 @@
-package edu.vanier.waveSim.models;
+package edu.vanier.waveSim.deprecated;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;

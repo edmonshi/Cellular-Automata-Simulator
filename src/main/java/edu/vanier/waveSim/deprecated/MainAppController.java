@@ -1,4 +1,4 @@
-package edu.vanier.waveSim.controllers;
+package edu.vanier.waveSim.deprecated;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

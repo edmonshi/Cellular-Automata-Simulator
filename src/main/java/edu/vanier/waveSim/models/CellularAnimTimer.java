@@ -10,17 +10,16 @@ import javafx.animation.AnimationTimer;
  *
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
-public class AnimTimer extends AnimationTimer {
+public class CellularAnimTimer extends AnimationTimer {
 
-    private SimLogic logic;
+    private CellularLogic logic;
 
     
     /**TODO documentation
      * @param logic
      */
-    public AnimTimer(SimLogic logic) {
+    public CellularAnimTimer(CellularLogic logic) {
         this.logic = logic;
-
     }
     
     

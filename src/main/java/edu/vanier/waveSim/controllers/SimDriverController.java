@@ -1,14 +1,24 @@
 package edu.vanier.waveSim.controllers;
 
-import edu.vanier.waveSim.models.AnimTimer;
+import edu.vanier.waveSim.models.CellularAnimTimer;
+import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
-import edu.vanier.waveSim.models.Grid;
-import edu.vanier.waveSim.models.GridPixel;
-import edu.vanier.waveSim.models.SimLogic;
+import edu.vanier.waveSim.deprecated.Grid;
+import edu.vanier.waveSim.deprecated.GridPixel;
+import edu.vanier.waveSim.deprecated.SimLogic;
+import edu.vanier.waveSim.models.SimLogicWave1;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -21,24 +31,35 @@ import org.slf4j.LoggerFactory;
  */
 public class SimDriverController {
 
-    private final static Logger logger = LoggerFactory.getLogger(MainAppController.class);
+    private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
 
 //    get canvas from FXML
     @FXML
-    Canvas SimCanvas;
+    private Canvas SimCanvas;
     @FXML
-    Button btnTest;
+    private Button btnTest;
     @FXML
-    Button btnStop;
+    private Button btnStop;
     @FXML
-    Button btnStart;
+    private Button btnStart;
+    @FXML
+    private ChoiceBox scaleChoice;
+    @FXML
+    private Slider sldrDamping;
+    @FXML
+    private Label lblDamping;
+    
+    ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     @FXML
     public void initialize() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/basicCanvasTest.fxml"));
         // create simulation object
-        SimLogic simulation = new SimLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight());
-        AnimTimer animation = new AnimTimer(simulation);
+        SimLogicWave1 simulation = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        CellularAnimTimer animation = new CellularAnimTimer(simulation);
+        
+        scaleChoice.setValue(1);
+        scaleChoice.setItems(scaleChoiceItems);
+        
         
         btnTest.setOnAction((event) -> {
             handleTestBtn(simulation, animation);
@@ -52,48 +73,53 @@ public class SimDriverController {
             handleStartBtn(animation);
         });
         
+        // add listenner to slider to change the damping during  simulation
+        sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
+
+                @Override
+                public void changed(
+                   ObservableValue<? extends Number> observableValue, 
+                   Number oldValue, 
+                   Number newValue) { 
+                      simulation.setDamping(newValue.floatValue());
+                  }
+        });
+        
+        // bind text property to the slider value
+        lblDamping.textProperty().bind(Bindings.format("%.3f",sldrDamping.valueProperty()));
+        
+        
+        
     }
     
-    private void handleTestBtn(SimLogic simulation, AnimTimer animation){
+    private void handleTestBtn(SimLogicWave1 simulation, CellularAnimTimer animation){
         System.out.println("Test");
         
-        simStartButton(simulation, animation);
+        System.out.println("STARTING THE SIMULATION");
         
+        System.out.println(simulation.getDamping());
         
-        // TODO make sure this is not commented in final build
-//        // draw a line
-//        for(int i =0; i< SimCanvas.getHeight()-1; i++){
-//        colorCellWilliamVersion(SimCanvas, 30, i, Color.BLACK);
-//        }
+        int choice = (int) scaleChoice.getValue();
+        
+        simulation.setScaling(choice);
+        
+        simulation.setPoint(50, 50);
+        
+        animation.start();
+ 
     }
     
-    private void handleStopBtn(AnimTimer animation) {
+    private void handleStopBtn(CellularAnimTimer animation) {
         System.out.println("Stop button pressed");
         animation.stop();
         System.out.println("Animation stopped");
     }
     
-    /**
-     * Simulation starting method.
-     * 
-     * @param simulation SimLogic simulation object
-     * @param animation AnimTimer animation object to control timing
-     */
-    public void simStartButton(SimLogic simulation, AnimTimer animation){
-        System.out.println("STARTING THE SIMULATION");
-        
-        simulation.setPoint(100, 100);
-        
-        simulation.setDamping(1);
-        
-        animation.start();
-        
-        System.out.println("Simulation end");
-    }
     
-    public void handleStartBtn(AnimTimer animation) {
-        System.out.println("Starting animation");
+    public void handleStartBtn(CellularAnimTimer animation) {
+        System.out.println("Restarting animation button pressed");
         animation.start();
+        System.out.println("Restarted animation");
     }
     
     /**

@@ -33,7 +33,7 @@ public class Driver extends Application {
             
             
             
-            Scene scene = new Scene(root, 500, 300);
+            Scene scene = new Scene(root, 662, 400);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             primaryStage.setAlwaysOnTop(true);

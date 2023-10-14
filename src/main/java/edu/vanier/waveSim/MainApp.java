@@ -1,6 +1,6 @@
 package edu.vanier.waveSim;
 
-import edu.vanier.waveSim.controllers.MainAppController;
+import edu.vanier.waveSim.deprecated.MainAppController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
