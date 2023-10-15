@@ -146,7 +146,7 @@ public class SimDriverController {
                   }
         });
         
-        // add listenner to scaling choicebox to change the scaling. This clears the screen and stops the animation
+        // add listenner to scaling choicebox to change the scaling. This clears the screen and stops the animation and clears the origin point list.
         scaleChoice.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -156,6 +156,7 @@ public class SimDriverController {
                    Number newValue) {
                       simulation.setScaling(newValue.intValue());
                       simulation.clearScreen();
+                      pointList.clear();
                       animation.stop();
                   }
         });
