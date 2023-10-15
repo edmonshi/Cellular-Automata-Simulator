@@ -24,7 +24,7 @@ public class Driver extends Application {
             logger.info("Bootstrapping the application...");
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/basicCanvasTest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
 
             loader.setController(new SimDriverController());
             BorderPane root = loader.load();
@@ -33,7 +33,7 @@ public class Driver extends Application {
             
             
             
-            Scene scene = new Scene(root, 662, 400);
+            Scene scene = new Scene(root, 700, 526);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             primaryStage.setAlwaysOnTop(true);
