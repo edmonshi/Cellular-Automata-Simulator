@@ -84,17 +84,20 @@
                                        </padding>
                                     </Label>
                                  </children>
+                                 <padding>
+                                    <Insets top="10.0" />
+                                 </padding>
                               </VBox>
                            </children>
                         </AnchorPane>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" text="untitled 2">
+                  <TitledPane animated="false" text="Simulation 2">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" text="untitled 3">
+                  <TitledPane animated="false" text="Simulation 3">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                      </content>
