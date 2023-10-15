@@ -16,7 +16,7 @@ public class SimLogicWave1 extends CellularLogic{
     
     /**Some damping value 0 to 1 non-integer
      */
-    private float damping = (float) 0.9;
+    private float damping = (float) 0.98;
 
     
     private final static Logger logger = LoggerFactory.getLogger(SimLogicWave1.class);
@@ -44,6 +44,7 @@ public class SimLogicWave1 extends CellularLogic{
      */
     public SimLogicWave1(Canvas operatingCanvas, int widthX, int heightY, int scaling) {
         super(operatingCanvas, widthX, heightY);
+        // deal with scaling
         if (scaling < 1 || scaling % 2 != 0) {
             logger.error("scaling is wrong, setting to 1 by default");
         }else {

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Controller class of the MainApp's UI.
  *
- * @author frostybee
+ * @author TODO
  */
 public class SimDriverController {
 
@@ -118,6 +118,8 @@ public class SimDriverController {
         SimLogicWave1 simulation = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         CellularAnimTimer animation = new CellularAnimTimer(simulation);
         
+        
+        // set ChoiceBox elements
         scaleChoice.setValue(1);
         scaleChoice.setItems(scaleChoiceItems);
         
@@ -141,8 +143,9 @@ public class SimDriverController {
                 public void changed(
                    ObservableValue<? extends Number> observableValue, 
                    Number oldValue, 
-                   Number newValue) { 
-                      simulation.setDamping(newValue.floatValue());
+                   Number newValue) {
+                      // map damping
+                      simulation.setDamping(1-newValue.floatValue());
                   }
         });
         
