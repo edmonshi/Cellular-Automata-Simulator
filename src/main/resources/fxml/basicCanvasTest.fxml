@@ -23,7 +23,7 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="409.0" prefWidth="130.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="btnTest" mnemonicParsing="false" text="Test 1 Point" />
+            <Button fx:id="btnTest" mnemonicParsing="false" text="Test" />
             <Button fx:id="btnStop" mnemonicParsing="false" text="Stop" />
             <Button fx:id="btnStart" mnemonicParsing="false" text="Restart" />
             <Label text="Scaling" />
@@ -37,6 +37,10 @@
                   <Insets left="10.0" right="10.0" />
                </VBox.margin></Slider>
             <Label fx:id="lblDamping" text="0.900" />
+            <Label text="Place origin points" />
+            <Label text="or remove them" />
+            <Label text="using left click." />
+            <Label text="Then press: &quot;Test&quot;" />
          </children>
          <BorderPane.margin>
             <Insets top="20.0" />

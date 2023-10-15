@@ -13,7 +13,6 @@ import javafx.animation.AnimationTimer;
 public class CellularAnimTimer extends AnimationTimer {
 
     private CellularLogic logic;
-
     
     /**TODO documentation
      * @param logic
@@ -21,8 +20,6 @@ public class CellularAnimTimer extends AnimationTimer {
     public CellularAnimTimer(CellularLogic logic) {
         this.logic = logic;
     }
-    
-    
     
     @Override
     public void handle(long now) {

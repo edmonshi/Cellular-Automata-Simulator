@@ -17,6 +17,7 @@ public class SimLogicWave1 extends CellularLogic{
     /**Some damping value 0 to 1 non-integer
      */
     private float damping = (float) 0.9;
+
     
     private final static Logger logger = LoggerFactory.getLogger(SimLogicWave1.class);
     
@@ -24,6 +25,7 @@ public class SimLogicWave1 extends CellularLogic{
     public float getDamping() {
         return damping;
     }
+
 
     /** * Set damping for the waves.Some float value 0 to 1 non-integer.
      * @param damping, the damping value, must be a float between 0 and < 1
@@ -74,9 +76,11 @@ public class SimLogicWave1 extends CellularLogic{
                 }
                 Color color;
                 if(pixelValue != 0) {
+                    // sim Color
                     color = Color.BLUE;
                 } else{
-                    color = Color.WHITE;
+                    // background Color
+                    color = backgroundColor;
                 }
                 // get colour update
                 colorCell(x, y, color); // TODO colour mapping

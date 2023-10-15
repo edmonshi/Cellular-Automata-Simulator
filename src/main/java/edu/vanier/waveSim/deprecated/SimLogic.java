@@ -101,7 +101,7 @@ public class SimLogic {
                     color = Color.WHITE;
                 }
                 // get colour update
-                SimDriverController.colorCellWilliamVersion(this.operatingCanvas, x, y, color); // TODO colour mapping
+                //SimDriverController.colorCellWilliamVersion(this.operatingCanvas, x, y, color); // TODO colour mapping
                 
             }
         }

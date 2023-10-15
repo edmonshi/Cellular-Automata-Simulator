@@ -7,6 +7,8 @@ import edu.vanier.waveSim.deprecated.Grid;
 import edu.vanier.waveSim.deprecated.GridPixel;
 import edu.vanier.waveSim.deprecated.SimLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
+import java.util.ArrayList;
+import java.util.HashSet;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,7 +35,65 @@ public class SimDriverController {
 
     private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
 
-//    get canvas from FXML
+    private boolean animationRunning = false;
+    
+    
+    /**Point object for use in array of origin points*/
+    private class Point{
+        private int x;
+        private int y;
+        
+        Point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Point other = (Point) obj;
+            if (this.x != other.x) {
+                return false;
+            }
+            return this.y == other.y;
+        }
+        
+    }
+    
+    HashSet<Point> pointList = new HashSet<>();
+    
+    
+//    get elements from FXML
     @FXML
     private Canvas SimCanvas;
     @FXML
@@ -49,6 +109,7 @@ public class SimDriverController {
     @FXML
     private Label lblDamping;
     
+    // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     @FXML
@@ -85,11 +146,54 @@ public class SimDriverController {
                   }
         });
         
+        // add listenner to scaling choicebox to change the scaling. This clears the screen and stops the animation
+        scaleChoice.valueProperty().addListener(new ChangeListener<Number>() {
+
+                @Override
+                public void changed(
+                   ObservableValue<? extends Number> observableValue, 
+                   Number oldValue, 
+                   Number newValue) {
+                      simulation.setScaling(newValue.intValue());
+                      simulation.clearScreen();
+                      animation.stop();
+                  }
+        });
+        
         // bind text property to the slider value
         lblDamping.textProperty().bind(Bindings.format("%.3f",sldrDamping.valueProperty()));
         
+        // get coordinates of mouse on click
+        SimCanvas.setOnMouseClicked((event) -> {
+            newPoint(event.getX(),event.getY(), simulation);
+        });
         
-        
+    }
+    
+    private void newPoint(double x, double y, CellularLogic simulation) {
+        int xFloor = (int)Math.floor(x);
+        int yFloor = (int)Math.floor(y);
+        int xFloorScaled = (int)Math.floor(x)/simulation.getScaling();
+        int yFloorScaled = (int)Math.floor(y)/simulation.getScaling();
+        Point clickPoint = new Point(xFloorScaled, yFloorScaled);
+        if (!pointList.contains(clickPoint) && xFloorScaled < simulation.getScaledX()-1 && yFloorScaled < simulation.getScaledY()-1) {
+            
+            if (animationRunning == false) {
+                // add the point to the ArrayList of current points.
+                pointList.add(clickPoint);
+            }
+            // set the point in the simulation
+            simulation.setPoint(xFloor, yFloor);
+            // add the point to the canvas as Color.RED
+            // the scaling must be adjusted because colorCell uses array coorrdinates, not canvas coordinates
+            simulation.colorCell(xFloorScaled, yFloorScaled, Color.RED);
+        }else if (animationRunning == false && pointList.contains(clickPoint)){
+            pointList.remove(clickPoint);
+            // if the point was removed from the array, remove from canvas.
+            if (simulation.removePoint(xFloor, yFloor)) {
+                simulation.colorCell(xFloorScaled, yFloorScaled, simulation.getBackgroundColor());
+            }
+        }
     }
     
     private void handleTestBtn(SimLogicWave1 simulation, CellularAnimTimer animation){
@@ -99,11 +203,7 @@ public class SimDriverController {
         
         System.out.println(simulation.getDamping());
         
-        int choice = (int) scaleChoice.getValue();
-        
-        simulation.setScaling(choice);
-        
-        simulation.setPoint(50, 50);
+        animationRunning = true;
         
         animation.start();
  
@@ -112,6 +212,7 @@ public class SimDriverController {
     private void handleStopBtn(CellularAnimTimer animation) {
         System.out.println("Stop button pressed");
         animation.stop();
+        animationRunning = false;
         System.out.println("Animation stopped");
     }
     
@@ -119,56 +220,7 @@ public class SimDriverController {
     public void handleStartBtn(CellularAnimTimer animation) {
         System.out.println("Restarting animation button pressed");
         animation.start();
+        animationRunning = true;
         System.out.println("Restarted animation");
     }
-    
-    /**
-     * William's version of set color the way it makes sense for him.
-     * Is probably more efficient because it does not create new grids and does not return anything
-     * @param canvas The canvas object from FXML to write to
-     * @param xPos The x position from top right in pixels
-     * @param yPos The y position from top right in pixels
-     * @param color The color of the pixel using javaFX Color object
-     */
-    public static void colorCellWilliamVersion(Canvas canvas, int xPos, int yPos, Color color){
-        GraphicsContext Graphics = canvas.getGraphicsContext2D();
-        Graphics.setFill(color);
-        Graphics.getPixelWriter().setColor(xPos, yPos, color);
-    }
-    
-    //Cannot use PixelWriter without a surface to write on => Use fxml layout as that surface
-    /**
-     * This method colors individual cells of the canvas contained in a fxml file.The canvas is assumed to be in the center.
-     * @param root root pane to color cells of
-     * @param x position x in pixels
-     * @param y position y in pixels from top down
-     * @return BorderPane
-     */
-    public BorderPane colorCell(Grid grid, BorderPane root, int x, int y){
-        // Has height of 400 and a width of 500
-        GridPixel pixel = new GridPixel();
-        pixel.setColor(Color.CORAL);
-        pixel.setOn(true);
-        pixel.setSize(10);
-        grid.setPixel(x, y , pixel);
-        //The center is the canvas. Just need to cast it.
-        Canvas canvas = (Canvas) root.getCenter();
-        System.out.println(canvas.getHeight()+" "+canvas.getWidth());
-        for(int i = 0; i<grid.getCanvas().length; i++){
-            for(int j=0; j<grid.getCanvas()[0].length; j++){
-                if(grid.getCanvas()[i][j].isOn()){
-                    //Paint a square of 10*10 in the canvas
-                    // Source to get the method of getGraphicsContext2D() tp paint in the canvas:
-                    // https://stackoverflow.com/questions/70085482/drawing-with-transparency-on-javafx-canvas-using-pixelwriter
-                    canvas.getGraphicsContext2D().fillRect(i*10, j*10, 10, 10);
-                }
-            }
-        }
-        // We need to modify the canvas, then re-set it to the center
-        root.setCenter(canvas);
-        //-- 2) Create and set the scene to the stage.
-            return root;
-        
-    }
-
 }

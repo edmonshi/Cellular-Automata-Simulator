@@ -26,7 +26,9 @@ public abstract class CellularLogic {
     protected int scaledX;
     protected int scaledY;
     
-    /**Must be an even integer, will be regulated by a dropdown menu the GUI*/
+    protected Color backgroundColor = Color.WHITE;
+    
+    /**Must be an even integer, should be regulated by a dropdown menu in the GUI*/
     protected int scaling = 1;
     
     /**
@@ -41,10 +43,15 @@ public abstract class CellularLogic {
         
         this.widthX = widthX;
         this.heightY = heightY;
+        this.scaledX = widthX;
+        this.scaledY = heightY;
         
         // make grid even width and height
         if (widthX%2 != 0){ widthX -= 1;
-        }else if (heightY%2 != 0){ heightY -= 1;} 
+        }else if (heightY%2 != 0){ heightY -= 1;}
+        
+        this.current = new float[widthX][heightY];
+        this.nextFrame = new float[widthX][heightY];
     }
 
     public void setScaling(int scaling) {
@@ -55,6 +62,18 @@ public abstract class CellularLogic {
         this.current = new float[widthX/this.scaling][heightY/this.scaling];
         this.nextFrame = new float[widthX/this.scaling][heightY/this.scaling];
         
+    }
+
+    public int getScaledX() {
+        return scaledX;
+    }
+
+    public int getScaledY() {
+        return scaledY;
+    }
+
+    public Canvas getOperatingCanvas() {
+        return operatingCanvas;
     }
 
     public int getScaling() {
@@ -77,6 +96,14 @@ public abstract class CellularLogic {
         return heightY;
     }
     
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+    
     /**TODO documentation
      * @param x horizontal position in pixels on the canvas
      * @param y vertical position in pixels on the canvas
@@ -85,19 +112,39 @@ public abstract class CellularLogic {
         this.current[x/this.scaling][y/this.scaling] = 255;
     }
     
+    /**Removes a point from the simulation array if it is maximum 255 (removes only origination points) 
+     * @param x horizontal position in pixels on the canvas
+     * @param y vertical position in pixels on the canvas
+     * @return true if point was removed from the array, false otherwise
+     */
+    public boolean removePoint(int x, int y) {
+        if (this.current[x/this.scaling][y/this.scaling] == 255) {
+            this.current[x/this.scaling][y/this.scaling] = 0 ;
+            return true;
+        }
+        return false;
+    }
+    
     /**
-     * Set the color of a single cell in the grid using scale factor.
-     * @param xPosInGrid The x position from top right in units of scaled pixels int the numerical grid
-     * @param yPosInGrid The y position from top right in units of scaled pixels int the numerical grid
+     * Set the color of a single cell in the canvas from array coordinates using scale factor.
+     * @param xPosInArray The x position from top right in units of scaled pixels int the numerical grid
+     * @param yPosInArray The y position from top right in units of scaled pixels int the numerical grid
      * @param color The color of the pixel using javaFX Color object
      */
-    protected void colorCell(int xPosInGrid, int yPosInGrid, Color color){
+    public void colorCell(int xPosInArray, int yPosInArray, Color color){
         GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
         Graphics.setFill(color);
         WritablePixelFormat<IntBuffer> format = WritablePixelFormat.getIntArgbInstance();
-        Graphics.fillRect(xPosInGrid*this.scaling, yPosInGrid*this.scaling, this.scaling, this.scaling);
+        Graphics.fillRect(xPosInArray*this.scaling, yPosInArray*this.scaling, this.scaling, this.scaling);
         
     }
+    
+    /**TODO documentation -> clears screen*/
+    public void clearScreen() {
+        GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
+        Graphics.setFill(backgroundColor);
+        Graphics.fillRect(0,0,widthX,heightY);
+    }    
     
     /**The simulation logic that must be implemented by the extending class. 
      * Must set pixel colors using colorCell, and modify the current and nextFrame grids accordingly.
