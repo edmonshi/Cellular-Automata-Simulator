@@ -134,7 +134,7 @@ public class SimDriverController {
             handleStartBtn(animation);
         });
         
-        // add listenner to slider to change the damping during  simulation
+        // add listenner to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
