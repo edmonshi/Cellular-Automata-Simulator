@@ -171,13 +171,14 @@ public class SimDriverController {
         
     }
     
+    /**TODO*/
     private void newPoint(double x, double y, CellularLogic simulation) {
         int xFloor = (int)Math.floor(x);
         int yFloor = (int)Math.floor(y);
         int xFloorScaled = (int)Math.floor(x)/simulation.getScaling();
         int yFloorScaled = (int)Math.floor(y)/simulation.getScaling();
         Point clickPoint = new Point(xFloorScaled, yFloorScaled);
-        if (!pointList.contains(clickPoint) && xFloorScaled < simulation.getScaledX()-1 && yFloorScaled < simulation.getScaledY()-1) {
+        if (!pointList.contains(clickPoint) && xFloorScaled < simulation.getScaledX()-1 && yFloorScaled < simulation.getScaledY()-1 && xFloorScaled > 0 && yFloorScaled > 0) {
             
             if (animationRunning == false) {
                 // add the point to the ArrayList of current points.

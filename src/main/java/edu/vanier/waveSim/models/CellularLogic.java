@@ -54,6 +54,7 @@ public abstract class CellularLogic {
         this.nextFrame = new float[widthX][heightY];
     }
 
+    /**TODO*/
     public void setScaling(int scaling) {
         this.scaling = scaling;
                 // scale grid by scaling factor (since it is an even number, and the width/height are even, this will always be integers.)
