@@ -68,7 +68,7 @@ public abstract class CellularLogic {
     /**
      * Scale the height and width of the grid by the scaling factor given.
      *
-     * @param scaling - The scaling factor.
+     * @param scaling The scaling factor.
      */
     public void setScaling(int scaling) {
         this.scaling = scaling;
@@ -83,7 +83,7 @@ public abstract class CellularLogic {
     /**
      * Get the scaled width of the simulation and return it.
      *
-     * @return scaledX - The scaled width of the simulation. It is an int
+     * @return scaledX The scaled width of the simulation. It is an int
      * value.
      */
     public int getScaledX() {
@@ -93,7 +93,7 @@ public abstract class CellularLogic {
     /**
      * Get the scaled height of the simulation and return it.
      *
-     * @return scaledY - The scaled height of the simulation. It is an int
+     * @return scaledY The scaled height of the simulation. It is an int
      * value.
      */
     public int getScaledY() {
@@ -103,7 +103,7 @@ public abstract class CellularLogic {
     /**
      * Get the operating canvas of the simulation and return it.
      *
-     * @return opertingCanavas - The operating canvas of the simulation. It is a
+     * @return opertingCanavas The operating canvas of the simulation. It is a
      * Canvas object.
      */
     public Canvas getOperatingCanvas() {
@@ -113,7 +113,7 @@ public abstract class CellularLogic {
     /**
      * Get the scaling factor of the simulation and return it.
      *
-     * @return scaling - The scaling factor of the simulation. It is an int
+     * @return scaling The scaling factor of the simulation. It is an int
      * value.
      */
     public int getScaling() {
@@ -123,7 +123,7 @@ public abstract class CellularLogic {
     /**
      * Set the width of the simulation to the specified width.
      *
-     * @param widthX - The specified width of the simulation. It is an int
+     * @param widthX The specified width of the simulation. It is an int
      * value.
      */
     public void setWidthX(int widthX) {
@@ -133,7 +133,7 @@ public abstract class CellularLogic {
     /**
      * Set the height of the simulation to the specified height.
      *
-     * @param heightY - The specified height of the simulation. It is an int
+     * @param heightY The specified height of the simulation. It is an int
      * value.
      */
     public void setHeightY(int heightY) {
@@ -143,7 +143,7 @@ public abstract class CellularLogic {
     /**
      * Get the width of the simulation and return it.
      *
-     * @return widthX - The width of the simulation. It is an int value.
+     * @return widthX The width of the simulation. It is an int value.
      */
     public int getWidthX() {
         return widthX;
@@ -152,7 +152,7 @@ public abstract class CellularLogic {
     /**
      * Get the height of the simulation and return it.
      *
-     * @return heightY - The height of the simulation. It is an int value.
+     * @return heightY The height of the simulation. It is an int value.
      */
     public int getHeightY() {
         return heightY;
@@ -161,7 +161,7 @@ public abstract class CellularLogic {
     /**
      * Get the background color of the simulation and return it.
      *
-     * @return backgroundColor - The background color of the simulation. It is a
+     * @return backgroundColor The background color of the simulation. It is a
      * color object.
      */
     public Color getBackgroundColor() {
@@ -172,7 +172,7 @@ public abstract class CellularLogic {
      * Set the background color of the simulation to the specified background
      * color.
      *
-     * @param backgroundColor - The specified color that the background of the
+     * @param backgroundColor The specified color that the background of the
      * simulation. It is a color object.
      */
     public void setBackgroundColor(Color backgroundColor) {

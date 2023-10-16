@@ -58,7 +58,7 @@ public class Driver extends Application {
      * Main method of the program.
      * Execute the launch method of the Application class.
      * Launch a standalone application.
-     * @param args 
+     * @param args - The line of arguments passed down to the application.
      */
     public static void main(String[] args) {
         launch(args);
