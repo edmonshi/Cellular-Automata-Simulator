@@ -4,11 +4,17 @@
  */
 package edu.vanier.waveSim.models;
 
+import javafx.scene.canvas.Canvas;
+
 /**
  *
  * @author 2265724
  */
 public class ConwayGameOfLifeLogic extends CellularLogic{
+
+    public ConwayGameOfLifeLogic(Canvas operatingCanvas, int widthX, int heightY) {
+        super(operatingCanvas, widthX, heightY);
+    }
 
     @Override
     public void simFrame() {
