@@ -29,7 +29,16 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
 
     @Override
     public void simFrame() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        int size;
+        byte[] prev = new byte[size];
+        byte[] next = new byte[size];
+        for (int x =1; x<scaledX-1;x++){
+            for (int y =1; y<scaledY-1;y++){
+                
+            }
+        
+        }
+    
     }
     
     
