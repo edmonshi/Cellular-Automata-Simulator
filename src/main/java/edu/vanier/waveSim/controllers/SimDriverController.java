@@ -139,7 +139,7 @@ public class SimDriverController {
         });
         
         btnReset.setOnAction((event) -> {
-            handleResetBtn(simulation, animation);
+            ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
         // add listenner to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
@@ -163,10 +163,7 @@ public class SimDriverController {
                    ObservableValue<? extends Number> observableValue, 
                    Number oldValue, 
                    Number newValue) {
-                      simulation.setScaling(newValue.intValue());
-                      simulation.clearScreen();
-                      pointList.clear();
-                      animation.stop();
+                      ResetScreenAndAnim(simulation, animation,newValue.intValue());
                   }
         });
         
@@ -212,6 +209,8 @@ public class SimDriverController {
             }
         }
     }
+    
+    
     /**
      * Event that is activated when the play button is clicked.
      * The animation will play.
@@ -243,18 +242,17 @@ public class SimDriverController {
     }
     
     /**
-     * Event that is activated when the reset button is clicked
+     * Reset the animation and screen
      * The animation will stop and the simulation will be cleared.
      * @param simulation CellularLogic object providing the simulation target 
      * @param animation CellularAnimTimer object providing the animation it will handle
+     * @param scaling scaling by which to reset the animation with
      */
-    public void handleResetBtn(CellularLogic simulation, CellularAnimTimer animation) {
-        System.out.println("Reset animation button pressed");
-        simulation.setScaling(simulation.getScaling());
+    public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
+        simulation.setScaling(scaling);
         simulation.clearScreen();
         pointList.clear();
         animation.stop();
         animationRunning = false;
-        System.out.println("Resetting animation");
     }
 }
