@@ -129,17 +129,19 @@ public class SimDriverController {
      */
     @FXML
     public void initialize() {
-        // create simulation object
+        // create simulation objects
 
         SimLogicWave1 WaveSim = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        
+        // initialize default simulation
         simulation = WaveSim;
         
         simulationsList[0] = simulation;
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
         
-        
+        // initialize default animation object
         animation = new CellularAnimTimer(simulation);
         simulation.clearScreen();
         
