@@ -90,7 +90,7 @@ public class SimDriverController {
         
     }
     
-    HashSet<Point> pointList = new HashSet<>();
+    HashSet<Point> pointList;
     
     
 //    get elements from FXML
@@ -122,6 +122,8 @@ public class SimDriverController {
         SimLogicWave1 simulation = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         CellularAnimTimer animation = new CellularAnimTimer(simulation);
         simulation.clearScreen();
+        
+        pointList = new HashSet<>();
         
         // set ChoiceBox elements
         scaleChoice.setValue(1);
@@ -247,8 +249,10 @@ public class SimDriverController {
      */
     public void handleResetBtn(CellularLogic simulation, CellularAnimTimer animation) {
         System.out.println("Reset animation button pressed");
-        animation.stop();
+        simulation.setScaling(simulation.getScaling());
         simulation.clearScreen();
+        pointList.clear();
+        animation.stop();
         animationRunning = false;
         System.out.println("Resetting animation");
     }
