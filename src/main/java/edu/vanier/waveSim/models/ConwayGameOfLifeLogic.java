@@ -29,16 +29,46 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
 
     @Override
     public void simFrame() {
-        int size;
-        byte[] prev = new byte[size];
-        byte[] next = new byte[size];
         for (int x =1; x<scaledX-1;x++){
             for (int y =1; y<scaledY-1;y++){
-                
+                this.nextFrame[x][y]=isAlive(x,y);
             }
         
         }
+        float[][] temp = this.current;
+        this.current = this.nextFrame;
+        this.nextFrame = temp;
     
+    }
+    // isAlive returns 0 for dead and 1 for alive
+    // nextFrame and current
+    public int isAlive(int x, int y){
+        int neighbours = 0;
+        int isAlive;
+        if(this.current[x-1][y-1]!=0)
+            neighbours++;
+        if(this.current[x][y-1]!=0)
+            neighbours++;
+        if(this.current[x+1][y-1]!=0)
+            neighbours++;
+        if(this.current[x-1][y+1]!=0)
+            neighbours++;
+        if(this.current[x][y+1]!=0)
+            neighbours++;
+        if(this.current[x+1][y+1]!=0)
+            neighbours++;
+        if(this.current[x-1][y]!=0)
+            neighbours++;
+        if(this.current[x+1][y]!=0)
+            neighbours++;
+        if((neighbours<2)||(neighbours>3)){
+            isAlive=1;
+        }
+        else
+            isAlive=0;
+        return isAlive;
+        
+        
     }
     
     
