@@ -105,12 +105,17 @@ public class SimDriverController {
     @FXML
     private ChoiceBox scaleChoice;
     @FXML
+    private ChoiceBox simTypeChoice;
+    @FXML
     private Slider sldrDamping;
     @FXML
     private Label lblDamping;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
+    
+    //list of simulation types, simple wave, etc
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Wave");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -128,6 +133,9 @@ public class SimDriverController {
         // set ChoiceBox elements
         scaleChoice.setValue(1);
         scaleChoice.setItems(scaleChoiceItems);
+        
+        simTypeChoice.setValue("Simple Wave");
+        simTypeChoice.setItems(simTypeChoiceItems);
         
         
         btnPlay.setOnAction((event) -> {
