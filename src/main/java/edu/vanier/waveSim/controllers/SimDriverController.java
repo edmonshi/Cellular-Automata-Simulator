@@ -96,6 +96,7 @@ public class SimDriverController {
     HashSet<Point> pointList;
     CellularLogic[] simulationsList = new CellularLogic[3];
     CellularLogic simulation;
+    CellularAnimTimer animation;
     
     
 //    get elements from FXML
@@ -139,7 +140,7 @@ public class SimDriverController {
         simulationsList[2] = Conway;
         
         
-        CellularAnimTimer animation = new CellularAnimTimer(simulation);
+        animation = new CellularAnimTimer(simulation);
         simulation.clearScreen();
         
         pointList = new HashSet<>();
@@ -195,7 +196,8 @@ public class SimDriverController {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 simulation = changeSim(newValue, simulationsList, simulation, animation);
-                ResetScreenAndAnim(simulation, animation,scale);
+                animation = new CellularAnimTimer(simulation);
+                ResetScreenAndAnim(simulation, animation, scale);
             }  
         });
         
@@ -212,11 +214,9 @@ public class SimDriverController {
     private CellularLogic changeSim(String newValue, CellularLogic[] simulations, CellularLogic simulation, CellularAnimTimer animation) {
         if (newValue == "Simple Ripple") {
             simulation = simulations[1];
-//            animation = new CellularAnimTimer(simulation);
             return simulation;
         }else if (newValue == "Conway's Game of Life") {
             simulation = simulations[2];
-//            animation = new CellularAnimTimer(simulation);
             return simulation;
         }else{
             return simulation;
