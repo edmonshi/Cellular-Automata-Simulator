@@ -66,7 +66,7 @@
             <ChoiceBox fx:id="simTypeChoice" prefWidth="120.0" />
             <Accordion>
                <panes>
-                  <TitledPane animated="false" text="Simple Wave">
+                  <TitledPane animated="false" text="Simple Ripple">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -101,6 +101,11 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                      </content>
+                  </TitledPane>
+                  <TitledPane animated="false" text="Simulation 4">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
                   </TitledPane>
                </panes>
             </Accordion>

@@ -134,7 +134,7 @@ public class SimDriverController {
         scaleChoice.setValue(1);
         scaleChoice.setItems(scaleChoiceItems);
         
-        simTypeChoice.setValue("Simple Wave");
+        simTypeChoice.setValue("Simple Ripple");
         simTypeChoice.setItems(simTypeChoiceItems);
         
         
