@@ -97,11 +97,11 @@ public class SimDriverController {
     @FXML
     private Canvas SimCanvas;
     @FXML
-    private Button btnTest;
+    private Button btnPlay;
     @FXML
-    private Button btnStop;
+    private Button btnPause;
     @FXML
-    private Button btnStart;
+    private Button btnReset;
     @FXML
     private ChoiceBox scaleChoice;
     @FXML
@@ -128,16 +128,16 @@ public class SimDriverController {
         scaleChoice.setItems(scaleChoiceItems);
         
         
-        btnTest.setOnAction((event) -> {
-            handleTestBtn(simulation, animation);
+        btnPlay.setOnAction((event) -> {
+            handlePlayBtn(simulation, animation);
         });
          
-        btnStop.setOnAction((event) -> {
-            handleStopBtn(animation);
+        btnPause.setOnAction((event) -> {
+            handlePauseBtn(animation);
         });
         
-        btnStart.setOnAction((event) -> {
-            handleStartBtn(animation);
+        btnReset.setOnAction((event) -> {
+            handleResetBtn(simulation, animation);
         });
         
         // add listenner to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
@@ -216,8 +216,8 @@ public class SimDriverController {
      * @param simulation the simulation on of the animation
      * @param animation the animation it will handle
      */
-    private void handleTestBtn(SimLogicWave1 simulation, CellularAnimTimer animation){
-        System.out.println("Test");
+    private void handlePlayBtn(SimLogicWave1 simulation, CellularAnimTimer animation){
+        System.out.println("Play");
         
         System.out.println("STARTING THE SIMULATION");
         
@@ -233,7 +233,7 @@ public class SimDriverController {
      * The animation will stop.
      * @param animation the animation it will handle
      */
-    private void handleStopBtn(CellularAnimTimer animation) {
+    private void handlePauseBtn(CellularAnimTimer animation) {
         System.out.println("Stop button pressed");
         animation.stop();
         animationRunning = false;
@@ -245,10 +245,11 @@ public class SimDriverController {
      * The animation will start.
      * @param animation the animation it will handle
      */
-    public void handleStartBtn(CellularAnimTimer animation) {
-        System.out.println("Restarting animation button pressed");
-        animation.start();
-        animationRunning = true;
-        System.out.println("Restarted animation");
+    public void handleResetBtn(CellularLogic simulation, CellularAnimTimer animation) {
+        System.out.println("Reset animation button pressed");
+        animation.stop();
+        simulation.clearScreen();
+        animationRunning = false;
+        System.out.println("Resetting animation");
     }
 }
