@@ -245,7 +245,8 @@ public class SimDriverController {
     /**
      * Event that is activated when the reset button is clicked
      * The animation will stop and the simulation will be cleared.
-     * @param animation the animation it will handle
+     * @param simulation CellularLogic object providing the simulation target 
+     * @param animation CellularAnimTimer object providing the animation it will handle
      */
     public void handleResetBtn(CellularLogic simulation, CellularAnimTimer animation) {
         System.out.println("Reset animation button pressed");
