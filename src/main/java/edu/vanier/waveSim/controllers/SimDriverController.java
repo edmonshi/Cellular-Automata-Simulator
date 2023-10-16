@@ -115,7 +115,7 @@ public class SimDriverController {
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Wave");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Wave", "Conway's Game of Life");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
