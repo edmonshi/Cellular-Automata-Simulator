@@ -121,7 +121,7 @@ public class SimDriverController {
         // create simulation object
         SimLogicWave1 simulation = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         CellularAnimTimer animation = new CellularAnimTimer(simulation);
-        
+        simulation.clearScreen();
         
         // set ChoiceBox elements
         scaleChoice.setValue(1);
