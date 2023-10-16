@@ -150,7 +150,7 @@ public class SimDriverController {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
-        // add listenner to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        // add listener to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -163,7 +163,7 @@ public class SimDriverController {
                   }
         });
         
-        // add listenner to scaling choicebox to change the scaling. This clears the screen and stops the animation and clears the origin point list.
+        // add listener to scaling choicebox to change the scaling. This clears the screen and stops the animation and clears the origin point list.
         scaleChoice.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -173,6 +173,16 @@ public class SimDriverController {
                    Number newValue) {
                       ResetScreenAndAnim(simulation, animation,newValue.intValue());
                   }
+        });
+        
+        //add listener to simulation type choicebox to change the simulation type. This will change the simulation logic.
+        simTypeChoice.valueProperty().addListener(new ChangeListener<String>()  {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                
+            }
+                
+            
         });
         
         // bind text property to the slider value
