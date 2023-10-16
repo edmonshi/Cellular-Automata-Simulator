@@ -195,7 +195,8 @@ public class SimDriverController {
         simTypeChoice.valueProperty().addListener(new ChangeListener<String>()  {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                simulation = changeSim(newValue, simulationsList, simulation, animation);
+                animation.stop();
+                simulation = changeSim(newValue, simulationsList, simulation);
                 animation = new CellularAnimTimer(simulation);
                 ResetScreenAndAnim(simulation, animation, scale);
             }  
@@ -211,15 +212,23 @@ public class SimDriverController {
         
     }
     
-    private CellularLogic changeSim(String newValue, CellularLogic[] simulations, CellularLogic simulation, CellularAnimTimer animation) {
-        if (newValue == "Simple Ripple") {
-            simulation = simulations[1];
+    /**TODO Documentation -> switched the active simulation
+     */
+    private CellularLogic changeSim(String newValue, CellularLogic[] simulations, CellularLogic simulation) {
+        if (null == newValue) {
             return simulation;
-        }else if (newValue == "Conway's Game of Life") {
-            simulation = simulations[2];
-            return simulation;
-        }else{
-            return simulation;
+        }else switch (newValue) {
+            case "Simple Ripple" -> {
+                simulation = simulations[1];
+                return simulation;
+            }
+            case "Conway's Game of Life" -> {
+                simulation = simulations[2];
+                return simulation;
+            }
+            default -> {
+                return simulation;
+            }
         }
     }
     
