@@ -112,6 +112,10 @@ public class SimDriverController {
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
+    /**
+     * Initialize the FXML file of the simulation, assignee events to the controllers and 
+     * import the simulation the the FXML file.
+     */
     @FXML
     public void initialize() {
         // create simulation object
@@ -174,7 +178,13 @@ public class SimDriverController {
         
     }
     
-    /**TODO*/
+    /**
+     * Create a red point in the simulation on the selected x and y coordinate
+     * that follows the chosen cellular logic.
+     * @param x The horizontal position of the new point
+     * @param y The vertical position of the new point 
+     * @param simulation The cellular logic that the point will follow
+     */
     private void newPoint(double x, double y, CellularLogic simulation) {
         int xFloor = (int)Math.floor(x);
         int yFloor = (int)Math.floor(y);
@@ -200,7 +210,12 @@ public class SimDriverController {
             }
         }
     }
-    
+    /**
+     * Event that is activated when the test button is clicked.
+     * The animation will start to run.
+     * @param simulation the simulation on of the animation
+     * @param animation the animation it will handle
+     */
     private void handleTestBtn(SimLogicWave1 simulation, CellularAnimTimer animation){
         System.out.println("Test");
         
@@ -213,7 +228,11 @@ public class SimDriverController {
         animation.start();
  
     }
-    
+    /**
+     * Event that is activated when the stop button is clicked.
+     * The animation will stop.
+     * @param animation the animation it will handle
+     */
     private void handleStopBtn(CellularAnimTimer animation) {
         System.out.println("Stop button pressed");
         animation.stop();
@@ -221,7 +240,11 @@ public class SimDriverController {
         System.out.println("Animation stopped");
     }
     
-    
+    /**
+     * Event that is activated when the start button is clicked
+     * The animation will start.
+     * @param animation the animation it will handle
+     */
     public void handleStartBtn(CellularAnimTimer animation) {
         System.out.println("Restarting animation button pressed");
         animation.start();

@@ -7,7 +7,9 @@ package edu.vanier.waveSim.models;
 import javafx.animation.AnimationTimer;
 
 /**
- *
+ * The timer of the cellular logic simulation.
+ * Extends the AnimationTimer class of JavaFX that is responsible for creating timers.
+ * 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
 public class CellularAnimTimer extends AnimationTimer {

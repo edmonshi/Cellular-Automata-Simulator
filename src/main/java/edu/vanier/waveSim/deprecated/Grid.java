@@ -8,7 +8,10 @@ import javafx.scene.image.PixelWriter;
 import static javafx.scene.paint.Color.color;
 import javafx.stage.Stage;
 
-
+/**
+ * 
+ * @author TODO
+ */
 public class Grid{
     //A grid is a 2-D array of pixels
     //Set the number of pixels we want

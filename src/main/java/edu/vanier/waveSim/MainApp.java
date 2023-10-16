@@ -22,6 +22,13 @@ public class MainApp extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
 
+    /**
+     * Override the abstract method start(Stage primaryStage) of Application.
+     * The main entry point for the JavaFX application.
+     * 
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set. 
+     * @exception Exception - If something goes wrong
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -40,7 +47,13 @@ public class MainApp extends Application {
             logger.error(ex.getMessage(), ex);
         }
     }
-
+    
+    /**
+     * Main method of the program.
+     * Execute the launch method of the Application class.
+     * Launch a standalone application.
+     * @param args - The parameters of the launch method.
+     */
     public static void main(String[] args) {
         launch(args);
     }

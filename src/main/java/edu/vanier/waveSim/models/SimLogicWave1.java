@@ -9,7 +9,9 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- *
+ * The class which contains the cellular logic of the simulated waves.
+ * It extends the CellularLogic class
+ * 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
 public class SimLogicWave1 extends CellularLogic{
@@ -21,7 +23,12 @@ public class SimLogicWave1 extends CellularLogic{
     
     private final static Logger logger = LoggerFactory.getLogger(SimLogicWave1.class);
     
-
+    /**
+     * Get the damping value of the simulation waves and return in the form of
+     * a float value.
+     * @return damping - The damping of the simulation, must be a float between
+     * 0 and < 1.
+     */
     public float getDamping() {
         return damping;
     }
@@ -54,7 +61,10 @@ public class SimLogicWave1 extends CellularLogic{
 
     
     /**Simulation logic is here per frame, comes from: https://web.archive.org/web/20160418004149/http://freespace.virgin.net/hugo.elias/graphics/x_water.htm
-     *TODO Cite properly
+     * Use the simulation logic of the waves to create the next frame of the simulation.
+     * Creates a new grid the that is filled up with points using the simulation logic of the waves
+     * and the current frame. Then replace the current frame.
+     * 
      */
     @Override
     public void simFrame(){

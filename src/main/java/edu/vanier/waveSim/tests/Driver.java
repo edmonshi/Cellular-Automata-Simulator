@@ -12,12 +12,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO document this
+ * The Main class of the application.
+ * It extends the Application class and is responsible for initializing the JavaFX application, 
+ * setting up the primary stage, and launching the application.
+ * 
+ * @author TODO
  */
 public class Driver extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(Driver.class);
 
+    /**
+     * Override the abstract method start(Stage primaryStage) of Application.
+     * The main entry point for the JavaFX application.
+     * 
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set. 
+     * @exception Exception - if something goes wrong
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -42,7 +53,13 @@ public class Driver extends Application {
             logger.error(ex.getMessage(), ex);
         }
     }
-
+    
+    /**
+     * Main method of the program.
+     * Execute the launch method of the Application class.
+     * Launch a standalone application.
+     * @param args 
+     */
     public static void main(String[] args) {
         launch(args);
     }
