@@ -17,13 +17,13 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
     
     private final static Logger logger = LoggerFactory.getLogger(SimLogicWave1.class);
 
-    public ConwayGameOfLifeLogic(Canvas operatingCanvas, int widthX, int heightY) {
+    public ConwayGameOfLifeLogic(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
-        if (scaling < 1 || scaling % 2 != 0) {
+        if (scale < 1 || scale % 2 != 0) {
             logger.error("scaling is wrong, setting to 1 by default");
         }else {
-            setScaling(scaling);
+            setScaling(scale);
         }
     }
 
