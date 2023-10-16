@@ -213,8 +213,8 @@ public class SimDriverController {
         }
     }
     /**
-     * Event that is activated when the test button is clicked.
-     * The animation will start to run.
+     * Event that is activated when the play button is clicked.
+     * The animation will play.
      * @param simulation the simulation on of the animation
      * @param animation the animation it will handle
      */
@@ -231,7 +231,7 @@ public class SimDriverController {
  
     }
     /**
-     * Event that is activated when the stop button is clicked.
+     * Event that is activated when the pause button is clicked.
      * The animation will stop.
      * @param animation the animation it will handle
      */
@@ -243,8 +243,8 @@ public class SimDriverController {
     }
     
     /**
-     * Event that is activated when the start button is clicked
-     * The animation will start.
+     * Event that is activated when the reset button is clicked
+     * The animation will stop and the simulation will be cleared.
      * @param animation the animation it will handle
      */
     public void handleResetBtn(CellularLogic simulation, CellularAnimTimer animation) {
