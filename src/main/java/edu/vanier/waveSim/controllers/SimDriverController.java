@@ -2,7 +2,7 @@ package edu.vanier.waveSim.controllers;
 
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
-import javafx.fxml.FXML
+import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
 import java.util.HashSet;
