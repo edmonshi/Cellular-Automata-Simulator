@@ -15,6 +15,19 @@ import javafx.animation.AnimationTimer;
 public class CellularAnimTimer extends AnimationTimer {
 
     private CellularLogic logic;
+    private long delayMillis = 1;
+    
+    // use internally to regulate speed
+    private long lastUpdate = 0 ;
+
+    public void setDelayMillis(long delayMillis) {
+        this.delayMillis = delayMillis;
+    }
+
+    public long getDelayMillis() {
+        return delayMillis;
+    }
+
     
     /**
      * Constructor of CellularAnimTimer
@@ -31,7 +44,10 @@ public class CellularAnimTimer extends AnimationTimer {
      */
     @Override
     public void handle(long now) {
-        doHandle();
+        if (now - lastUpdate >= delayMillis * 1_000_000) {
+            doHandle();
+            lastUpdate = now ;
+        }
     }
     
     /**

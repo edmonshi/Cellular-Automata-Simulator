@@ -31,10 +31,30 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
     public void simFrame() {
         for (int x =1; x<scaledX-1;x++){
             for (int y =1; y<scaledY-1;y++){
-                this.nextFrame[x][y]=isAlive(x,y);
+                if ( isAlive(x,y)){
+                    this.nextFrame[x][y]= 255;
+                    colorCell(x,y,Color.GREEN);
+                }else{
+                    this.nextFrame[x][y]= 0;
+                    colorCell(x,y,backgroundColor);
+                }
+                
             }
         
         }
+//        if (isAlive(1,1)) {
+//            colorCell(1,1,Color.GREEN);
+//        }
+//        if (isAlive(1,2)) {
+//            colorCell(1,2,Color.GREEN);
+//        }
+//        if (isAlive(2,2)) {
+//            colorCell(2,2,Color.GREEN);
+//        }
+//        if (isAlive(2,1)) {
+//            colorCell(2,1,Color.GREEN);
+//        }
+
         float[][] temp = this.current;
         this.current = this.nextFrame;
         this.nextFrame = temp;
@@ -42,35 +62,42 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
     }
     // isAlive returns 0 for dead and 1 for alive
     // nextFrame and current
-    public int isAlive(int x, int y){
+    public boolean isAlive(int x, int y){
+        // setPoint sets a value of 255, TODO override maybe
         int neighbours = 0;
-        int isAlive;
-        if(this.current[x-1][y-1]!=0)
+        boolean isAlive= false;
+        if(this.current[x-1][y-1] == 255) {
             neighbours++;
-        if(this.current[x][y-1]!=0)
-            neighbours++;
-        if(this.current[x+1][y-1]!=0)
-            neighbours++;
-        if(this.current[x-1][y+1]!=0)
-            neighbours++;
-        if(this.current[x][y+1]!=0)
-            neighbours++;
-        if(this.current[x+1][y+1]!=0)
-            neighbours++;
-        if(this.current[x-1][y]!=0)
-            neighbours++;
-        if(this.current[x+1][y]!=0)
-            neighbours++;
-        if((neighbours<2)||(neighbours>3)){
-            isAlive=1;
         }
-        else
-            isAlive=0;
+        if(this.current[x][y-1] == 255) {
+            neighbours++;
+        }
+        if(this.current[x+1][y-1] == 255) {
+            neighbours++;
+        }
+        if(this.current[x-1][y+1] == 255) {
+            neighbours++;
+        }
+        if(this.current[x][y+1] == 255) {
+            neighbours++;
+        }
+        if(this.current[x+1][y+1] == 255) {
+            neighbours++;
+        }
+        if(this.current[x-1][y] == 255) {
+            neighbours++;
+        }
+        if(this.current[x+1][y] == 255) {
+            neighbours++;
+        }
+        if((neighbours<2)||(neighbours>3)){
+            isAlive = false;
+        }
+        else if ((neighbours == 2 && this.current[x][y] == 255) || neighbours == 3){
+            isAlive = true;
+        }else{
+            isAlive = false;
+        }
         return isAlive;
-        
-        
-    }
-    
-    
-    
+    }    
 }

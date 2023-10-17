@@ -39,6 +39,7 @@ public class SimDriverController {
     private boolean animationRunning = false;
     
     int scale = 1;
+    int delayMillis = 1;
     
     
     /**Point object for use in array of origin points*/
@@ -116,6 +117,10 @@ public class SimDriverController {
     private Slider sldrDamping;
     @FXML
     private Label lblDamping;
+    @FXML
+    private Slider sldrSpeed;
+    @FXML
+    private Label lblSpeed;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -167,7 +172,7 @@ public class SimDriverController {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
-        // add listener to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -177,6 +182,20 @@ public class SimDriverController {
                    Number newValue) {
                       // map damping
                       WaveSim.setDamping(1-newValue.floatValue());
+                  }
+        });
+        
+        // add listener to speed slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        sldrSpeed.valueProperty().addListener(new ChangeListener<Number>() {
+
+                @Override
+                public void changed(
+                   ObservableValue<? extends Number> observableValue, 
+                   Number oldValue, 
+                   Number newValue) {
+                      // map damping
+                      animation.setDelayMillis(newValue.intValue());
+                      delayMillis = newValue.intValue();
                   }
         });
         
@@ -200,12 +219,15 @@ public class SimDriverController {
                 animation.stop();
                 simulation = changeSim(newValue, simulationsList, simulation);
                 animation = new CellularAnimTimer(simulation);
+                animation.setDelayMillis(delayMillis);
                 ResetScreenAndAnim(simulation, animation, scale);
             }  
         });
         
-        // bind text property to the slider value
+        // bind text property to the slider value damping
         lblDamping.textProperty().bind(Bindings.format("%.3f",sldrDamping.valueProperty()));
+        // bind text property to the slider value speed
+        lblSpeed.textProperty().bind(Bindings.format("%1.0f",sldrSpeed.valueProperty()));
         
         // get coordinates of mouse on click
         SimCanvas.setOnMouseClicked((event) -> {
