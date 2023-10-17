@@ -49,13 +49,13 @@ public class SimLogicWave1 extends CellularLogic{
      * @param heightY The height in pixels for the vertical, measured top to bottom
      * @param scaling Scaling should be handled by the GUI as a dropdown menu, but it is checked here anyway.
      */
-    public SimLogicWave1(Canvas operatingCanvas, int widthX, int heightY, int scaling) {
+    public SimLogicWave1(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
-        if (scaling < 1 || scaling % 2 != 0) {
+        if (scale < 1 || scale % 2 != 0) {
             logger.error("scaling is wrong, setting to 1 by default");
         }else {
-            setScaling(scaling);
+            setScaling(scale);
         }
     }
 

@@ -2,7 +2,8 @@ package edu.vanier.waveSim.controllers;
 
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
-import javafx.fxml.FXML;
+import javafx.fxml.FXML
+import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
 import java.util.HashSet;
 import javafx.beans.binding.Bindings;
@@ -29,6 +30,9 @@ public class SimDriverController {
     private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
 
     private boolean animationRunning = false;
+    
+    int scale = 1;
+    int delayMillis = 1;
     
     
     /**Point object for use in array of origin points*/
@@ -84,6 +88,9 @@ public class SimDriverController {
     }
     
     HashSet<Point> pointList;
+    CellularLogic[] simulationsList = new CellularLogic[3];
+    CellularLogic simulation;
+    CellularAnimTimer animation;
     
     
 //    get elements from FXML
@@ -103,12 +110,16 @@ public class SimDriverController {
     private Slider sldrDamping;
     @FXML
     private Label lblDamping;
+    @FXML
+    private Slider sldrSpeed;
+    @FXML
+    private Label lblSpeed;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -116,9 +127,20 @@ public class SimDriverController {
      */
     @FXML
     public void initialize() {
-        // create simulation object
-        SimLogicWave1 simulation = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        CellularAnimTimer animation = new CellularAnimTimer(simulation);
+        // create simulation objects
+
+        SimLogicWave1 WaveSim = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        
+        // initialize default simulation
+        simulation = WaveSim;
+        
+        simulationsList[0] = simulation;
+        simulationsList[1] = WaveSim;
+        simulationsList[2] = Conway;
+        
+        // initialize default animation object
+        animation = new CellularAnimTimer(simulation);
         simulation.clearScreen();
         
         pointList = new HashSet<>();
@@ -143,7 +165,7 @@ public class SimDriverController {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
-        // add listener to slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -152,7 +174,21 @@ public class SimDriverController {
                    Number oldValue, 
                    Number newValue) {
                       // map damping
-                      simulation.setDamping(1-newValue.floatValue());
+                      WaveSim.setDamping(1-newValue.floatValue());
+                  }
+        });
+        
+        // add listener to speed slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        sldrSpeed.valueProperty().addListener(new ChangeListener<Number>() {
+
+                @Override
+                public void changed(
+                   ObservableValue<? extends Number> observableValue, 
+                   Number oldValue, 
+                   Number newValue) {
+                      // map damping
+                      animation.setDelayMillis(newValue.intValue());
+                      delayMillis = newValue.intValue();
                   }
         });
         
@@ -164,6 +200,7 @@ public class SimDriverController {
                    ObservableValue<? extends Number> observableValue, 
                    Number oldValue, 
                    Number newValue) {
+                      scale = newValue.intValue();
                       ResetScreenAndAnim(simulation, animation,newValue.intValue());
                   }
         });
@@ -172,20 +209,44 @@ public class SimDriverController {
         simTypeChoice.valueProperty().addListener(new ChangeListener<String>()  {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                
-            }
-                
-            
+                animation.stop();
+                simulation = changeSim(newValue, simulationsList, simulation);
+                animation = new CellularAnimTimer(simulation);
+                animation.setDelayMillis(delayMillis);
+                ResetScreenAndAnim(simulation, animation, scale);
+            }  
         });
         
-        // bind text property to the slider value
+        // bind text property to the slider value damping
         lblDamping.textProperty().bind(Bindings.format("%.3f",sldrDamping.valueProperty()));
+        // bind text property to the slider value speed
+        lblSpeed.textProperty().bind(Bindings.format("%1.0f",sldrSpeed.valueProperty()));
         
         // get coordinates of mouse on click
         SimCanvas.setOnMouseClicked((event) -> {
             newPoint(event.getX(),event.getY(), simulation);
         });
         
+    }
+    
+    /**TODO Documentation -> switched the active simulation
+     */
+    private CellularLogic changeSim(String newValue, CellularLogic[] simulations, CellularLogic simulation) {
+        if (null == newValue) {
+            return simulation;
+        }else switch (newValue) {
+            case "Simple Ripple" -> {
+                simulation = simulations[1];
+                return simulation;
+            }
+            case "Conway's Game of Life" -> {
+                simulation = simulations[2];
+                return simulation;
+            }
+            default -> {
+                return simulation;
+            }
+        }
     }
     
     /**
@@ -228,12 +289,8 @@ public class SimDriverController {
      * @param simulation the simulation on of the animation
      * @param animation the animation it will handle
      */
-    private void handlePlayBtn(SimLogicWave1 simulation, CellularAnimTimer animation){
-        System.out.println("Play");
-        
+    private void handlePlayBtn(CellularLogic simulation, CellularAnimTimer animation){
         System.out.println("STARTING THE SIMULATION");
-        
-        System.out.println(simulation.getDamping());
         
         animationRunning = true;
         
@@ -260,6 +317,7 @@ public class SimDriverController {
      * @param scaling scaling by which to reset the animation with
      */
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
+        for (int i=0;i<this.simulationsList.length;i++) {}
         simulation.setScaling(scaling);
         simulation.clearScreen();
         pointList.clear();
