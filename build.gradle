@@ -25,6 +25,7 @@ dependencies {
     compileOnly  "org.openjfx:javafx-fxml:20.0.2:javadoc"
     compileOnly  "org.openjfx:javafx-graphics:20.0.2:javadoc"
 
+<<<<<<< Updated upstream
 // https://mvnrepository.com/artifact/com.opencsv/opencsv
 implementation 'com.opencsv:opencsv:5.8'
 
@@ -46,5 +47,12 @@ application {
 
 test {
     exclude '**/*'
+=======
+    // Link Logback to the project: @see: https://logback.qos.ch/ 
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "ch.qos.logback:logback-core:$logbackVersion"
+    // https://mvnrepository.com/artifact/com.opencsv/opencsv
+    implementation 'com.opencsv:opencsv:5.8'
+>>>>>>> Stashed changes
 }
 
