@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Level;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -345,6 +346,14 @@ public class SimDriverController {
             writer.write(simTypeChoice.getValue().toString()+",");
             // Write speed
             writer.write(Double.toString(sldrSpeed.getValue())+",");
+            //Write points
+            for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
+                Point currentPoint = points.next();
+                if(points.hasNext()==false)
+                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY()));
+                else
+                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
+            }
             writer.write("\n");
         }
     }
@@ -363,6 +372,22 @@ public class SimDriverController {
             simTypeChoice.setValue(settings[2]);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
+            // Set points
+            int x,y;
+            for(int counterIndex = 0; counterIndex<((settings.length-4)/2); counterIndex++){
+                x=0;
+                y=0;
+                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
+                    if(counterCoordinates==0)
+                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
+                    else
+                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
+                }
+                System.out.println("Points: x="+x+" and y="+y);
+                simulation.setPoint(x, y);
+                pointList.add(new Point(x,y));
+            }
+            
         }catch(Exception e){
             System.out.println(e.toString());
         }
