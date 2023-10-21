@@ -1,11 +1,17 @@
 package edu.vanier.waveSim.controllers;
 
+import com.opencsv.CSVReader;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.logging.Level;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,6 +21,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -114,6 +121,10 @@ public class SimDriverController {
     private Slider sldrSpeed;
     @FXML
     private Label lblSpeed;
+    @FXML
+    private MenuItem itmSave;
+    @FXML
+    private MenuItem itmLoad;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -164,7 +175,16 @@ public class SimDriverController {
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
-        
+        itmSave.setOnAction((event)->{
+            try {
+                handleSaveItm(simulation);
+            } catch (IOException ex) {
+                System.out.println(ex.toString());
+            }
+        });
+        itmLoad.setOnAction((event)->{
+            handleLoadItm(simulation);
+        });
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -308,7 +328,45 @@ public class SimDriverController {
         animationRunning = false;
         System.out.println("Animation stopped");
     }
-    
+    /**
+     * This method saves the settings of a simulation in a CSV File called settings.csv
+     * This file is contained in the resources folder, in a package called data
+     * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
+     */
+    private void handleSaveItm(CellularLogic simulation) throws IOException {
+        System.out.println("Save button clicked");
+        try(FileWriter fw = new FileWriter("src/main/resources/data/settings.csv");
+                PrintWriter writer = new PrintWriter(fw);){
+            //Write damping
+            writer.write(Double.toString(sldrDamping.getValue())+",");
+            //Write scale
+            writer.write(scaleChoice.getValue().toString()+",");
+            //Write simulation type
+            writer.write(simTypeChoice.getValue().toString()+",");
+            // Write speed
+            writer.write(Double.toString(sldrSpeed.getValue())+",");
+            writer.write("\n");
+        }
+    }
+
+    private void handleLoadItm(CellularLogic simulation) {
+        System.out.println("Load button clicked");
+        try{
+            CSVReader reader = new CSVReader(new FileReader("src/main/resources/data/settings.csv"));
+            int saveOption  = 0;
+            String[] settings = reader.readAll().get(saveOption);
+            // Set the damping
+            sldrDamping.adjustValue(Double.parseDouble(settings[0]));
+            // Set scale
+            scaleChoice.setValue(Integer.parseInt(settings[1]));
+            // Set simulation type
+            simTypeChoice.setValue(settings[2]);
+            // Set simulation speed
+            sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
     /**
      * Reset the animation and screen
      * The animation will stop and the simulation will be cleared.
