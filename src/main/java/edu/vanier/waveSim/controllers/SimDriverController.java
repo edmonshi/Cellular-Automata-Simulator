@@ -336,8 +336,11 @@ public class SimDriverController {
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException {
         System.out.println("Save button clicked");
+        
         try(FileWriter fw = new FileWriter("src/main/resources/data/settings.csv");
                 PrintWriter writer = new PrintWriter(fw);){
+            //Erase previous save settings
+            writer.flush();
             //Write damping
             writer.write(Double.toString(sldrDamping.getValue())+",");
             //Write scale
