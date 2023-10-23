@@ -24,6 +24,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,6 +130,12 @@ public class SimDriverController {
     private MenuItem itmSave;
     @FXML
     private MenuItem itmLoad;
+    @FXML
+    private Pane SimCanvasPane;
+    @FXML
+    private VBox SimVBox;
+    @FXML
+    private TabPane simTab;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -164,6 +174,11 @@ public class SimDriverController {
         simTypeChoice.setValue("Simple Ripple");
         simTypeChoice.setItems(simTypeChoiceItems);
         
+        
+        
+        // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
+        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
+        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
         
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
@@ -388,6 +403,7 @@ public class SimDriverController {
                 }
                 System.out.println("Points: x="+x+" and y="+y);
                 simulation.setPoint(x, y);
+                simulation.colorCell(x, y, Color.CORAL);
                 pointList.add(new Point(x,y));
             }
             
