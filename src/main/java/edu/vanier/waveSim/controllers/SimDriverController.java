@@ -134,8 +134,6 @@ public class SimDriverController {
     private Pane SimCanvasPane;
     @FXML
     private VBox SimVBox;
-    @FXML
-    private TabPane simTab;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);

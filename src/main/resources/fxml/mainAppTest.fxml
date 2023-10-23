@@ -16,10 +16,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<BorderPane prefHeight="526.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="526.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox prefHeight="26.0" prefWidth="862.0" BorderPane.alignment="CENTER">
          <children>
@@ -132,9 +133,13 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="447.0" prefWidth="680.0">
                      <children>
-                        <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <VBox fx:id="SimVBox" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
-                              <Canvas fx:id="SimCanvas" height="400.0" width="532.0" />
+                              <Pane fx:id="SimCanvasPane">
+                                 <children>
+                                    <Canvas fx:id="SimCanvas" height="400.0" width="532.0" />
+                                 </children>
+                              </Pane>
                               <HBox alignment="CENTER" prefHeight="46.0" prefWidth="658.0" spacing="30.0" style="-fx-alignment: center;">
                                  <children>
                                     <Button fx:id="btnPlay" mnemonicParsing="false" text="Play" />
