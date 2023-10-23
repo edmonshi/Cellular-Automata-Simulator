@@ -175,8 +175,8 @@ public class SimDriverController {
         
         
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
-        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
-        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
+//        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
+//        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
         
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
