@@ -126,6 +126,12 @@ public class SimDriverController {
     private MenuItem itmSave;
     @FXML
     private MenuItem itmLoad;
+    @FXML
+    private Button btnSaveRender;
+    @FXML
+    private Button btnPauseRender;
+    @FXML
+    private Button btnResetRender;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -373,10 +379,12 @@ public class SimDriverController {
             scaleChoice.setValue(Integer.parseInt(settings[1]));
             // Set simulation type
             simTypeChoice.setValue(settings[2]);
+            simulation.setScaling(Integer.parseInt(settings[1]));
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
             // Set points
             int x,y;
+            System.out.println(settings.length);
             for(int counterIndex = 0; counterIndex<((settings.length-4)/2); counterIndex++){
                 x=0;
                 y=0;
@@ -387,6 +395,7 @@ public class SimDriverController {
                         y=Integer.parseInt(settings[(counterIndex*2)+5]);
                 }
                 System.out.println("Points: x="+x+" and y="+y);
+                simulation.colorCell(x, y, Color.CORAL);
                 simulation.setPoint(x, y);
                 pointList.add(new Point(x,y));
             }
