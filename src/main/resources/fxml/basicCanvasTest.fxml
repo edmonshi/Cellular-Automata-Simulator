@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="662.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <HBox prefWidth="535.0" BorderPane.alignment="CENTER">
+         <children>
+            <Line endX="50.0" endY="860.0" startX="50.0" startY="460.0" />
+            <Canvas fx:id="SimCanvas" height="400.0" width="532.0" />
+         </children>
+      </HBox>
+   </center>
+   <left>
+      <VBox alignment="TOP_CENTER" prefHeight="409.0" prefWidth="130.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnTest" mnemonicParsing="false" text="Test" />
+            <Button fx:id="btnStop" mnemonicParsing="false" text="Stop" />
+            <Button fx:id="btnStart" mnemonicParsing="false" text="Restart" />
+            <Label text="Scaling" />
+            <ChoiceBox fx:id="scaleChoice" prefWidth="150.0">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin></ChoiceBox>
+            <Label prefHeight="25.0" prefWidth="101.0" text="Damping Dynamic" />
+            <Slider fx:id="sldrDamping" blockIncrement="0.001" majorTickUnit="0.1" max="0.15" min="0.001" showTickLabels="true" showTickMarks="true" value="0.02">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin></Slider>
+            <Label fx:id="lblDamping" text="0.900" />
+            <Label text="Place origin points" />
+            <Label text="or remove them" />
+            <Label text="using left click." />
+            <Label text="Then press: &quot;Test&quot;" />
+         </children>
+         <BorderPane.margin>
+            <Insets top="20.0" />
+         </BorderPane.margin></VBox>
+   </left>
+</BorderPane>

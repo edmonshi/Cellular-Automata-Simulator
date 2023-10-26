@@ -16,10 +16,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<BorderPane prefHeight="526.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="526.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox prefHeight="26.0" prefWidth="862.0" BorderPane.alignment="CENTER">
          <children>
@@ -28,8 +29,8 @@
                   <Menu mnemonicParsing="false" text="File">
                      <items>
                         <MenuItem mnemonicParsing="false" text="TBD" />
-                        <MenuItem fx:id="btnSave" mnemonicParsing="false" text="Save" />
-                        <MenuItem fx:id="btnLoad" mnemonicParsing="false" text="Load Settings" />
+                        <MenuItem fx:id="itmSave" mnemonicParsing="false" text="Save Settings" />
+                        <MenuItem fx:id="itmLoad" mnemonicParsing="false" text="Load Settings" />
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Render">
@@ -132,9 +133,13 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="447.0" prefWidth="680.0">
                      <children>
-                        <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <VBox fx:id="SimVBox" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
-                              <Canvas fx:id="SimCanvas" height="400.0" width="532.0" />
+                              <Pane fx:id="SimCanvasPane">
+                                 <children>
+                                    <Canvas fx:id="SimCanvas" height="400.0" width="532.0" />
+                                 </children>
+                              </Pane>
                               <HBox alignment="CENTER" prefHeight="46.0" prefWidth="658.0" spacing="30.0" style="-fx-alignment: center;">
                                  <children>
                                     <Button fx:id="btnPlay" mnemonicParsing="false" text="Play" />
@@ -153,7 +158,21 @@
             </Tab>
             <Tab text="Render">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="30.0">
+                           <children>
+                              <Canvas height="374.0" width="546.0" />
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                 <children>
+                                    <Button fx:id="btnSaveRender" mnemonicParsing="false" text="Save" />
+                                    <Button fx:id="btnPauseRender" mnemonicParsing="false" text="Pause" />
+                                    <Button fx:id="btnResetRender" mnemonicParsing="false" text="Reset" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
                </content>
             </Tab>
          </tabs>

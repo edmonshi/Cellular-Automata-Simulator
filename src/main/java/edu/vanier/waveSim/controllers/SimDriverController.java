@@ -6,11 +6,14 @@ import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
+import java.awt.Component;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Level;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -23,7 +26,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +49,6 @@ public class SimDriverController {
     int scale = 1;
     int delayMillis = 1;
 
-    
     
     
     /**Point object for use in array of origin points*/
@@ -124,9 +131,15 @@ public class SimDriverController {
     @FXML
     private Label lblSpeed;
     @FXML
-    private MenuItem btnSave;
+    private MenuItem itmSave;
     @FXML
-    private MenuItem btnLoad;
+    private MenuItem itmLoad;
+    @FXML
+    private Button btnSaveRender;
+    @FXML
+    private Button btnPauseRender;
+    @FXML
+    private Button btnResetRender;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -166,6 +179,11 @@ public class SimDriverController {
         simTypeChoice.setItems(simTypeChoiceItems);
         
         
+        
+        // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
+//        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
+//        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
+        
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
         });
@@ -177,15 +195,15 @@ public class SimDriverController {
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
-        btnSave.setOnAction((event)->{
+        itmSave.setOnAction((event)->{
             try {
-                handleSaveBtn(simulation);
+                handleSaveItm(simulation);
             } catch (IOException ex) {
                 System.out.println(ex.toString());
             }
         });
-        btnLoad.setOnAction((event)->{
-            handleLoadBtn(simulation);
+        itmLoad.setOnAction((event)->{
+            handleLoadItm(simulation);
         });
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
@@ -330,11 +348,22 @@ public class SimDriverController {
         animationRunning = false;
         System.out.println("Animation stopped");
     }
-    // "src/main/resources/data/zipcodes.csv"
-    private void handleSaveBtn(CellularLogic simulation) throws IOException {
+    /**
+     * This method saves the settings of a simulation in a CSV File called settings.csv
+     * This file is contained in the resources folder, in a package called data
+     * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
+     */
+    private void handleSaveItm(CellularLogic simulation) throws IOException {
         System.out.println("Save button clicked");
-        try(FileWriter fw = new FileWriter("src/main/resources/data/settings.csv");
+        Component aComponent = new Component(){};
+            JFileChooser fc = new JFileChooser();
+            fc.showOpenDialog(aComponent);
+            File file  = fc.getSelectedFile();
+        try(FileWriter fw = new FileWriter(file.getPath());
                 PrintWriter writer = new PrintWriter(fw);){
+            
+            //Erase previous save settings
+            writer.flush();
             //Write damping
             writer.write(Double.toString(sldrDamping.getValue())+",");
             //Write scale
@@ -343,15 +372,27 @@ public class SimDriverController {
             writer.write(simTypeChoice.getValue().toString()+",");
             // Write speed
             writer.write(Double.toString(sldrSpeed.getValue())+",");
+            //Write points
+            for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
+                Point currentPoint = points.next();
+                if(points.hasNext()==false)
+                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY()));
+                else
+                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
+            }
             writer.write("\n");
         }
     }
 
-    private void handleLoadBtn(CellularLogic simulation) {
+    private void handleLoadItm(CellularLogic simulation) {
         System.out.println("Load button clicked");
         try{
-            CSVReader reader = new CSVReader(new FileReader("src/main/resources/data/settings.csv"));
-            int saveOption  = 0;
+            Component aComponent = new Component(){};
+            JFileChooser fc = new JFileChooser();
+            fc.showOpenDialog(aComponent);
+            File file  = fc.getSelectedFile();
+            CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+            int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
             // Set the damping
             sldrDamping.adjustValue(Double.parseDouble(settings[0]));
@@ -359,12 +400,32 @@ public class SimDriverController {
             scaleChoice.setValue(Integer.parseInt(settings[1]));
             // Set simulation type
             simTypeChoice.setValue(settings[2]);
+            simulation.setScaling(Integer.parseInt(settings[1]));
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
+            // Set points
+            int x,y;
+            System.out.println(settings.length);
+            for(int counterIndex = 0; counterIndex<((settings.length-4)/2); counterIndex++){
+                x=0;
+                y=0;
+                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
+                    if(counterCoordinates==0)
+                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
+                    else
+                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
+                }
+                System.out.println("Points: x="+x+" and y="+y);
+                simulation.colorCell(x, y, Color.CORAL);
+                simulation.setPoint(x, y);
+                simulation.colorCell(x, y, Color.CORAL);
+                pointList.add(new Point(x,y));
+            }
+            
         }catch(Exception e){
+            System.out.println(e.toString());
         }
     }
-    
     /**
      * Reset the animation and screen
      * The animation will stop and the simulation will be cleared.
