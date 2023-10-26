@@ -6,6 +6,8 @@ import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
+import java.awt.Component;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +48,7 @@ public class SimDriverController {
     
     int scale = 1;
     int delayMillis = 1;
+
     
     
     /**Point object for use in array of origin points*/
@@ -351,9 +355,13 @@ public class SimDriverController {
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException {
         System.out.println("Save button clicked");
-        
-        try(FileWriter fw = new FileWriter("src/main/resources/data/settings.csv");
+        Component aComponent = new Component(){};
+            JFileChooser fc = new JFileChooser();
+            fc.showOpenDialog(aComponent);
+            File file  = fc.getSelectedFile();
+        try(FileWriter fw = new FileWriter(file.getPath());
                 PrintWriter writer = new PrintWriter(fw);){
+            
             //Erase previous save settings
             writer.flush();
             //Write damping
@@ -379,8 +387,12 @@ public class SimDriverController {
     private void handleLoadItm(CellularLogic simulation) {
         System.out.println("Load button clicked");
         try{
-            CSVReader reader = new CSVReader(new FileReader("src/main/resources/data/settings.csv"));
-            int saveOption  = 0;
+            Component aComponent = new Component(){};
+            JFileChooser fc = new JFileChooser();
+            fc.showOpenDialog(aComponent);
+            File file  = fc.getSelectedFile();
+            CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+            int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
             // Set the damping
             sldrDamping.adjustValue(Double.parseDouble(settings[0]));
