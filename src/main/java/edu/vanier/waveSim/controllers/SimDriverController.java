@@ -33,6 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -359,10 +360,10 @@ public class SimDriverController{
     private void handleSaveItm(CellularLogic simulation) throws IOException {
         
         System.out.println("Save button clicked");
-        Component aComponent = new Component(){};
-            JFileChooser fc = new JFileChooser();
-            fc.showOpenDialog(aComponent);
-            File file  = fc.getSelectedFile();
+        FileChooser f = new FileChooser();
+            Stage stage  = new Stage();
+            stage.setAlwaysOnTop(true);
+            File file = f.showOpenDialog(stage);
             
         try(FileWriter fw = new FileWriter(file.getPath());
                 
@@ -393,10 +394,11 @@ public class SimDriverController{
     private void handleLoadItm(CellularLogic simulation) {
         System.out.println("Load button clicked");
         try{
-            Component aComponent = new Component(){};
-            JFileChooser fc = new JFileChooser();
-            fc.showOpenDialog(aComponent);
-            File file = fc.getSelectedFile();
+            FileChooser f = new FileChooser();
+            Stage stage  = new Stage();
+            stage.setAlwaysOnTop(true);
+            stage.showAndWait();
+            File file = f.showOpenDialog(stage);
             CSVReader reader = new CSVReader(new FileReader(file.getPath()));
             int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
