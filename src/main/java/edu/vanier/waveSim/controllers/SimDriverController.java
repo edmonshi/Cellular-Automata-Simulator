@@ -1,6 +1,7 @@
 package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
+import edu.vanier.waveSim.MainApp;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
@@ -31,6 +32,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author TODO
  */
-public class SimDriverController {
+public class SimDriverController{
 
     private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
 
@@ -49,6 +51,7 @@ public class SimDriverController {
     int scale = 1;
     int delayMillis = 1;
 
+    
     
     
     /**Point object for use in array of origin points*/
@@ -393,14 +396,13 @@ public class SimDriverController {
             Component aComponent = new Component(){};
             JFileChooser fc = new JFileChooser();
             fc.showOpenDialog(aComponent);
-            File file  = fc.getSelectedFile();
+            File file = fc.getSelectedFile();
             CSVReader reader = new CSVReader(new FileReader(file.getPath()));
             int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
-            /*
+            
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
-            */
             // Set the damping
             sldrDamping.adjustValue(Double.parseDouble(settings[0]));
             // Set scale
