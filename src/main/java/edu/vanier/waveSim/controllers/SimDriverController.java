@@ -354,12 +354,16 @@ public class SimDriverController {
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException {
+        
         System.out.println("Save button clicked");
         Component aComponent = new Component(){};
+        /*
             JFileChooser fc = new JFileChooser();
             fc.showOpenDialog(aComponent);
             File file  = fc.getSelectedFile();
-        try(FileWriter fw = new FileWriter(file.getPath());
+            */
+        try(FileWriter fw = new FileWriter("C:\\Users\\loovd\\OneDrive\\Documents\\GitHub\\wave-simulation\\src\\main\\resources\\data\\settings.csv");
+                
                 PrintWriter writer = new PrintWriter(fw);){
             
             //Erase previous save settings
@@ -387,20 +391,28 @@ public class SimDriverController {
     private void handleLoadItm(CellularLogic simulation) {
         System.out.println("Load button clicked");
         try{
+            /*
             Component aComponent = new Component(){};
             JFileChooser fc = new JFileChooser();
             fc.showOpenDialog(aComponent);
+            
             File file  = fc.getSelectedFile();
-            CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+            */
+            CSVReader reader = new CSVReader(new FileReader("C:\\Users\\loovd\\OneDrive\\Documents\\GitHub\\wave-simulation\\src\\main\\resources\\data\\settings.csv"));
             int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
+            /*
+            //Set scaling
+            simulation.setScaling(Integer.parseInt(settings[1]));
+            */
             // Set the damping
             sldrDamping.adjustValue(Double.parseDouble(settings[0]));
             // Set scale
-            scaleChoice.setValue(Integer.parseInt(settings[1]));
+            int scale = Integer.parseInt(settings[1]);
+            scaleChoice.setValue(scale);
             // Set simulation type
             simTypeChoice.setValue(settings[2]);
-            simulation.setScaling(Integer.parseInt(settings[1]));
+            
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
             // Set points
@@ -417,8 +429,7 @@ public class SimDriverController {
                 }
                 System.out.println("Points: x="+x+" and y="+y);
                 simulation.colorCell(x, y, Color.CORAL);
-                simulation.setPoint(x, y);
-                simulation.colorCell(x, y, Color.CORAL);
+                simulation.setPoint(scale*x, scale*y);
                 pointList.add(new Point(x,y));
             }
             
