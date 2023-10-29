@@ -9,6 +9,7 @@ import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave1;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,7 +23,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -51,6 +54,7 @@ public class SimDriverController{
     
     int scale = 1;
     int delayMillis = 1;
+
 
     
     
@@ -207,7 +211,11 @@ public class SimDriverController{
             }
         });
         itmLoad.setOnAction((event)->{
-            handleLoadItm(simulation);
+            try {
+                handleLoadItm(simulation);
+            } catch (FileNotFoundException ex) {
+                java.util.logging.Logger.getLogger(SimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
@@ -358,17 +366,13 @@ public class SimDriverController{
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException {
-        
         System.out.println("Save button clicked");
         FileChooser f = new FileChooser();
             Stage stage  = new Stage();
             stage.setAlwaysOnTop(true);
             File file = f.showOpenDialog(stage);
-            
         try(FileWriter fw = new FileWriter(file.getPath());
-                
                 PrintWriter writer = new PrintWriter(fw);){
-            
             //Erase previous save settings
             writer.flush();
             //Write damping
@@ -390,15 +394,27 @@ public class SimDriverController{
             writer.write("\n");
         }
     }
-
-    private void handleLoadItm(CellularLogic simulation) {
+    /**
+     * This method loads the settings from a csv file chosen by the user.
+     * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
+     */
+    private void handleLoadItm(CellularLogic simulation) throws FileNotFoundException {
         System.out.println("Load button clicked");
         try{
             FileChooser f = new FileChooser();
-            Stage stage  = new Stage();
-            stage.setAlwaysOnTop(true);
-            File file = f.showOpenDialog(stage);
-            CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+        Stage stage  = new Stage();
+        stage.setAlwaysOnTop(true);
+        File file = f.showOpenDialog(stage);
+        // make sure that the file is csv
+        /*
+        Cannot mkae alert dialog appear on tp of main Window
+        boolean isCsv = "csv".equals(file.getPath().substring(file.getPath().length()-3, file.getPath().length()));
+        if(!isCsv){
+            showAlert("The file chosen is not a csv file. Please use a csv file. Try again.");
+            itmLoad.getOnAction();
+        }
+        */
+        CSVReader reader = new CSVReader(new FileReader(file.getPath()));
             int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
             
@@ -450,5 +466,16 @@ public class SimDriverController{
         pointList.clear();
         animation.stop();
         animationRunning = false;
+    }
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setContentText("Please try again.");
+        alert.setHeaderText(message);
+        alert.showAndWait();
+        if(alert.getResult() == ButtonType.OK){
+            System.out.println("Error message seen.");
+        }
+        
     }
 }
