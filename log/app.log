@@ -85,3 +85,9 @@
 19:56:38.150  [INFO ] e.v.w.t.Driver  msg: Bootstrapping the application...
 19:56:38.328  [ERROR] e.v.w.m.SimLogicWave1 msg: scaling is wrong, setting to 1 by default
 19:56:38.330  [ERROR] e.v.w.m.SimLogicWave1 msg: scaling is wrong, setting to 1 by default
+20:08:43.868  [INFO ] e.v.w.t.Driver  msg: Bootstrapping the application...
+20:08:44.071  [ERROR] e.v.w.m.SimLogicWave1 msg: scaling is wrong, setting to 1 by default
+20:08:44.073  [ERROR] e.v.w.m.SimLogicWave1 msg: scaling is wrong, setting to 1 by default
+20:10:51.062  [INFO ] e.v.w.t.Driver  msg: Bootstrapping the application...
+20:10:51.270  [ERROR] e.v.w.m.SimLogicWave1 msg: scaling is wrong, setting to 1 by default
+20:10:51.272  [ERROR] e.v.w.m.SimLogicWave1 msg: scaling is wrong, setting to 1 by default

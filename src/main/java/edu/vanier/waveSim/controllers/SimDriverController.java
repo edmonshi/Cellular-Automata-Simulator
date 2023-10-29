@@ -397,7 +397,6 @@ public class SimDriverController{
             FileChooser f = new FileChooser();
             Stage stage  = new Stage();
             stage.setAlwaysOnTop(true);
-            stage.showAndWait();
             File file = f.showOpenDialog(stage);
             CSVReader reader = new CSVReader(new FileReader(file.getPath()));
             int saveOption = 0;
