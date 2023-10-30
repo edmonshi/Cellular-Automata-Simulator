@@ -399,6 +399,8 @@ public class SimDriverController{
         animationRunning = true;
         
         animation.start();
+        
+        pointList.clear();
  
     }
     /**
