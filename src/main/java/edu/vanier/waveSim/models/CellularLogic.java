@@ -79,6 +79,22 @@ public abstract class CellularLogic {
         this.nextFrame = new float[widthX / this.scaling][heightY / this.scaling];
 
     }
+    
+    /**TODO Docs*/
+    public void setWidth(int width){
+        this.widthX = width;
+        this.scaledX = width/this.scaling;
+        this.current = new float[widthX / this.scaling][heightY / this.scaling];
+        this.nextFrame = new float[widthX / this.scaling][heightY / this.scaling];
+    }
+    
+    /**TODO Docs*/
+    public void setHeight(int height){
+        this.heightY = height;
+        this.scaledY = height/this.scaling;
+        this.current = new float[widthX / this.scaling][heightY / this.scaling];
+        this.nextFrame = new float[widthX / this.scaling][heightY / this.scaling];
+    }
 
     /**
      * Get the scaled width of the simulation and return it.
@@ -220,7 +236,6 @@ public abstract class CellularLogic {
         Graphics.setFill(color);
         WritablePixelFormat<IntBuffer> format = WritablePixelFormat.getIntArgbInstance();
         Graphics.fillRect(xPosInArray * this.scaling, yPosInArray * this.scaling, this.scaling, this.scaling);
-
     }
 
     /**
@@ -230,6 +245,7 @@ public abstract class CellularLogic {
         GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
         Graphics.setFill(backgroundColor);
         Graphics.fillRect(0, 0, widthX, heightY);
+        System.out.println(widthX + "  "+heightY);
     }
 
     /**

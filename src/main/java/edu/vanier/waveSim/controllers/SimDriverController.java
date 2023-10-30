@@ -55,10 +55,6 @@ public class SimDriverController{
     int scale = 1;
     int delayMillis = 1;
 
-
-    
-    
-    
     /**Point object for use in array of origin points*/
     private class Point{
         private int x;
@@ -148,6 +144,14 @@ public class SimDriverController{
     private Button btnPauseRender;
     @FXML
     private Button btnResetRender;
+    @FXML
+    private Pane SimCanvasPane;
+    @FXML
+    private Label lblWi;
+    @FXML
+    private Label lblHi;
+    @FXML
+    private TabPane SimTabPane;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -191,6 +195,13 @@ public class SimDriverController{
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
 //        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
 //        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
+  
+        SimTabPane.heightProperty().addListener((observable) -> {
+            setHeight(SimTabPane.heightProperty().getValue().intValue(), simulation, animation, lblHi);
+        });
+        SimTabPane.widthProperty().addListener((observable) -> {
+            setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
+        });
         
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
@@ -281,12 +292,53 @@ public class SimDriverController{
         
     }
     
+    /**TODO Documentation*/
+    private void setWidth(int width, CellularLogic simulation, CellularAnimTimer animation, Label lblWidth) {
+        animation.stop();
+        pointList.clear();
+        animationRunning = false;
+        if (width % 2 == 1) {
+            width --;
+        }
+        simulation.setWidth(width);
+        simulation.setScaling(simulation.getScaling());
+        SimCanvas.setWidth(width);
+        simulation.clearScreen();
+        lblWidth.setText("Width: "+width);
+    }
+    /**TODO Documentation*/
+    private void setHeight(int height, CellularLogic simulation, CellularAnimTimer animation, Label lblHeight) {
+        int HBoxHeight = 100;
+
+        animation.stop();
+        pointList.clear();
+        animationRunning = false;
+        if (height % 2 == 1) {
+            height --;
+        }
+        int realHeight = height-HBoxHeight;
+        simulation.setHeight(realHeight);
+        simulation.setScaling(simulation.getScaling());
+        SimCanvas.setHeight(realHeight);
+        simulation.clearScreen();
+        lblHeight.setText("Height: "+realHeight);
+    }
+    
     /**TODO Documentation -> switched the active simulation
      */
     private CellularLogic changeSim(String newValue, CellularLogic[] simulations, CellularLogic simulation) {
+        int Height, Width;
         if (null == newValue) {
             return simulation;
-        }else switch (newValue) {
+        }else
+            Height = simulation.getHeightY();
+            Width = simulation.getWidthX();
+            // set width and height for every simulation so they have the right width and height on switch
+            for(CellularLogic sim:simulations){
+                sim.setHeight(Height);
+                sim.setWidth(Width);
+            }
+            switch (newValue) {
             case "Simple Ripple" -> {
                 simulation = simulations[1];
                 return simulation;
