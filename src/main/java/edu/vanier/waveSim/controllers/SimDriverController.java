@@ -49,11 +49,42 @@ import org.slf4j.LoggerFactory;
 public class SimDriverController{
 
     private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
-
+    
+    private Stage primaryStage;
+    
     private boolean animationRunning = false;
     
     int scale = 1;
     int delayMillis = 1;
+    int sceneHeight;
+    int sceneWidth;
+
+    public SimDriverController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public int getSceneHeight() {
+        return sceneHeight;
+    }
+
+    public void setSceneHeight(int sceneHeight) {
+        this.sceneHeight = sceneHeight;
+    }
+
+    public int getSceneWidth() {
+        return sceneWidth;
+    }
+
+    public void setSceneWidth(int sceneWidth) {
+        this.sceneWidth = sceneWidth;
+    }
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
     /**Point object for use in array of origin points*/
     private class Point{
@@ -440,11 +471,12 @@ public class SimDriverController{
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
-                if(points.hasNext()==false)
-                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY()));
-                else
                     writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
             }
+            int width = simulation.getWidthX();
+            int height = simulation.getHeightY();
+            writer.write(Integer.toString(width)+",");
+            writer.write(Integer.toString(height));
             writer.write("\n");
         }
     }
@@ -487,7 +519,7 @@ public class SimDriverController{
             // Set points
             int x,y;
             System.out.println(settings.length);
-            for(int counterIndex = 0; counterIndex<((settings.length-4)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-6)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
@@ -501,9 +533,22 @@ public class SimDriverController{
                 simulation.setPoint(scale*x, scale*y);
                 pointList.add(new Point(x,y));
             }
+            int width = Integer.parseInt(settings[settings.length-2]);
+            int height = Integer.parseInt(settings[settings.length-1]);
+            changeStageSize(width, height);
+            this.setSceneHeight(height);
+            this.setSceneWidth(width);
+            System.out.println("Width and Height: "+width+" "+height);
             
         }catch(Exception e){
             System.out.println(e.toString());
+        }
+    }
+    @FXML
+    public void changeStageSize(int width, int height){
+        if(primaryStage!=null){
+            primaryStage.setHeight(height);
+            primaryStage.setWidth(width);
         }
     }
     /**
