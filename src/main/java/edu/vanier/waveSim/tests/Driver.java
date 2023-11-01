@@ -42,8 +42,9 @@ public class Driver extends Application {
             BorderPane root = loader.load();
             
             //-- 2) Create and set the scene to the stage.
-            Scene scene = new Scene(root, 526, 300);
+            Scene scene = new Scene(root, 700, 526);
             primaryStage.setScene(scene);
+            primaryStage.setAlwaysOnTop(true);
             primaryStage.sizeToScene();
             primaryStage.show();
         } catch (IOException ex) {

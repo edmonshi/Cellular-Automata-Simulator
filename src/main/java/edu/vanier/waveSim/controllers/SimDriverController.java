@@ -455,7 +455,9 @@ public class SimDriverController{
         FileChooser f = new FileChooser();
             Stage stage  = new Stage();
             stage.setAlwaysOnTop(true);
+            this.primaryStage.setAlwaysOnTop(false);
             File file = f.showOpenDialog(stage);
+            this.primaryStage.setAlwaysOnTop(true);
         try(FileWriter fw = new FileWriter(file.getPath());
                 PrintWriter writer = new PrintWriter(fw);){
             //Erase previous save settings
@@ -473,10 +475,10 @@ public class SimDriverController{
                 Point currentPoint = points.next();
                     writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
             }
-            int width = simulation.getWidthX();
-            int height = simulation.getHeightY();
-            writer.write(Integer.toString(width)+",");
-            writer.write(Integer.toString(height));
+            double width = primaryStage.getWidth();
+            double height = primaryStage.getHeight();
+            writer.write(Double.toString(width)+",");
+            writer.write(Double.toString(height));
             writer.write("\n");
         }
     }
@@ -490,7 +492,9 @@ public class SimDriverController{
             FileChooser f = new FileChooser();
         Stage stage  = new Stage();
         stage.setAlwaysOnTop(true);
+        this.primaryStage.setAlwaysOnTop(false);
         File file = f.showOpenDialog(stage);
+        this.primaryStage.setAlwaysOnTop(true);
         // make sure that the file is csv
         /*
         Cannot mkae alert dialog appear on tp of main Window
@@ -501,7 +505,7 @@ public class SimDriverController{
         }
         */
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
-            int saveOption = 0;
+        int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
             
             //Set scaling
@@ -533,8 +537,8 @@ public class SimDriverController{
                 simulation.setPoint(scale*x, scale*y);
                 pointList.add(new Point(x,y));
             }
-            primaryStage.setHeight(Integer.parseInt(settings[settings.length-1]));
-            primaryStage.setWidth(Integer.parseInt(settings[settings.length-2]));
+            primaryStage.setHeight(Double.parseDouble(settings[settings.length-1]));
+            primaryStage.setWidth(Double.parseDouble(settings[settings.length-2]));
             
         }catch(Exception e){
             System.out.println(e.toString());
