@@ -42,7 +42,7 @@ public class Driver extends Application {
             BorderPane root = loader.load();
             
             //-- 2) Create and set the scene to the stage.
-            Scene scene = new Scene(root, SDC.getSceneWidth(), SDC.getSceneHeight());
+            Scene scene = new Scene(root, 526, 300);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             primaryStage.show();
