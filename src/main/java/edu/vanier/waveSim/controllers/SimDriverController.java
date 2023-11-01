@@ -533,22 +533,11 @@ public class SimDriverController{
                 simulation.setPoint(scale*x, scale*y);
                 pointList.add(new Point(x,y));
             }
-            int width = Integer.parseInt(settings[settings.length-2]);
-            int height = Integer.parseInt(settings[settings.length-1]);
-            changeStageSize(width, height);
-            this.setSceneHeight(height);
-            this.setSceneWidth(width);
-            System.out.println("Width and Height: "+width+" "+height);
+            primaryStage.setHeight(Integer.parseInt(settings[settings.length-1]));
+            primaryStage.setWidth(Integer.parseInt(settings[settings.length-2]));
             
         }catch(Exception e){
             System.out.println(e.toString());
-        }
-    }
-    @FXML
-    public void changeStageSize(int width, int height){
-        if(primaryStage!=null){
-            primaryStage.setHeight(height);
-            primaryStage.setWidth(width);
         }
     }
     /**
