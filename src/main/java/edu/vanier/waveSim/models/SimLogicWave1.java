@@ -53,7 +53,7 @@ public class SimLogicWave1 extends CellularLogic{
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
         if (scale < 1 || scale % 2 != 0) {
-            logger.error("scaling is wrong, setting to 1 by default");
+            logger.info("scaling is not set, setting to 1 by default");
         }else {
             setScaling(scale);
         }

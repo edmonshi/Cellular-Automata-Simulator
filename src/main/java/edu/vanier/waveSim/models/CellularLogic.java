@@ -29,6 +29,8 @@ public abstract class CellularLogic {
 
     protected int scaledX;
     protected int scaledY;
+    
+    protected boolean renderFlag = false;
 
     protected Color backgroundColor = Color.WHITE;
 
@@ -147,6 +149,14 @@ public abstract class CellularLogic {
     }
 
     /**
+     * Set the value of the render parameter, true makes the simulation begin rendering mode
+     * @param renderFlag, false for no render, true for render mode
+     */
+    public void setRenderFlag(boolean renderFlag) {
+        this.renderFlag = renderFlag;
+    }
+
+    /**
      * Set the height of the simulation to the specified height.
      *
      * @param heightY The specified height of the simulation. It is an int
@@ -245,7 +255,6 @@ public abstract class CellularLogic {
         GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
         Graphics.setFill(backgroundColor);
         Graphics.fillRect(0, 0, widthX, heightY);
-        System.out.println(widthX + "  "+heightY);
     }
 
     /**

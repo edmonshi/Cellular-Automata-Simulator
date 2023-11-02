@@ -55,6 +55,7 @@ public class SimDriverController{
     int scale = 1;
     int delayMillis = 1;
 
+
     /**Point object for use in array of origin points*/
     private class Point{
         private int x;
@@ -139,6 +140,8 @@ public class SimDriverController{
     @FXML
     private MenuItem itmLoad;
     @FXML
+    private MenuItem itmRenderStart;
+    @FXML
     private Button btnSaveRender;
     @FXML
     private Button btnPauseRender;
@@ -205,6 +208,10 @@ public class SimDriverController{
         
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
+        });
+        
+        itmRenderStart.setOnAction((event) -> {
+            handleRenderStart();
         });
          
         btnPause.setOnAction((event) -> {
@@ -330,7 +337,7 @@ public class SimDriverController{
         int Height, Width;
         if (null == newValue) {
             return simulation;
-        }else
+        }else{
             Height = simulation.getHeightY();
             Width = simulation.getWidthX();
             // set width and height for every simulation so they have the right width and height on switch
@@ -339,16 +346,17 @@ public class SimDriverController{
                 sim.setWidth(Width);
             }
             switch (newValue) {
-            case "Simple Ripple" -> {
-                simulation = simulations[1];
-                return simulation;
-            }
-            case "Conway's Game of Life" -> {
-                simulation = simulations[2];
-                return simulation;
-            }
-            default -> {
-                return simulation;
+                case "Simple Ripple" -> {
+                    simulation = simulations[1];
+                    return simulation;
+                }
+                case "Conway's Game of Life" -> {
+                    simulation = simulations[2];
+                    return simulation;
+                }
+                default -> {
+                    return simulation;
+                }
             }
         }
     }
@@ -386,6 +394,12 @@ public class SimDriverController{
         }
     }
     
+    /**
+     * Start rendering the current animation upon button click 
+     */
+    private void handleRenderStart() {
+        System.out.println("Render");
+    }
     
     /**
      * Event that is activated when the play button is clicked.
