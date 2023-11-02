@@ -475,10 +475,10 @@ public class SimDriverController{
                 Point currentPoint = points.next();
                     writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
             }
-            double width = primaryStage.getWidth();
-            double height = primaryStage.getHeight();
-            writer.write(Double.toString(width)+",");
-            writer.write(Double.toString(height));
+            writer.write(Integer.toString(simulation.getHeightY())+",");
+            writer.write(Integer.toString(simulation.getWidthX())+",");
+            writer.write(Double.toString(primaryStage.getWidth())+",");
+            writer.write(Double.toString(primaryStage.getHeight()));
             writer.write("\n");
         }
     }
@@ -487,6 +487,8 @@ public class SimDriverController{
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
      */
     private void handleLoadItm(CellularLogic simulation) throws FileNotFoundException {
+        animationRunning=false;
+        
         System.out.println("Load button clicked");
         try{
             FileChooser f = new FileChooser();
@@ -507,7 +509,22 @@ public class SimDriverController{
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
             String[] settings = reader.readAll().get(saveOption);
-            
+            // Set height and width
+            // Of the stage
+            primaryStage.setHeight(Double.parseDouble(settings[settings.length-1]));
+            primaryStage.setWidth(Double.parseDouble(settings[settings.length-2]));
+            // Of the canavs
+            /*
+            simulation.setWidthX(Integer.parseInt(settings[settings.length-4]));
+            simulation.setWidth(Integer.parseInt(settings[settings.length-4]));
+            SimCanvas.setWidth(Double.parseDouble(settings[settings.length-4]));
+            SimTabPane.setPrefWidth(Double.parseDouble(settings[settings.length-4]));
+            simulation.setHeightY(Integer.parseInt(settings[settings.length-3]));
+            simulation.setHeight(Integer.parseInt(settings[settings.length-3]));
+            SimCanvas.setHeight(Double.parseDouble(settings[settings.length-3]));
+            SimTabPane.setPrefHeight(Double.parseDouble(settings[settings.length-3]));
+            System.out.println(simulation.getOperatingCanvas().getWidth());
+            */
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
@@ -517,13 +534,12 @@ public class SimDriverController{
             scaleChoice.setValue(scale);
             // Set simulation type
             simTypeChoice.setValue(settings[2]);
-            
+            changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            // Set points
+            //Set points
             int x,y;
-            System.out.println(settings.length);
-            for(int counterIndex = 0; counterIndex<((settings.length-6)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
@@ -533,12 +549,13 @@ public class SimDriverController{
                         y=Integer.parseInt(settings[(counterIndex*2)+5]);
                 }
                 System.out.println("Points: x="+x+" and y="+y);
-                simulation.colorCell(x, y, Color.CORAL);
-                simulation.setPoint(scale*x, scale*y);
-                pointList.add(new Point(x,y));
+                //simulation.colorCell(x,y, Color.CORAL);
+                
+                newPoint((double)x,(double)y,simulation);
+                //simulation.setPoint((x), (y));
+                //pointList.add(new Point(x,y));
             }
-            primaryStage.setHeight(Double.parseDouble(settings[settings.length-1]));
-            primaryStage.setWidth(Double.parseDouble(settings[settings.length-2]));
+            System.out.println(settings.length);
             
         }catch(Exception e){
             System.out.println(e.toString());
