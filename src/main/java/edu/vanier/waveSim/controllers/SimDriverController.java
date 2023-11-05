@@ -494,13 +494,12 @@ public class SimDriverController{
         }
     }
     public void setStageDimensions(double x, double y){
+        
         primaryStage.setWidth(x);
         primaryStage.setHeight(y);
+        
     }
-    public void setCanvasDimensions(double x, double y){
-        simulation.getOperatingCanvas().setWidth(x);
-        simulation.getOperatingCanvas().setHeight(y);
-    }
+    
     File fileLoad;
 
     public File getFileLoad() {
@@ -535,22 +534,9 @@ public class SimDriverController{
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
         String[] settings = reader.readAll().get(saveOption);
-        handleLoadArray(settings);
-            
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
-    }
-    public void handleLoadArray(String[] settings){
-        int saveOption = 0;
-            // Set height and width
-            // Of the stage
+        
+        // Set height and width
             setStageDimensions(Double.parseDouble(settings[settings.length-2]),Double.parseDouble(settings[settings.length-1]));
-            setCanvasDimensions(Double.parseDouble(settings[settings.length-4]), Double.parseDouble(settings[settings.length-3]));
-            System.out.println(primaryStage.getWidth());
-            System.out.println((int) primaryStage.getHeight());
-            System.out.println(simulation.getOperatingCanvas().getWidth());
-            System.out.println(simulation.getOperatingCanvas().getHeight());
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
@@ -579,6 +565,12 @@ public class SimDriverController{
                 newPoint((double)x*scale, (double)y*scale, simulation);
             }
             System.out.println(settings.length);
+            
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
+    public void handleLoadArray(String[] settings){
     }
     /**
      * Reset the animation and screen

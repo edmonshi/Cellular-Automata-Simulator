@@ -36,7 +36,7 @@ public class Driver extends Application {
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
-            primaryStage.setTitle("Hello");
+            primaryStage.setTitle("Wave simulator");
             SimDriverController SDC = new SimDriverController(primaryStage);
             loader.setController(SDC);
             BorderPane root = loader.load();
