@@ -279,7 +279,6 @@ public abstract class CellularLogic {
      */
     public void createRenderContext() {
         image = new BufferedImage(scaledX,scaledY, BufferedImage.TYPE_INT_RGB);
-        System.out.println("Created render context");
         
     }
     
