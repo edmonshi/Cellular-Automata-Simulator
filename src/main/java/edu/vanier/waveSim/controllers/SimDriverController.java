@@ -58,7 +58,16 @@ public class SimDriverController{
     int delayMillis = 1;
     int sceneHeight;
     int sceneWidth;
+    String[] settings;
 
+    public String[] getSettings() {
+        return settings;
+    }
+
+    public void setSettings(String[] settings) {
+        this.settings = settings;
+    }
+    
     public SimDriverController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
@@ -477,11 +486,31 @@ public class SimDriverController{
             }
             writer.write(Integer.toString(simulation.getHeightY())+",");
             writer.write(Integer.toString(simulation.getWidthX())+",");
+            writer.write(Double.toString(simulation.getOperatingCanvas().getWidth())+",");
+            writer.write(Double.toString(simulation.getOperatingCanvas().getHeight())+",");
             writer.write(Double.toString(primaryStage.getWidth())+",");
             writer.write(Double.toString(primaryStage.getHeight()));
             writer.write("\n");
         }
     }
+    public void setStageDimensions(double x, double y){
+        primaryStage.setWidth(x);
+        primaryStage.setHeight(y);
+    }
+    public void setCanvasDimensions(double x, double y){
+        simulation.getOperatingCanvas().setWidth(x);
+        simulation.getOperatingCanvas().setHeight(y);
+    }
+    File fileLoad;
+
+    public File getFileLoad() {
+        return fileLoad;
+    }
+
+    public void setFileLoad(File fileLoad) {
+        this.fileLoad = fileLoad;
+    }
+    
     /**
      * This method loads the settings from a csv file chosen by the user.
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
@@ -495,36 +524,33 @@ public class SimDriverController{
         Stage stage  = new Stage();
         stage.setAlwaysOnTop(true);
         this.primaryStage.setAlwaysOnTop(false);
-        File file = f.showOpenDialog(stage);
-        this.primaryStage.setAlwaysOnTop(true);
-        // make sure that the file is csv
-        /*
-        Cannot mkae alert dialog appear on tp of main Window
-        boolean isCsv = "csv".equals(file.getPath().substring(file.getPath().length()-3, file.getPath().length()));
-        if(!isCsv){
-            showAlert("The file chosen is not a csv file. Please use a csv file. Try again.");
-            itmLoad.getOnAction();
+        File file;
+        if(this.getFileLoad()==null){
+            file = f.showOpenDialog(stage);
+            this.setFileLoad(file);
         }
-        */
+        else
+            file = this.getFileLoad();
+        this.primaryStage.setAlwaysOnTop(true);
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
-            String[] settings = reader.readAll().get(saveOption);
+        String[] settings = reader.readAll().get(saveOption);
+        handleLoadArray(settings);
+            
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
+    public void handleLoadArray(String[] settings){
+        int saveOption = 0;
             // Set height and width
             // Of the stage
-            primaryStage.setHeight(Double.parseDouble(settings[settings.length-1]));
-            primaryStage.setWidth(Double.parseDouble(settings[settings.length-2]));
-            // Of the canavs
-            /*
-            simulation.setWidthX(Integer.parseInt(settings[settings.length-4]));
-            simulation.setWidth(Integer.parseInt(settings[settings.length-4]));
-            SimCanvas.setWidth(Double.parseDouble(settings[settings.length-4]));
-            SimTabPane.setPrefWidth(Double.parseDouble(settings[settings.length-4]));
-            simulation.setHeightY(Integer.parseInt(settings[settings.length-3]));
-            simulation.setHeight(Integer.parseInt(settings[settings.length-3]));
-            SimCanvas.setHeight(Double.parseDouble(settings[settings.length-3]));
-            SimTabPane.setPrefHeight(Double.parseDouble(settings[settings.length-3]));
+            setStageDimensions(Double.parseDouble(settings[settings.length-2]),Double.parseDouble(settings[settings.length-1]));
+            setCanvasDimensions(Double.parseDouble(settings[settings.length-4]), Double.parseDouble(settings[settings.length-3]));
+            System.out.println(primaryStage.getWidth());
+            System.out.println((int) primaryStage.getHeight());
             System.out.println(simulation.getOperatingCanvas().getWidth());
-            */
+            System.out.println(simulation.getOperatingCanvas().getHeight());
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
@@ -539,7 +565,7 @@ public class SimDriverController{
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
             //Set points
             int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-10)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
@@ -549,17 +575,10 @@ public class SimDriverController{
                         y=Integer.parseInt(settings[(counterIndex*2)+5]);
                 }
                 System.out.println("Points: x="+x+" and y="+y);
-                //simulation.colorCell(x,y, Color.CORAL);
                 
-                newPoint((double)x,(double)y,simulation);
-                //simulation.setPoint((x), (y));
-                //pointList.add(new Point(x,y));
+                newPoint((double)x*scale, (double)y*scale, simulation);
             }
             System.out.println(settings.length);
-            
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
     }
     /**
      * Reset the animation and screen
