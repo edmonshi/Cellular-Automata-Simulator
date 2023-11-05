@@ -35,7 +35,7 @@ public abstract class CellularLogic {
     // render variables
     protected int frameNumber = 0;
     protected BufferedImage image;
-    protected int frameLimit = 0;
+    protected int frameLimit = Integer.MAX_VALUE; // default is pseudo-indefinite but not forever
     
     protected boolean renderFlag = false;
 
@@ -167,6 +167,24 @@ public abstract class CellularLogic {
     }
 
     /**
+     * TODO
+     * @param frameNumber
+     */
+    public void setFrameNumber(int frameNumber) {
+        this.frameNumber = frameNumber;
+    }
+
+    /**
+     * TODO
+     * @param frameLimit
+     */
+    public void setFrameLimit(int frameLimit) {
+        this.frameLimit = frameLimit;
+    }
+    
+    
+
+    /**
      * TODO docs and error handling
      */
     public void setRenderPath(String renderPath) {
@@ -262,7 +280,7 @@ public abstract class CellularLogic {
     public void createRenderContext() {
         image = new BufferedImage(scaledX,scaledY, BufferedImage.TYPE_INT_RGB);
         System.out.println("Created render context");
-        System.out.println(image.getWidth() + " "+ image.getHeight());
+        
     }
     
     /**

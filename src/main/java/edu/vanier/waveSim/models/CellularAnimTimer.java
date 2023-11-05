@@ -4,6 +4,7 @@
  */
 package edu.vanier.waveSim.models;
 
+import edu.vanier.waveSim.controllers.SimDriverController;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +19,7 @@ import javafx.animation.AnimationTimer;
 public class CellularAnimTimer extends AnimationTimer {
 
     private CellularLogic logic;
+    private SimDriverController controller;
     private long delayMillis = 1;
     
     // use internally to regulate speed
@@ -36,8 +38,9 @@ public class CellularAnimTimer extends AnimationTimer {
      * Constructor of CellularAnimTimer
      * @param logic
      */
-    public CellularAnimTimer(CellularLogic logic) {
+    public CellularAnimTimer(CellularLogic logic, SimDriverController controller) {
         this.logic = logic;
+        this.controller = controller;
     }
     
     /**
@@ -57,17 +60,21 @@ public class CellularAnimTimer extends AnimationTimer {
      * Call the simFrame method to generate frame
      */
     private void doHandle(){
-        if (logic.getRenderFlag()) {
-            logic.createRenderContext();
-        }
-        logic.simFrame();
-        if (logic.getRenderFlag()) {
-            try {
-                logic.saveFrame();
-            } catch (IOException ex) {
-                Logger.getLogger(CellularAnimTimer.class.getName()).log(Level.SEVERE, null, ex);
+        if (logic.frameNumber < logic.frameLimit) {
+            if (logic.getRenderFlag()) {
+                logic.createRenderContext();
             }
+            logic.simFrame();
+            if (logic.getRenderFlag()) {
+                try {
+                    logic.saveFrame();
+                } catch (IOException ex) {
+                    Logger.getLogger(CellularAnimTimer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            logic.frameNumber++;
+        }else {
+            controller.ResetScreenAndAnim(logic,this,logic.getScaling());
         }
-        logic.frameNumber++;
     }
 }

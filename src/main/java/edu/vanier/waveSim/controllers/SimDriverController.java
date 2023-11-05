@@ -1,13 +1,11 @@
 package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
-import edu.vanier.waveSim.MainApp;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave;
-import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -22,6 +20,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -30,14 +30,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +52,8 @@ public class SimDriverController{
     
     int scale = 1;
     int delayMillis = 1;
-    String renderPath;
 
+    
     /**Point object for use in array of origin points*/
     private class Point{
         private int x;
@@ -113,6 +111,12 @@ public class SimDriverController{
     CellularLogic simulation;
     CellularAnimTimer animation;
     
+    /**
+     * Utility for creating new refreshed animation timers
+     */
+    private CellularAnimTimer newAnimationTimer() {
+        return new CellularAnimTimer(simulation, this);
+    }
     
 //    get elements from FXML
     @FXML
@@ -143,6 +147,8 @@ public class SimDriverController{
     private MenuItem itmRenderStart;
     @FXML
     private MenuItem itmStopRender;
+    @FXML
+    private MenuItem itmRenderSettings;
     @FXML
     private Button btnSaveRender;
     @FXML
@@ -183,7 +189,7 @@ public class SimDriverController{
         simulationsList[2] = Conway;
         
         // initialize default animation object
-        animation = new CellularAnimTimer(simulation);
+        animation = newAnimationTimer();
         simulation.clearScreen();
         
         pointList = new HashSet<>();
@@ -218,6 +224,10 @@ public class SimDriverController{
         
         itmStopRender.setOnAction((event) -> {
             handleRenderStop();
+        });
+        
+        itmRenderSettings.setOnAction((event) -> {
+            launchRenderSettings();
         });
          
         btnPause.setOnAction((event) -> {
@@ -287,7 +297,7 @@ public class SimDriverController{
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 animation.stop();
                 simulation = changeSim(newValue, simulationsList, simulation);
-                animation = new CellularAnimTimer(simulation);
+                animation = newAnimationTimer();
                 animation.setDelayMillis(delayMillis);
                 ResetScreenAndAnim(simulation, animation, scale);
             }  
@@ -424,6 +434,38 @@ public class SimDriverController{
         System.out.println("Stop Render");
         for (CellularLogic sim: simulationsList) {
             sim.setRenderFlag(false);
+        }
+        ResetScreenAndAnim(simulation, animation, scale);
+    }
+    
+    /**
+     * TODO
+     */
+    private void launchRenderSettings() {
+        try {
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/renderSettings.fxml"));
+            RenderSettingsController controller = new RenderSettingsController();
+            loader.setController(controller);
+            
+            // could throw exception
+            Pane root = loader.load();
+            
+            Scene scene = new Scene(root, 400,400);
+            Stage renderSettings = new Stage();
+            renderSettings.setScene(scene);
+            renderSettings.setTitle("Rendering Settings");
+            renderSettings.setAlwaysOnTop(true);
+            renderSettings.sizeToScene();
+            renderSettings.initModality(Modality.APPLICATION_MODAL);
+            controller.setSelf(renderSettings);
+            renderSettings.showAndWait();
+            
+            for (CellularLogic sim: simulationsList) {
+                sim.setFrameLimit(controller.getFrameLimit());
+            }
+            
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(SimDriverController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -562,8 +604,13 @@ public class SimDriverController{
         animation.stop();
         animationRunning = false;
         if (simulation.getRenderFlag()) {
-            handleRenderStop();
+            System.out.println("Stop Render");
+            for (CellularLogic sim: simulationsList) {
+                sim.setRenderFlag(false);
+            }
         }
+        simulation.setFrameNumber(0);
+        System.out.println("Stopped Animation");
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
