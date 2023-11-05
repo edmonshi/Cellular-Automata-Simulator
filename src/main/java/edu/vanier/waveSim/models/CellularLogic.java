@@ -313,7 +313,6 @@ public abstract class CellularLogic {
             int b = Double.valueOf(color.getBlue()*255).intValue();
             int pixColor = new java.awt.Color(r,g,b).getRGB();
             image.setRGB(xPosInArray,yPosInArray, pixColor);
-            System.out.println(r+" "+g+" "+b);
         }
     }
 

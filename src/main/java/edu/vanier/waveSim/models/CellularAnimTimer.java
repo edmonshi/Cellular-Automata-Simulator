@@ -72,6 +72,7 @@ public class CellularAnimTimer extends AnimationTimer {
                     Logger.getLogger(CellularAnimTimer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            System.out.println("Frame: "+logic.frameNumber);
             logic.frameNumber++;
         }else {
             controller.ResetScreenAndAnim(logic,this,logic.getScaling());
