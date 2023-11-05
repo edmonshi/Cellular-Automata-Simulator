@@ -4,6 +4,9 @@
  */
 package edu.vanier.waveSim.models;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 
 /**
@@ -54,6 +57,17 @@ public class CellularAnimTimer extends AnimationTimer {
      * Call the simFrame method to generate frame
      */
     private void doHandle(){
+        if (logic.getRenderFlag()) {
+            logic.createRenderContext();
+        }
         logic.simFrame();
+        if (logic.getRenderFlag()) {
+            try {
+                logic.saveFrame();
+            } catch (IOException ex) {
+                Logger.getLogger(CellularAnimTimer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        logic.frameNumber++;
     }
 }
