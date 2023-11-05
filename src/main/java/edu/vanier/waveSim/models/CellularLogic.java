@@ -4,11 +4,13 @@
  */
 package edu.vanier.waveSim.models;
 
-import java.nio.IntBuffer;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
+import javax.imageio.ImageIO;
 
 /**
  * The abstract class CellularLogic defines the basic structure and behavior for
@@ -29,8 +31,18 @@ public abstract class CellularLogic {
 
     protected int scaledX;
     protected int scaledY;
+    
+    // render variables
+    protected int frameNumber = 0;
+    protected BufferedImage image;
+    protected int frameLimit = Integer.MAX_VALUE; // default is pseudo-indefinite but not forever
+    
+    protected boolean renderFlag = false;
 
     protected Color backgroundColor = Color.WHITE;
+    
+    // create defaut render path
+    protected String renderPath = new File("").getAbsolutePath()+"/render"+System.currentTimeMillis();;
 
     /**
      * Must be an even integer, should be regulated by a dropdown menu in the GUI
@@ -117,6 +129,14 @@ public abstract class CellularLogic {
     }
 
     /**
+     * TODO
+     */
+    public boolean getRenderFlag() {
+        return renderFlag;
+    }
+    
+
+    /**
      * Get the operating canvas of the simulation and return it.
      *
      * @return opertingCanavas The operating canvas of the simulation. It is a
@@ -144,6 +164,39 @@ public abstract class CellularLogic {
      */
     public void setWidthX(int widthX) {
         this.widthX = widthX;
+    }
+
+    /**
+     * TODO
+     * @param frameNumber
+     */
+    public void setFrameNumber(int frameNumber) {
+        this.frameNumber = frameNumber;
+    }
+
+    /**
+     * TODO
+     * @param frameLimit
+     */
+    public void setFrameLimit(int frameLimit) {
+        this.frameLimit = frameLimit;
+    }
+    
+    
+
+    /**
+     * TODO docs and error handling
+     */
+    public void setRenderPath(String renderPath) {
+        this.renderPath = renderPath;
+    }
+
+    /**
+     * Set the value of the render parameter, true makes the simulation begin rendering mode
+     * @param renderFlag, false for no render, true for render mode
+     */
+    public void setRenderFlag(boolean renderFlag) {
+        this.renderFlag = renderFlag;
     }
 
     /**
@@ -220,7 +273,24 @@ public abstract class CellularLogic {
         }
         return false;
     }
-
+    
+    /**
+     * TODO
+     */
+    public void createRenderContext() {
+        image = new BufferedImage(scaledX,scaledY, BufferedImage.TYPE_INT_RGB);
+        
+    }
+    
+    /**
+     * TODO
+     * @throws java.io.IOException
+     */
+    public void saveFrame() throws IOException {
+        File imgOut = new File(renderPath+"/"+frameNumber+".bmp");
+        ImageIO.write(image, "BMP", imgOut);
+    }
+    
     /**
      * Set the color of a single cell in the canvas from array coordinates using
      * scale factor.
@@ -234,8 +304,15 @@ public abstract class CellularLogic {
     public void colorCell(int xPosInArray, int yPosInArray, Color color) {
         GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
         Graphics.setFill(color);
-        WritablePixelFormat<IntBuffer> format = WritablePixelFormat.getIntArgbInstance();
         Graphics.fillRect(xPosInArray * this.scaling, yPosInArray * this.scaling, this.scaling, this.scaling);
+        if (renderFlag) {
+            // multiply by 255 because the colors return a double from 0-1
+            int r = Double.valueOf(color.getRed()*255).intValue();
+            int g = Double.valueOf(color.getGreen()*255).intValue();
+            int b = Double.valueOf(color.getBlue()*255).intValue();
+            int pixColor = new java.awt.Color(r,g,b).getRGB();
+            image.setRGB(xPosInArray,yPosInArray, pixColor);
+        }
     }
 
     /**
@@ -245,7 +322,6 @@ public abstract class CellularLogic {
         GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
         Graphics.setFill(backgroundColor);
         Graphics.fillRect(0, 0, widthX, heightY);
-        System.out.println(widthX + "  "+heightY);
     }
 
     /**

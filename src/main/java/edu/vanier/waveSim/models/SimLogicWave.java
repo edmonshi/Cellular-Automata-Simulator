@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
-public class SimLogicWave1 extends CellularLogic{
+public class SimLogicWave extends CellularLogic{
     
     /**Some damping value 0 to 1 non-integer
      */
     private float damping = (float) 0.98;
-
+    private final Color simColor = Color.BLUE;
     
-    private final static Logger logger = LoggerFactory.getLogger(SimLogicWave1.class);
+    private final static Logger logger = LoggerFactory.getLogger(SimLogicWave.class);
     
     /**
      * Get the damping value of the simulation waves and return in the form of
@@ -49,11 +49,11 @@ public class SimLogicWave1 extends CellularLogic{
      * @param heightY The height in pixels for the vertical, measured top to bottom
      * @param scaling Scaling should be handled by the GUI as a dropdown menu, but it is checked here anyway.
      */
-    public SimLogicWave1(Canvas operatingCanvas, int widthX, int heightY, int scale) {
+    public SimLogicWave(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
         if (scale < 1 || scale % 2 != 0) {
-            logger.error("scaling is wrong, setting to 1 by default");
+            logger.info("scaling is not set, setting to 1 by default");
         }else {
             setScaling(scale);
         }
@@ -88,7 +88,7 @@ public class SimLogicWave1 extends CellularLogic{
                 Color color;
                 if(pixelValue != 0) {
                     // sim Color
-                    color = Color.BLUE;
+                    color = simColor;
                 } else{
                     // background Color
                     color = backgroundColor;

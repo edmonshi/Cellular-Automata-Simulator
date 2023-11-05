@@ -1,13 +1,11 @@
 package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
-import edu.vanier.waveSim.MainApp;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
-import edu.vanier.waveSim.models.SimLogicWave1;
-import java.awt.Component;
+import edu.vanier.waveSim.models.SimLogicWave;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -22,6 +20,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -30,14 +30,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +93,7 @@ public class SimDriverController{
         return primaryStage;
     }
 
+    
     /**Point object for use in array of origin points*/
     private class Point{
         private int x;
@@ -152,6 +151,12 @@ public class SimDriverController{
     CellularLogic simulation;
     CellularAnimTimer animation;
     
+    /**
+     * Utility for creating new refreshed animation timers
+     */
+    private CellularAnimTimer newAnimationTimer() {
+        return new CellularAnimTimer(simulation, this);
+    }
     
 //    get elements from FXML
     @FXML
@@ -178,6 +183,12 @@ public class SimDriverController{
     private MenuItem itmSave;
     @FXML
     private MenuItem itmLoad;
+    @FXML
+    private MenuItem itmRenderStart;
+    @FXML
+    private MenuItem itmStopRender;
+    @FXML
+    private MenuItem itmRenderSettings;
     @FXML
     private Button btnSaveRender;
     @FXML
@@ -207,7 +218,7 @@ public class SimDriverController{
     public void initialize() {
         // create simulation objects
 
-        SimLogicWave1 WaveSim = new SimLogicWave1(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         
         // initialize default simulation
@@ -218,7 +229,7 @@ public class SimDriverController{
         simulationsList[2] = Conway;
         
         // initialize default animation object
-        animation = new CellularAnimTimer(simulation);
+        animation = newAnimationTimer();
         simulation.clearScreen();
         
         pointList = new HashSet<>();
@@ -245,6 +256,18 @@ public class SimDriverController{
         
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
+        });
+        
+        itmRenderStart.setOnAction((event) -> {
+            handleRenderStart();
+        });
+        
+        itmStopRender.setOnAction((event) -> {
+            handleRenderStop();
+        });
+        
+        itmRenderSettings.setOnAction((event) -> {
+            launchRenderSettings();
         });
          
         btnPause.setOnAction((event) -> {
@@ -314,7 +337,7 @@ public class SimDriverController{
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 animation.stop();
                 simulation = changeSim(newValue, simulationsList, simulation);
-                animation = new CellularAnimTimer(simulation);
+                animation = newAnimationTimer();
                 animation.setDelayMillis(delayMillis);
                 ResetScreenAndAnim(simulation, animation, scale);
             }  
@@ -370,7 +393,7 @@ public class SimDriverController{
         int Height, Width;
         if (null == newValue) {
             return simulation;
-        }else
+        }else{
             Height = simulation.getHeightY();
             Width = simulation.getWidthX();
             // set width and height for every simulation so they have the right width and height on switch
@@ -379,16 +402,17 @@ public class SimDriverController{
                 sim.setWidth(Width);
             }
             switch (newValue) {
-            case "Simple Ripple" -> {
-                simulation = simulations[1];
-                return simulation;
-            }
-            case "Conway's Game of Life" -> {
-                simulation = simulations[2];
-                return simulation;
-            }
-            default -> {
-                return simulation;
+                case "Simple Ripple" -> {
+                    simulation = simulations[1];
+                    return simulation;
+                }
+                case "Conway's Game of Life" -> {
+                    simulation = simulations[2];
+                    return simulation;
+                }
+                default -> {
+                    return simulation;
+                }
             }
         }
     }
@@ -426,6 +450,64 @@ public class SimDriverController{
         }
     }
     
+    /**
+     * Start rendering the current animation upon button click 
+     */
+    private void handleRenderStart() {
+        System.out.println("Start Render");
+        String path = new File("").getAbsolutePath()+"/render"+System.currentTimeMillis();
+
+        for (CellularLogic sim: simulationsList) {
+            sim.setRenderFlag(true);
+            sim.setRenderPath(path);
+        }
+        
+        // create directory
+        new File(path).mkdirs();
+        handlePlayBtn(simulation, animation);
+    }
+    
+    /**
+     * TODO
+     */
+    private void handleRenderStop() {
+        System.out.println("Stop Render");
+        for (CellularLogic sim: simulationsList) {
+            sim.setRenderFlag(false);
+        }
+        ResetScreenAndAnim(simulation, animation, scale);
+    }
+    
+    /**
+     * TODO
+     */
+    private void launchRenderSettings() {
+        try {
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/renderSettings.fxml"));
+            RenderSettingsController controller = new RenderSettingsController();
+            loader.setController(controller);
+            
+            // could throw exception
+            Pane root = loader.load();
+            
+            Scene scene = new Scene(root, 400,400);
+            Stage renderSettings = new Stage();
+            renderSettings.setScene(scene);
+            renderSettings.setTitle("Rendering Settings");
+            renderSettings.setAlwaysOnTop(true);
+            renderSettings.sizeToScene();
+            renderSettings.initModality(Modality.APPLICATION_MODAL);
+            controller.setSelf(renderSettings);
+            renderSettings.showAndWait();
+            
+            for (CellularLogic sim: simulationsList) {
+                sim.setFrameLimit(controller.getFrameLimit());
+            }
+            
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(SimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     /**
      * Event that is activated when the play button is clicked.
@@ -461,6 +543,7 @@ public class SimDriverController{
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException {
         System.out.println("Save button clicked");
+        // create file chooser
         FileChooser f = new FileChooser();
             Stage stage  = new Stage();
             stage.setAlwaysOnTop(true);
@@ -586,6 +669,14 @@ public class SimDriverController{
         pointList.clear();
         animation.stop();
         animationRunning = false;
+        if (simulation.getRenderFlag()) {
+            System.out.println("Stop Render");
+            for (CellularLogic sim: simulationsList) {
+                sim.setRenderFlag(false);
+            }
+        }
+        simulation.setFrameNumber(0);
+        System.out.println("Stopped Animation");
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

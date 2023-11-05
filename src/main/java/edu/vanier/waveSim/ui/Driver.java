@@ -1,4 +1,4 @@
-package edu.vanier.waveSim.tests;
+package edu.vanier.waveSim.ui;
 
 import edu.vanier.waveSim.controllers.SimDriverController;
 import java.io.IOException;
