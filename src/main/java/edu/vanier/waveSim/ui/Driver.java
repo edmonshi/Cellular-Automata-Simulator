@@ -36,18 +36,16 @@ public class Driver extends Application {
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
-
-            loader.setController(new SimDriverController());
+            primaryStage.setTitle("Wave simulator");
+            SimDriverController SDC = new SimDriverController(primaryStage);
+            loader.setController(SDC);
             BorderPane root = loader.load();
             
             //-- 2) Create and set the scene to the stage.
-            
-            
-            
             Scene scene = new Scene(root, 700, 526);
             primaryStage.setScene(scene);
-            primaryStage.sizeToScene();
             primaryStage.setAlwaysOnTop(true);
+            primaryStage.sizeToScene();
             primaryStage.show();
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);

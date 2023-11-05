@@ -47,11 +47,51 @@ import org.slf4j.LoggerFactory;
 public class SimDriverController{
 
     private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
-
+    
+    private Stage primaryStage;
+    
     private boolean animationRunning = false;
     
     int scale = 1;
     int delayMillis = 1;
+    int sceneHeight;
+    int sceneWidth;
+    String[] settings;
+
+    public String[] getSettings() {
+        return settings;
+    }
+
+    public void setSettings(String[] settings) {
+        this.settings = settings;
+    }
+    
+    public SimDriverController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public int getSceneHeight() {
+        return sceneHeight;
+    }
+
+    public void setSceneHeight(int sceneHeight) {
+        this.sceneHeight = sceneHeight;
+    }
+
+    public int getSceneWidth() {
+        return sceneWidth;
+    }
+
+    public void setSceneWidth(int sceneWidth) {
+        this.sceneWidth = sceneWidth;
+    }
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
     
     /**Point object for use in array of origin points*/
@@ -507,7 +547,9 @@ public class SimDriverController{
         FileChooser f = new FileChooser();
             Stage stage  = new Stage();
             stage.setAlwaysOnTop(true);
+            this.primaryStage.setAlwaysOnTop(false);
             File file = f.showOpenDialog(stage);
+            this.primaryStage.setAlwaysOnTop(true);
         try(FileWriter fw = new FileWriter(file.getPath());
                 PrintWriter writer = new PrintWriter(fw);){
             //Erase previous save settings
@@ -523,38 +565,61 @@ public class SimDriverController{
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
-                if(points.hasNext()==false)
-                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY()));
-                else
                     writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
             }
+            writer.write(Integer.toString(simulation.getHeightY())+",");
+            writer.write(Integer.toString(simulation.getWidthX())+",");
+            writer.write(Double.toString(simulation.getOperatingCanvas().getWidth())+",");
+            writer.write(Double.toString(simulation.getOperatingCanvas().getHeight())+",");
+            writer.write(Double.toString(primaryStage.getWidth())+",");
+            writer.write(Double.toString(primaryStage.getHeight()));
             writer.write("\n");
         }
     }
+    public void setStageDimensions(double x, double y){
+        
+        primaryStage.setWidth(x);
+        primaryStage.setHeight(y);
+        
+    }
+    
+    File fileLoad;
+
+    public File getFileLoad() {
+        return fileLoad;
+    }
+
+    public void setFileLoad(File fileLoad) {
+        this.fileLoad = fileLoad;
+    }
+    
     /**
      * This method loads the settings from a csv file chosen by the user.
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
      */
     private void handleLoadItm(CellularLogic simulation) throws FileNotFoundException {
+        animationRunning=false;
+        
         System.out.println("Load button clicked");
         try{
             FileChooser f = new FileChooser();
         Stage stage  = new Stage();
         stage.setAlwaysOnTop(true);
-        File file = f.showOpenDialog(stage);
-        // make sure that the file is csv
-        /*
-        Cannot mkae alert dialog appear on tp of main Window
-        boolean isCsv = "csv".equals(file.getPath().substring(file.getPath().length()-3, file.getPath().length()));
-        if(!isCsv){
-            showAlert("The file chosen is not a csv file. Please use a csv file. Try again.");
-            itmLoad.getOnAction();
+        this.primaryStage.setAlwaysOnTop(false);
+        File file;
+        if(this.getFileLoad()==null){
+            file = f.showOpenDialog(stage);
+            this.setFileLoad(file);
         }
-        */
+        else
+            file = this.getFileLoad();
+        this.primaryStage.setAlwaysOnTop(true);
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
-            int saveOption = 0;
-            String[] settings = reader.readAll().get(saveOption);
-            
+        int saveOption = 0;
+        String[] settings = reader.readAll().get(saveOption);
+        
+        // Set height and width
+            setStageDimensions(Double.parseDouble(settings[settings.length-2]),Double.parseDouble(settings[settings.length-1]));
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
@@ -564,13 +629,12 @@ public class SimDriverController{
             scaleChoice.setValue(scale);
             // Set simulation type
             simTypeChoice.setValue(settings[2]);
-            
+            changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            // Set points
+            //Set points
             int x,y;
-            System.out.println(settings.length);
-            for(int counterIndex = 0; counterIndex<((settings.length-4)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-10)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
@@ -580,14 +644,16 @@ public class SimDriverController{
                         y=Integer.parseInt(settings[(counterIndex*2)+5]);
                 }
                 System.out.println("Points: x="+x+" and y="+y);
-                simulation.colorCell(x, y, Color.CORAL);
-                simulation.setPoint(scale*x, scale*y);
-                pointList.add(new Point(x,y));
+                
+                newPoint((double)x*scale, (double)y*scale, simulation);
             }
+            System.out.println(settings.length);
             
         }catch(Exception e){
             System.out.println(e.toString());
         }
+    }
+    public void handleLoadArray(String[] settings){
     }
     /**
      * Reset the animation and screen
