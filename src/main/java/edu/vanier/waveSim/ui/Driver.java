@@ -1,6 +1,6 @@
 package edu.vanier.waveSim.ui;
 
-import edu.vanier.waveSim.controllers.SimDriverController;
+import edu.vanier.waveSim.controllers.FXMLSimDriverController;
 import java.io.IOException;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -22,12 +22,11 @@ public class Driver extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(Driver.class);
 
+    FXMLSimDriverController SDC;
     /**
-     * Override the abstract method start(Stage primaryStage) of Application.
-     * The main entry point for the JavaFX application.
+     * Override the abstract method start(Stage primaryStage) of Application.The main entry point for the JavaFX application.
      * 
-     * @param primaryStage the primary stage for this application, onto which the application scene can be set. 
-     * @exception Exception - if something goes wrong
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set.
      */
     @Override
     public void start(Stage primaryStage) {
@@ -37,7 +36,7 @@ public class Driver extends Application {
             // associate it with its FXML controller.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
             primaryStage.setTitle("Wave simulator");
-            SimDriverController SDC = new SimDriverController(primaryStage);
+            SDC = new FXMLSimDriverController(primaryStage);
             loader.setController(SDC);
             BorderPane root = loader.load();
             
@@ -50,6 +49,12 @@ public class Driver extends Application {
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        SDC.stopAnimation();
     }
     
     /**

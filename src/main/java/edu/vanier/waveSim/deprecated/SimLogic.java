@@ -4,7 +4,7 @@
  */
 package edu.vanier.waveSim.deprecated;
 
-import edu.vanier.waveSim.controllers.SimDriverController;
+import edu.vanier.waveSim.controllers.FXMLSimDriverController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.canvas.Canvas;
