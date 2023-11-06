@@ -42,6 +42,7 @@ public class MainApp extends Application {
             Scene scene = new Scene(root, 500, 300);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
+            primaryStage.setTitle("Cellular Automation Simulations Explorer");
             primaryStage.show();
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
