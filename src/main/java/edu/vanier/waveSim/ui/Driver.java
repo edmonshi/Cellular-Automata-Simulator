@@ -24,11 +24,9 @@ public class Driver extends Application {
 
     FXMLSimDriverController SDC;
     /**
-     * Override the abstract method start(Stage primaryStage) of Application.
-     * The main entry point for the JavaFX application.
+     * Override the abstract method start(Stage primaryStage) of Application.The main entry point for the JavaFX application.
      * 
-     * @param primaryStage the primary stage for this application, onto which the application scene can be set. 
-     * @exception Exception - if something goes wrong
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set.
      */
     @Override
     public void start(Stage primaryStage) {
