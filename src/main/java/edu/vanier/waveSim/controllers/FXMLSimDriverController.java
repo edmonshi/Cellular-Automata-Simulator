@@ -93,6 +93,10 @@ public class FXMLSimDriverController{
         return primaryStage;
     }
 
+    public void stopAnimation() {
+        animation.stop();
+    }
+
     
     /**Point object for use in array of origin points*/
     private class Point{

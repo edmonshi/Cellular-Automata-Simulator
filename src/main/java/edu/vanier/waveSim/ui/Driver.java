@@ -22,6 +22,7 @@ public class Driver extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(Driver.class);
 
+    FXMLSimDriverController SDC;
     /**
      * Override the abstract method start(Stage primaryStage) of Application.
      * The main entry point for the JavaFX application.
@@ -37,7 +38,7 @@ public class Driver extends Application {
             // associate it with its FXML controller.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
             primaryStage.setTitle("Wave simulator");
-            FXMLSimDriverController SDC = new FXMLSimDriverController(primaryStage);
+            SDC = new FXMLSimDriverController(primaryStage);
             loader.setController(SDC);
             BorderPane root = loader.load();
             
@@ -50,6 +51,12 @@ public class Driver extends Application {
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        SDC.stopAnimation();
     }
     
     /**
