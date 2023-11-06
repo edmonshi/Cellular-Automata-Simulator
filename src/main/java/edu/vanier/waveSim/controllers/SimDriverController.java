@@ -568,7 +568,7 @@ public class SimDriverController{
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
-                    writer.write(Integer.toString(currentPoint.getX())+","+Integer.toString(currentPoint.getY())+",");
+                    writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
             writer.write(Integer.toString(simulation.getHeightY())+",");
             writer.write(Integer.toString(simulation.getWidthX())+",");
@@ -648,7 +648,7 @@ public class SimDriverController{
                 }
                 System.out.println("Points: x="+x+" and y="+y);
                 
-                newPoint((double)x*scale, (double)y*scale, simulation);
+                newPoint((double)x, (double)y, simulation);
             }
             System.out.println(settings.length);
             
