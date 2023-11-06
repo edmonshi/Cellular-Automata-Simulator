@@ -1,6 +1,6 @@
 package edu.vanier.waveSim.ui;
 
-import edu.vanier.waveSim.controllers.SimDriverController;
+import edu.vanier.waveSim.controllers.FXMLSimDriverController;
 import java.io.IOException;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -37,7 +37,7 @@ public class Driver extends Application {
             // associate it with its FXML controller.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
             primaryStage.setTitle("Wave simulator");
-            SimDriverController SDC = new SimDriverController(primaryStage);
+            FXMLSimDriverController SDC = new FXMLSimDriverController(primaryStage);
             loader.setController(SDC);
             BorderPane root = loader.load();
             

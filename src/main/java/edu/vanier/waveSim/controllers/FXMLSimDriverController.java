@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author TODO
  */
-public class SimDriverController{
+public class FXMLSimDriverController{
 
-    private final static Logger logger = LoggerFactory.getLogger(SimDriverController.class);
+    private final static Logger logger = LoggerFactory.getLogger(FXMLSimDriverController.class);
     
     private Stage primaryStage;
     
@@ -66,7 +66,7 @@ public class SimDriverController{
         this.settings = settings;
     }
     
-    public SimDriverController(Stage primaryStage) {
+    public FXMLSimDriverController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
@@ -288,7 +288,7 @@ public class SimDriverController{
             try {
                 handleLoadItm(simulation);
             } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(SimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
@@ -483,8 +483,8 @@ public class SimDriverController{
      */
     private void launchRenderSettings() {
         try {
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/renderSettings.fxml"));
-            RenderSettingsController controller = new RenderSettingsController();
+            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/FXMLRenderSettings.fxml"));
+            FXMLRenderSettingsController controller = new FXMLRenderSettingsController();
             loader.setController(controller);
             
             // could throw exception
@@ -505,7 +505,7 @@ public class SimDriverController{
             }
             
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(SimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
