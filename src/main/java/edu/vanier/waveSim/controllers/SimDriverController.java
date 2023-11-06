@@ -1,6 +1,7 @@
 package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
@@ -23,6 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -267,7 +269,9 @@ public class SimDriverController{
         });
         
         itmRenderSettings.setOnAction((event) -> {
+            /*
             launchRenderSettings();
+            */
         });
          
         btnPause.setOnAction((event) -> {
@@ -477,7 +481,6 @@ public class SimDriverController{
         }
         ResetScreenAndAnim(simulation, animation, scale);
     }
-    
     /**
      * TODO
      */
@@ -688,5 +691,155 @@ public class SimDriverController{
             System.out.println("Error message seen.");
         }
         
+    }
+    /**
+     * Verifies of the file chosen by the user is valid.
+     * If not valid, the method shows an alert, displaying what is wrong with the file
+     */
+    private boolean verifyFile(File file) throws FileNotFoundException, IOException, CsvException{
+        boolean isValid =true; //Assume that the file is valid, then look for mistakes
+        //Verify .csv
+        if(!".csv".equals(file.getPath().substring(file.getPath().length()-4, file.getPath().length()))){
+            showAlert("The file is not a csv file. Please try again.");
+            isValid=false;
+        }
+        //Verify if the file has only one line
+        CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+        if(reader.readAll().size()!=1){
+            showAlert("It seems like the file contains more than one simulation stored. Choose a file that has only one.");
+            isValid  = false;
+        }
+        //Verify of the information inside the file are valid
+        String[] info = reader.readNext();
+        
+        // Verify if the file has the minimum amount of information
+        //Should have 8 infos minimum
+        if(info.length<8){
+            showAlert("The file does not contain enough information for the load settings to work. Please use another one, "
+                    + "containing at least the damping, the scaling, the simulation type, the speed, zero or more "
+                    + "points coordinates, the width and height of the canvas and the window.");
+            isValid = false;
+        }
+            
+        try{
+            double dampVerification = Double.parseDouble(info[0]);
+            // Make sure that damping is between the right numerical bounds
+            // o.oo1 to 0.150
+            if(dampVerification>0.150||dampVerification<0.001)
+            {
+                showAlert("The first value is incorrect. The value of the damping should be between 0.001 and 0.150");
+                isValid = false;
+            }
+        }catch(Exception e){
+            showAlert("The first value should be a number corresponding to the value of the damping. However, it does not seem like a numerical value.");
+            isValid = false;
+        }
+        //Check scaling
+        try{
+            int scaleVerification = Integer.parseInt(info[1]);
+            if(scaleVerification>8||scaleVerification<1){
+                showAlert("The scaling should be a number between 1 and 8. However, it seems to be out of bounds");
+                isValid = false;
+            }
+        }catch(Exception e){
+            showAlert("The second value should be an integer corresponding to the value of the scaling. However, it does seem like a number.");
+            isValid = false;
+        }
+        //Check simulation type
+        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life"};
+        boolean isOneOfTypes = false;
+        for(String element:simulationTypes)
+            if(element.equals(info[2]))
+                isOneOfTypes = true;
+        if(isOneOfTypes==false){
+            showAlert("The third value, corresponding to the simulation type is invalid. Please try again.");
+            isValid = false;
+        }
+        //Check speed: Between 1 and 500
+        try{
+            double speedVerification = Double.parseDouble(info[3]);
+            if(speedVerification>500||speedVerification<1){
+                showAlert("The fourth value, corresponding to the speed of the simulation should be a value between 1 and 500. However, the value in the file seems to be out of bound. Please try again.");
+                isValid=false;
+            }
+        }catch(Exception e){
+            showAlert("The fourth value inside the file, corresponding to the speed of the simulation is not a number. Please try again, using a valid file.");
+            isValid = false;
+        }
+        //Check how many points are in the file
+        int numOfCoordinates = info.length-8;
+        if(numOfCoordinates%2==1){
+            showAlert("A coordinate is missing. Please try again, using a valid file.");
+            isValid=false;
+        }
+        // Go through every point to check if they are valid
+        if(numOfCoordinates!=0){
+            for(int counter=0; counter<numOfCoordinates; counter++){
+                try{
+                    int coordinate = Integer.parseInt(info[4+counter]);
+                    // Verify of the coordinates are within the proper bounds
+                    //x value
+                    if(counter%2==0){
+                        if((double)coordinate>simulation.getOperatingCanvas().getWidth()||coordinate<0){
+                            showAlert("The x-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+simulation.getOperatingCanvas().getWidth());
+                            isValid = false;
+                        }
+                    }
+                    //y value
+                    if(counter%2==1){
+                        if((double)coordinate>simulation.getOperatingCanvas().getHeight()||coordinate<0){
+                            showAlert("The y-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+simulation.getOperatingCanvas().getHeight());
+                            isValid = false;
+                        }
+                    }
+                }catch(Exception e){
+                    showAlert("The value at the "+(5+counter)+"th position should be an integer corresponding to a coordinate inside the canvas. However, it does not look like an integer. Please try again, using a valid file.");
+                    isValid=false;
+                }
+            }
+        }
+        // Verify canvas dimensions
+        // Width
+        try{
+            double widthCanvas = Double.parseDouble(info[info.length-4]);
+            if(widthCanvas<1){
+                showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
+            }
+        }catch(Exception e){
+            showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the width of the canvas. However, it does not look like a number.");
+            isValid=false;
+        }
+        //Height
+        try{
+            double heightCanvas = Double.parseDouble(info[info.length-3]);
+            if(heightCanvas<1){
+                showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
+            }
+        }catch(Exception e){
+            showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
+            isValid=false;
+        }
+        // Verify stage dimensions
+        // Width
+        try{
+            double widthStage = Double.parseDouble(info[info.length-2]);
+            if(widthStage<1){
+                showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the width of the window. It should be bigger than 0. However, it is inferior to 1.");
+            }
+        }catch(Exception e){
+            showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the width of the window. However, it does not look like a number.");
+            isValid=false;
+        }
+        //Height
+        try{
+            double heightStage = Double.parseDouble(info[info.length-1]);
+            if(heightStage<1){
+                showAlert("The value at the "+(info.length)+"th position should be a number corresponding to the height of the window. It should be bigger than 0. However, it is inferior to 1.");
+            }
+        }catch(Exception e){
+            showAlert("The value at the "+(info.length)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
+            isValid=false;
+        }
+        return isValid;
     }
 }
