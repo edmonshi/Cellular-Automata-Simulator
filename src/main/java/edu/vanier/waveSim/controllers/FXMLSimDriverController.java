@@ -1,6 +1,7 @@
 package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
@@ -13,8 +14,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -287,7 +290,13 @@ public class FXMLSimDriverController{
         });
         itmSave.setOnAction((event)->{
             try {
-                handleSaveItm(simulation);
+                try {
+                    handleSaveItm(simulation);
+                } catch (FileNotFoundException ex) {
+                    java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CsvException ex) {
+                    java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (IOException ex) {
                 System.out.println(ex.toString());
             }
@@ -548,7 +557,7 @@ public class FXMLSimDriverController{
      * This file is contained in the resources folder, in a package called data
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
      */
-    private void handleSaveItm(CellularLogic simulation) throws IOException {
+    private void handleSaveItm(CellularLogic simulation) throws IOException, FileNotFoundException, CsvException {
         System.out.println("Save button clicked");
         // create file chooser
         FileChooser f = new FileChooser();
@@ -574,8 +583,6 @@ public class FXMLSimDriverController{
                 Point currentPoint = points.next();
                     writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
-            writer.write(Integer.toString(simulation.getHeightY())+",");
-            writer.write(Integer.toString(simulation.getWidthX())+",");
             writer.write(Double.toString(simulation.getOperatingCanvas().getWidth())+",");
             writer.write(Double.toString(simulation.getOperatingCanvas().getHeight())+",");
             writer.write(Double.toString(primaryStage.getWidth())+",");
@@ -620,10 +627,14 @@ public class FXMLSimDriverController{
         }
         else
             file = this.getFileLoad();
-        this.primaryStage.setAlwaysOnTop(true);
+        System.out.println("length is "+new CSVReader(new FileReader(file.getPath())).readAll().get(0).length);
+        verifyFileCSV(file);
+        
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
         String[] settings = reader.readAll().get(saveOption);
+        verifyFileSettings(settings);
+        this.primaryStage.setAlwaysOnTop(true);
         
         // Set height and width
             setStageDimensions(Double.parseDouble(settings[settings.length-2]),Double.parseDouble(settings[settings.length-1]));
@@ -641,7 +652,7 @@ public class FXMLSimDriverController{
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
             //Set points
             int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-10)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
@@ -700,21 +711,31 @@ public class FXMLSimDriverController{
      * Verifies of the file chosen by the user is valid.
      * If not valid, the method shows an alert, displaying what is wrong with the file
      */
-    private boolean verifyFile(File file) throws FileNotFoundException, IOException, CsvException{
+    private boolean verifyFileCSV(File file) throws FileNotFoundException, IOException, CsvException{
         boolean isValid =true; //Assume that the file is valid, then look for mistakes
         //Verify .csv
         if(!".csv".equals(file.getPath().substring(file.getPath().length()-4, file.getPath().length()))){
             showAlert("The file is not a csv file. Please try again.");
             isValid=false;
         }
-        //Verify if the file has only one line
-        CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+        else
+            showAlert("File accepted");
+        return isValid;
+    }
+    private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
+        boolean isValid=true;
+        /*
+        boolean isValid=true;
         if(reader.readAll().size()!=1){
             showAlert("It seems like the file contains more than one simulation stored. Choose a file that has only one.");
             isValid  = false;
         }
         //Verify of the information inside the file are valid
-        String[] info = reader.readNext();
+        List<String[]> fileContent = reader.readAll();
+        System.out.println(fileContent.size());
+        System.out.println(fileContent.get(0)[0]);
+        String[] info = fileContent.get(0);
+        */
         
         // Verify if the file has the minimum amount of information
         //Should have 8 infos minimum
@@ -776,36 +797,12 @@ public class FXMLSimDriverController{
             showAlert("A coordinate is missing. Please try again, using a valid file.");
             isValid=false;
         }
-        // Go through every point to check if they are valid
-        if(numOfCoordinates!=0){
-            for(int counter=0; counter<numOfCoordinates; counter++){
-                try{
-                    int coordinate = Integer.parseInt(info[4+counter]);
-                    // Verify of the coordinates are within the proper bounds
-                    //x value
-                    if(counter%2==0){
-                        if((double)coordinate>simulation.getOperatingCanvas().getWidth()||coordinate<0){
-                            showAlert("The x-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+simulation.getOperatingCanvas().getWidth());
-                            isValid = false;
-                        }
-                    }
-                    //y value
-                    if(counter%2==1){
-                        if((double)coordinate>simulation.getOperatingCanvas().getHeight()||coordinate<0){
-                            showAlert("The y-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+simulation.getOperatingCanvas().getHeight());
-                            isValid = false;
-                        }
-                    }
-                }catch(Exception e){
-                    showAlert("The value at the "+(5+counter)+"th position should be an integer corresponding to a coordinate inside the canvas. However, it does not look like an integer. Please try again, using a valid file.");
-                    isValid=false;
-                }
-            }
-        }
         // Verify canvas dimensions
         // Width
+        double widthCanvas=0;
+        double heightCanvas=0;
         try{
-            double widthCanvas = Double.parseDouble(info[info.length-4]);
+            widthCanvas = Double.parseDouble(info[info.length-4]);
             if(widthCanvas<1){
                 showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
             }
@@ -815,7 +812,7 @@ public class FXMLSimDriverController{
         }
         //Height
         try{
-            double heightCanvas = Double.parseDouble(info[info.length-3]);
+            heightCanvas = Double.parseDouble(info[info.length-3]);
             if(heightCanvas<1){
                 showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
             }
@@ -823,6 +820,33 @@ public class FXMLSimDriverController{
             showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
             isValid=false;
         }
+        // Go through every point to check if they are valid
+        if(numOfCoordinates!=0){
+            for(int counter=0; counter<numOfCoordinates; counter++){
+                try{
+                    int coordinate = Integer.parseInt(info[4+counter]);
+                    // Verify of the coordinates are within the proper bounds
+                    //x value
+                    if(counter%2==0){
+                        if((double)coordinate>(widthCanvas)||coordinate<0){
+                            showAlert("The x-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+widthCanvas);
+                            isValid = false;
+                        }
+                    }
+                    //y value
+                    if(counter%2==1){
+                        if((double)coordinate>(heightCanvas)||coordinate<0){
+                            showAlert("The y-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+heightCanvas);
+                            isValid = false;
+                        }
+                    }
+                }catch(Exception e){
+                    showAlert("The value at the "+(5+counter)+"th position should be an integer corresponding to a coordinate inside the canvas. However, it does not look like an integer. Please try again, using a valid file.");
+                    isValid=false;
+                }
+            }
+        }
+        
         // Verify stage dimensions
         // Width
         try{
@@ -844,6 +868,7 @@ public class FXMLSimDriverController{
             showAlert("The value at the "+(info.length)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
             isValid=false;
         }
+        showAlert("File is valid: "+isValid);
         return isValid;
     }
 }
