@@ -212,6 +212,8 @@ public class FXMLSimDriverController{
     private Label lblHi;
     @FXML
     private TabPane SimTabPane;
+    @FXML
+    private MenuItem guideItm;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -368,6 +370,13 @@ public class FXMLSimDriverController{
         // get coordinates of mouse on click
         SimCanvas.setOnMouseClicked((event) -> {
             newPoint(event.getX(),event.getY(), simulation);
+        });
+        guideItm.setOnAction((event)->{
+            try {
+                handleGuideItm();
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
     }
@@ -878,5 +887,18 @@ public class FXMLSimDriverController{
             isValid=false;
         }
         return isValid;
+    }
+    private void handleGuideItm() throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
+        loader.setController(new FXMLHelpGuideController());
+        Pane root = loader.load();
+        
+        Scene scene = new Scene(root, 400,400);
+        Stage guideDialog = new Stage();
+        guideDialog.setTitle("Help Dialog");
+        guideDialog.setScene(scene);
+        guideDialog.setAlwaysOnTop(true);
+        guideDialog.sizeToScene();
+        guideDialog.showAndWait();
     }
 }

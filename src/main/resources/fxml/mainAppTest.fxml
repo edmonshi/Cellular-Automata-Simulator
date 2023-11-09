@@ -46,7 +46,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                      <items>
-                        <MenuItem mnemonicParsing="false" text="Guide" />
+                        <MenuItem fx:id="guideItm" mnemonicParsing="false" text="Guide" />
                         <MenuItem mnemonicParsing="false" text="About" />
                      </items>
                   </Menu>
