@@ -565,6 +565,12 @@ public class FXMLSimDriverController{
             stage.setAlwaysOnTop(true);
             this.primaryStage.setAlwaysOnTop(false);
             File file = f.showOpenDialog(stage);
+            boolean fileValid = verifyFileCSV(file);
+            if(fileValid==false){
+                handleSaveItm(simulation);
+                return;
+            }
+            showAlertInfo("File has been accepted.");
             this.primaryStage.setAlwaysOnTop(true);
         try(FileWriter fw = new FileWriter(file.getPath());
                 PrintWriter writer = new PrintWriter(fw);){
@@ -621,15 +627,12 @@ public class FXMLSimDriverController{
         stage.setAlwaysOnTop(true);
         this.primaryStage.setAlwaysOnTop(false);
         File file;
-        if(this.getFileLoad()==null){
-            file = f.showOpenDialog(stage);
-            this.setFileLoad(file);
+        file = f.showOpenDialog(stage);
+        boolean isValid = verifyFileCSV(file);
+        if(isValid==false){
+            handleLoadItm(simulation);
+            return;
         }
-        else
-            file = this.getFileLoad();
-        System.out.println("length is "+new CSVReader(new FileReader(file.getPath())).readAll().get(0).length);
-        verifyFileCSV(file);
-        
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
         String[] settings = reader.readAll().get(saveOption);
@@ -707,6 +710,14 @@ public class FXMLSimDriverController{
         }
         
     }
+    private void showAlertInfo(String message){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Validation");
+        alert.setContentText("File Validation");
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+    
     /**
      * Verifies of the file chosen by the user is valid.
      * If not valid, the method shows an alert, displaying what is wrong with the file
@@ -718,8 +729,6 @@ public class FXMLSimDriverController{
             showAlert("The file is not a csv file. Please try again.");
             isValid=false;
         }
-        else
-            showAlert("File accepted");
         return isValid;
     }
     private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
@@ -868,7 +877,6 @@ public class FXMLSimDriverController{
             showAlert("The value at the "+(info.length)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
             isValid=false;
         }
-        showAlert("File is valid: "+isValid);
         return isValid;
     }
 }
