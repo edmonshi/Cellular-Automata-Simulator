@@ -38,6 +38,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -568,16 +569,38 @@ public class FXMLSimDriverController{
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException, FileNotFoundException, CsvException {
         System.out.println("Save button clicked");
+        //Ask user if he already has a file in which he wants to save the settings, or if we create new file for him in give directory chosen by him
+        primaryStage.setAlwaysOnTop(false);
+        boolean createNewFile;
+        createNewFile = false;
+        askUserSaveSettingsDialog("Choose an existing file or create new one?", createNewFile);
+        primaryStage.setAlwaysOnTop(true);
+        File file;
+        file = new File("");
         // create file chooser
         FileChooser f = new FileChooser();
             Stage stage  = new Stage();
             stage.setAlwaysOnTop(true);
             this.primaryStage.setAlwaysOnTop(false);
-            File file = f.showOpenDialog(stage);
+            if(createNewFile==false){
+                file = f.showOpenDialog(stage);
             boolean fileValid = verifyFileCSV(file);
             if(fileValid==false){
                 handleSaveItm(simulation);
                 return;
+            }
+            }
+            else{
+            DirectoryChooser dc = new DirectoryChooser();
+            dc.setInitialDirectory(dc.showDialog(stage));
+                                    try {
+                                        dc.getInitialDirectory().createNewFile();
+                                        System.out.println(dc.getInitialDirectory());
+                                        String name = "FileSpecial";
+                                        file = new File(dc.getInitialDirectory()+"\\"+name+".csv");
+                                    } catch (IOException ex) {
+                                        System.out.println("Error in the program");
+                                    }
             }
             showAlertInfo("File has been accepted.");
             this.primaryStage.setAlwaysOnTop(true);
@@ -725,6 +748,20 @@ public class FXMLSimDriverController{
         alert.setContentText("File Validation");
         alert.setHeaderText(message);
         alert.showAndWait();
+    }
+    private void askUserSaveSettingsDialog(String message, boolean create){
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle("File Option");
+        alert.setContentText(message);
+        ButtonType createBtnType = new ButtonType("Create New File");
+        ButtonType chooseBtnType = new ButtonType("Choose Existing File");
+        alert.getButtonTypes().addAll(createBtnType, chooseBtnType);
+        alert.showAndWait();
+        if(alert.getResult()==createBtnType){
+            create = true;
+        }
+        else
+            create = false;
     }
     
     /**
