@@ -36,6 +36,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
@@ -575,35 +576,36 @@ public class FXMLSimDriverController{
         createNewFile = false;
         askUserSaveSettingsDialog("Choose an existing file or create new one?", createNewFile);
         primaryStage.setAlwaysOnTop(true);
-        File file;
-        file = new File("");
-        // create file chooser
-        FileChooser f = new FileChooser();
-            Stage stage  = new Stage();
+        File file = new File("");
+        Stage stage  = new Stage();
+        //USer already has a file
+        if(createNewFile==false){
+            // create file chooser
+            FileChooser f = new FileChooser();
             stage.setAlwaysOnTop(true);
             this.primaryStage.setAlwaysOnTop(false);
-            if(createNewFile==false){
-                file = f.showOpenDialog(stage);
+            file = f.showOpenDialog(stage);
             boolean fileValid = verifyFileCSV(file);
             if(fileValid==false){
                 handleSaveItm(simulation);
                 return;
             }
-            }
-            else{
-            DirectoryChooser dc = new DirectoryChooser();
-            dc.setInitialDirectory(dc.showDialog(stage));
-                                    try {
-                                        dc.getInitialDirectory().createNewFile();
-                                        System.out.println(dc.getInitialDirectory());
-                                        String name = "FileSpecial";
-                                        file = new File(dc.getInitialDirectory()+"\\"+name+".csv");
-                                    } catch (IOException ex) {
-                                        System.out.println("Error in the program");
-                                    }
-            }
             showAlertInfo("File has been accepted.");
             this.primaryStage.setAlwaysOnTop(true);
+        }
+        else{
+            DirectoryChooser dc = new DirectoryChooser();
+            dc.setInitialDirectory(dc.showDialog(stage));
+            try {
+                dc.getInitialDirectory().createNewFile();
+                System.out.println(dc.getInitialDirectory());
+                String name = chooseNameDialog();
+                name = nameFile;
+                file = new File(dc.getInitialDirectory()+"\\"+name+".csv");
+            } catch (IOException ex) {
+                System.out.println("Error in the program");
+       }
+        }
         try(FileWriter fw = new FileWriter(file.getPath());
                 PrintWriter writer = new PrintWriter(fw);){
             //Erase previous save settings
@@ -627,6 +629,22 @@ public class FXMLSimDriverController{
             writer.write(Double.toString(primaryStage.getHeight()));
             writer.write("\n");
         }
+    }
+    private String nameFile;
+    public String chooseNameDialog(){
+        Stage stage = new Stage();
+        Pane root = new Pane();
+        TextField nameTxtFld = new TextField("Name");
+        Button OkBtn = new Button("OK");
+        OkBtn.setOnAction((event)->{
+            nameFile = nameTxtFld.getText();
+        });
+        root.getChildren().addAll(nameTxtFld, OkBtn);
+        stage.setAlwaysOnTop(true);
+        Scene scene = new Scene(root, 300, 300);
+        stage.setScene(scene);
+        stage.showAndWait();
+        return nameFile;
     }
     public void setStageDimensions(double x, double y){
         
