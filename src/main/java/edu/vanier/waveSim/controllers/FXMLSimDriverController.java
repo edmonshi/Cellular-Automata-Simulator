@@ -38,6 +38,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -574,7 +575,7 @@ public class FXMLSimDriverController{
         primaryStage.setAlwaysOnTop(false);
         boolean createNewFile;
         createNewFile = false;
-        askUserSaveSettingsDialog("Choose an existing file or create new one?", createNewFile);
+        createNewFile = askUserSaveSettingsDialog("Choose an existing file or create new one?", createNewFile);
         primaryStage.setAlwaysOnTop(true);
         File file = new File("");
         Stage stage  = new Stage();
@@ -595,7 +596,11 @@ public class FXMLSimDriverController{
         }
         else{
             DirectoryChooser dc = new DirectoryChooser();
+            primaryStage.setAlwaysOnTop(false);
+            stage.setAlwaysOnTop(true);
             dc.setInitialDirectory(dc.showDialog(stage));
+            stage.setAlwaysOnTop(false);
+            primaryStage.setAlwaysOnTop(true);
             try {
                 dc.getInitialDirectory().createNewFile();
                 System.out.println(dc.getInitialDirectory());
@@ -633,13 +638,16 @@ public class FXMLSimDriverController{
     private String nameFile;
     public String chooseNameDialog(){
         Stage stage = new Stage();
-        Pane root = new Pane();
+        VBox root = new VBox();
+        Label nameLbl = new Label("Please write the name of your file");
         TextField nameTxtFld = new TextField("Name");
+        nameTxtFld.setLayoutX(0);
         Button OkBtn = new Button("OK");
         OkBtn.setOnAction((event)->{
             nameFile = nameTxtFld.getText();
+            stage.close();
         });
-        root.getChildren().addAll(nameTxtFld, OkBtn);
+        root.getChildren().addAll(nameLbl,nameTxtFld, OkBtn);
         stage.setAlwaysOnTop(true);
         Scene scene = new Scene(root, 300, 300);
         stage.setScene(scene);
@@ -724,8 +732,6 @@ public class FXMLSimDriverController{
             System.out.println(e.toString());
         }
     }
-    public void handleLoadArray(String[] settings){
-    }
     /**
      * Reset the animation and screen
      * The animation will stop and the simulation will be cleared.
@@ -767,7 +773,7 @@ public class FXMLSimDriverController{
         alert.setHeaderText(message);
         alert.showAndWait();
     }
-    private void askUserSaveSettingsDialog(String message, boolean create){
+    private boolean askUserSaveSettingsDialog(String message, boolean create){
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle("File Option");
         alert.setContentText(message);
@@ -776,10 +782,10 @@ public class FXMLSimDriverController{
         alert.getButtonTypes().addAll(createBtnType, chooseBtnType);
         alert.showAndWait();
         if(alert.getResult()==createBtnType){
-            create = true;
+            return true;
         }
         else
-            create = false;
+            return false;
     }
     
     /**
