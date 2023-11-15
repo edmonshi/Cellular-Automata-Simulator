@@ -16,6 +16,11 @@ import javafx.stage.Stage;
 public class FXMLRenderSettingsController {
     int frameLimit = Integer.MAX_VALUE;
     Stage self;
+    FXMLSimDriverController controller;
+
+    public FXMLRenderSettingsController(FXMLSimDriverController controller) {
+        this.controller = controller;
+    }
     
     @FXML
     private TextField txtFrameLimit;

@@ -1,7 +1,6 @@
 package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
@@ -59,6 +58,27 @@ public class FXMLSimDriverController{
     private Stage primaryStage;
     
     private boolean animationRunning = false;
+    
+    // File used to load the settings from.
+    private File fileLoad;
+
+    public File getFileLoad() {
+        return fileLoad;
+    }
+
+    public void setFileLoad(File fileLoad) {
+        this.fileLoad = fileLoad;
+    }
+    //Name of the csv file created by the user when using the save settings option
+    private String nameFile;
+
+    public String getNameFile() {
+        return nameFile;
+    }
+
+    public void setNameFile(String nameFile) {
+        this.nameFile = nameFile;
+    }
     
     int scale = 1;
     int delayMillis = 1;
@@ -506,13 +526,23 @@ public class FXMLSimDriverController{
         }
         ResetScreenAndAnim(simulation, animation, scale);
     }
+    private int frameLim;
+
+    public int getFrameLim() {
+        return frameLim;
+    }
+
+    public void setFrameLim(int frameLim) {
+        this.frameLim = frameLim;
+    }
     /**
      * TODO
      */
     private void launchRenderSettings() {
         try {
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/FXMLRenderSettings.fxml"));
-            FXMLRenderSettingsController controller = new FXMLRenderSettingsController();
+            FXMLRenderSettingsController controller = new FXMLRenderSettingsController(this);
+            this.setFrameLim(controller.getFrameLimit());
             loader.setController(controller);
             
             // could throw exception
@@ -565,21 +595,19 @@ public class FXMLSimDriverController{
         System.out.println("Animation stopped");
     }
     /**
-     * This method saves the settings of a simulation in a CSV File called settings.csv
-     * This file is contained in the resources folder, in a package called data
+     * This method saves the settings of a simulation in a CSV File.
+     * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException, FileNotFoundException, CsvException {
         System.out.println("Save button clicked");
         //Ask user if he already has a file in which he wants to save the settings, or if we create new file for him in give directory chosen by him
         primaryStage.setAlwaysOnTop(false);
-        boolean createNewFile;
-        createNewFile = false;
-        createNewFile = askUserSaveSettingsDialog("Choose an existing file or create new one?", createNewFile);
+        boolean createNewFile = askUserSaveSettingsDialog("Choose an existing file or create new one?");
         primaryStage.setAlwaysOnTop(true);
         File file = new File("");
         Stage stage  = new Stage();
-        //USer already has a file
+        //User already has a file
         if(createNewFile==false){
             // create file chooser
             FileChooser f = new FileChooser();
@@ -594,7 +622,9 @@ public class FXMLSimDriverController{
             showAlertInfo("File has been accepted.");
             this.primaryStage.setAlwaysOnTop(true);
         }
+        // User does not have an existing file, and wants to create one
         else{
+            // 1- Choose the directory in which the user wants to save the settings
             DirectoryChooser dc = new DirectoryChooser();
             primaryStage.setAlwaysOnTop(false);
             stage.setAlwaysOnTop(true);
@@ -604,15 +634,16 @@ public class FXMLSimDriverController{
             try {
                 dc.getInitialDirectory().createNewFile();
                 System.out.println(dc.getInitialDirectory());
-                String name = chooseNameDialog();
-                name = nameFile;
-                file = new File(dc.getInitialDirectory()+"\\"+name+".csv");
+                // Make a dialog appear for the user to choose a name for the file
+                this.setNameFile(chooseNameDialog());
+                // Create a file with the name
+                file = new File(dc.getInitialDirectory()+"\\"+this.getNameFile()+".csv");
             } catch (IOException ex) {
-                System.out.println("Error in the program");
+                System.out.println("Error in the program: "+ex.toString());
        }
         }
         try(FileWriter fw = new FileWriter(file.getPath());
-                PrintWriter writer = new PrintWriter(fw);){
+            PrintWriter writer = new PrintWriter(fw);){
             //Erase previous save settings
             writer.flush();
             //Write damping
@@ -628,14 +659,20 @@ public class FXMLSimDriverController{
                 Point currentPoint = points.next();
                     writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
+            //Write the properties of the canvas and the stage
             writer.write(Double.toString(simulation.getOperatingCanvas().getWidth())+",");
             writer.write(Double.toString(simulation.getOperatingCanvas().getHeight())+",");
             writer.write(Double.toString(primaryStage.getWidth())+",");
-            writer.write(Double.toString(primaryStage.getHeight()));
+            writer.write(Double.toString(primaryStage.getHeight())+",");
+            //Write the frame limit
+            writer.write(Integer.toString(this.getFrameLim()));
             writer.write("\n");
         }
     }
-    private String nameFile;
+    /**
+     * This method creates a dialog that is responsible of letting the user choose a name for the file he wants to create.
+     * It returns the name of the csv file, and is meant to be used in the save settings method, of the user wants to create a new csv file.
+     */
     public String chooseNameDialog(){
         Stage stage = new Stage();
         VBox root = new VBox();
@@ -654,23 +691,13 @@ public class FXMLSimDriverController{
         stage.showAndWait();
         return nameFile;
     }
+    /**
+     * This method sets the height and the width of the stage.
+     */
     public void setStageDimensions(double x, double y){
-        
         primaryStage.setWidth(x);
         primaryStage.setHeight(y);
-        
     }
-    
-    File fileLoad;
-
-    public File getFileLoad() {
-        return fileLoad;
-    }
-
-    public void setFileLoad(File fileLoad) {
-        this.fileLoad = fileLoad;
-    }
-    
     /**
      * This method loads the settings from a csv file chosen by the user.
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
@@ -697,8 +724,8 @@ public class FXMLSimDriverController{
         verifyFileSettings(settings);
         this.primaryStage.setAlwaysOnTop(true);
         
-        // Set height and width
-            setStageDimensions(Double.parseDouble(settings[settings.length-2]),Double.parseDouble(settings[settings.length-1]));
+            // Set height and width
+            setStageDimensions(Double.parseDouble(settings[settings.length-3]),Double.parseDouble(settings[settings.length-2]));
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
@@ -713,7 +740,7 @@ public class FXMLSimDriverController{
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
             //Set points
             int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-9)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
@@ -773,7 +800,7 @@ public class FXMLSimDriverController{
         alert.setHeaderText(message);
         alert.showAndWait();
     }
-    private boolean askUserSaveSettingsDialog(String message, boolean create){
+    private boolean askUserSaveSettingsDialog(String message){
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle("File Option");
         alert.setContentText(message);
@@ -871,7 +898,7 @@ public class FXMLSimDriverController{
             isValid = false;
         }
         //Check how many points are in the file
-        int numOfCoordinates = info.length-8;
+        int numOfCoordinates = (info.length-9);
         if(numOfCoordinates%2==1){
             showAlert("A coordinate is missing. Please try again, using a valid file.");
             isValid=false;
@@ -881,22 +908,22 @@ public class FXMLSimDriverController{
         double widthCanvas=0;
         double heightCanvas=0;
         try{
-            widthCanvas = Double.parseDouble(info[info.length-4]);
+            widthCanvas = Double.parseDouble(info[info.length-5]);
             if(widthCanvas<1){
-                showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(info.length-4)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the width of the canvas. However, it does not look like a number.");
+            showAlert("The value at the "+(info.length-4)+"th position should be a number corresponding to the width of the canvas. However, it does not look like a number.");
             isValid=false;
         }
         //Height
         try{
-            heightCanvas = Double.parseDouble(info[info.length-3]);
+            heightCanvas = Double.parseDouble(info[info.length-4]);
             if(heightCanvas<1){
-                showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
+            showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
             isValid=false;
         }
         // Go through every point to check if they are valid
@@ -929,26 +956,42 @@ public class FXMLSimDriverController{
         // Verify stage dimensions
         // Width
         try{
-            double widthStage = Double.parseDouble(info[info.length-2]);
+            double widthStage = Double.parseDouble(info[info.length-3]);
             if(widthStage<1){
-                showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the width of the window. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the width of the window. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the width of the window. However, it does not look like a number.");
+            showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the width of the window. However, it does not look like a number.");
             isValid=false;
         }
         //Height
         try{
-            double heightStage = Double.parseDouble(info[info.length-1]);
+            double heightStage = Double.parseDouble(info[info.length-2]);
             if(heightStage<1){
-                showAlert("The value at the "+(info.length)+"th position should be a number corresponding to the height of the window. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the height of the window. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
+            showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
             isValid=false;
+        }
+        //Verification for the frame limit here
+        try{
+            int frameLim = Integer.parseInt(info[info.length-1]);
+            if(frameLim<0){
+                showAlert("The value of the frame limit is invalid, because it is negative. Please try again with a file that has a positive value for the frame limit.");
+                System.out.println("Frame limit ="+info[info.length-1]);
+                isValid=false;
+            }
+        }catch(Exception e){
+            showAlert("The value corresponding to the frame limit is invalid. It does not appear to be a number. Please try again with a valid file.");
+            System.out.println("Frame limit ="+info[info.length-1]);
+            isValid = false;
         }
         return isValid;
     }
+    /**
+     * This method creates a help dialog for the user.
+     */
     private void handleGuideItm() throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
         loader.setController(new FXMLHelpGuideController());
