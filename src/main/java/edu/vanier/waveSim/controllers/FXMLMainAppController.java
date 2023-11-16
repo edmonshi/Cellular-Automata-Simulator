@@ -17,11 +17,16 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
+import javafx.animation.PauseTransition;
+import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -41,6 +46,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +62,9 @@ public class FXMLMainAppController{
     private Stage primaryStage;
     
     private boolean animationRunning = false;
+    
+    private final Transition pause = new PauseTransition(Duration.millis(5));
+    
     
     int scale = 1;
     int delayMillis = 1;
@@ -259,6 +268,13 @@ public class FXMLMainAppController{
         btnPause.setDisable(true);
         btnReset.setDisable(true);
         
+        // waiting util for load points
+        pause.setOnFinished((event) -> {
+            System.out.println("starting load points after wait");
+            loadPointsUtil();
+            System.out.println("waited paused");
+        });
+        
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
 //        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
 //        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
@@ -398,9 +414,8 @@ public class FXMLMainAppController{
             width --;
         }
         simulation.setWidth(width);
-        simulation.setScaling(simulation.getScaling());
         SimCanvas.setWidth(width);
-        simulation.clearScreen();
+        ResetScreenAndAnim(simulation, animation, scale);
         lblWidth.setText("Width: "+width);
     }
     /**TODO Documentation*/
@@ -415,9 +430,8 @@ public class FXMLMainAppController{
         }
         int realHeight = height-HBoxHeight;
         simulation.setHeight(realHeight);
-        simulation.setScaling(simulation.getScaling());
         SimCanvas.setHeight(realHeight);
-        simulation.clearScreen();
+        ResetScreenAndAnim(simulation, animation, scale);
         lblHeight.setText("Height: "+realHeight);
     }
     
@@ -685,6 +699,24 @@ public class FXMLMainAppController{
         this.fileLoad = fileLoad;
     }
     
+    private void loadPointsUtil() {
+        int x,y;
+            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
+                x=0;
+                y=0;
+                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
+                    if(counterCoordinates==0)
+                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
+                    else
+                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
+                }
+                System.out.println("Points: x="+x+" and y="+y);
+                
+                newPoint((double)x, (double)y, simulation);
+                System.out.println("newPoint");
+          }
+    }
+    
     /**
      * This method loads the settings from a csv file chosen by the user.
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
@@ -707,7 +739,7 @@ public class FXMLMainAppController{
         }
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
-        String[] settings = reader.readAll().get(saveOption);
+        settings = reader.readAll().get(saveOption);
         verifyFileSettings(settings);
         this.primaryStage.setAlwaysOnTop(true);
         
@@ -725,23 +757,14 @@ public class FXMLMainAppController{
             changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            //Set points
-            int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
-                x=0;
-                y=0;
-                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
-                    if(counterCoordinates==0)
-                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
-                    else
-                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
-                }
-                System.out.println("Points: x="+x+" and y="+y);
-                
-                newPoint((double)x, (double)y, simulation);
-            }
+            
+            
+            //Set points, pause because the canvas needs to update its size
+            pause.play();
+            
             System.out.println(settings.length);
             
+            System.out.println("WHEAT");
         }catch(Exception e){
             System.out.println(e.toString());
         }
