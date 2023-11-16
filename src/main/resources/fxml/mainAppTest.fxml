@@ -78,6 +78,7 @@
                   <Insets top="-10.0" />
                </VBox.margin>
             </Label>
+            <Slider />
             <Accordion>
                <panes>
                   <TitledPane animated="false" text="Simple Ripple">

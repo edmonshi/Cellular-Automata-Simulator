@@ -827,21 +827,6 @@ public class FXMLSimDriverController{
     }
     private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
         boolean isValid=true;
-        /*
-        boolean isValid=true;
-        if(reader.readAll().size()!=1){
-            showAlert("It seems like the file contains more than one simulation stored. Choose a file that has only one.");
-            isValid  = false;
-        }
-        //Verify of the information inside the file are valid
-        List<String[]> fileContent = reader.readAll();
-        System.out.println(fileContent.size());
-        System.out.println(fileContent.get(0)[0]);
-        String[] info = fileContent.get(0);
-        */
-        
-        // Verify if the file has the minimum amount of information
-        //Should have 8 infos minimum
         if(info.length<8){
             showAlert("The file does not contain enough information for the load settings to work. Please use another one, "
                     + "containing at least the damping, the scaling, the simulation type, the speed, zero or more "
