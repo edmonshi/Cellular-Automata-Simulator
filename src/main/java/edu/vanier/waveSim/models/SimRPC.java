@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class SimRPC extends CellularLogic {
 
     private int frameNumber = 0;
-    private int nreOfDifferentEntities = 8;
+    private int nreOfDifferentEntities = 4;
     private int nreOfNeededPredator = 1;
     private int nreOfRandomPredator = 1;
     Color[] colors = {Color.ORANGE, Color.YELLOW, Color.RED, Color.BLUE, Color.PURPLE, Color.GREEN, Color.GRAY, Color.HOTPINK};
@@ -147,5 +147,8 @@ public class SimRPC extends CellularLogic {
     public float getCellState(int x, int y) {
         return current[x][y];
     }
-
+    @Override 
+    public void setPoint(int x, int y){
+        //Do nothing
+    }
 }
