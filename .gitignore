@@ -219,3 +219,4 @@ DerivedData
 
 Contrib/**/
 log/app.log
+*.log
