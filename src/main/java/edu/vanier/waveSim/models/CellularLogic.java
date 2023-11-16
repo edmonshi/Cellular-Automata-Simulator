@@ -32,6 +32,7 @@ public abstract class CellularLogic {
     protected int scaledX;
     protected int scaledY;
     
+    protected boolean hasInitialized;
     // render variables
     protected int frameNumber = 0;
     protected BufferedImage image;

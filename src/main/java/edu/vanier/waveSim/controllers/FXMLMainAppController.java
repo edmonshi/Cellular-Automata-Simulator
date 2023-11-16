@@ -7,6 +7,7 @@ import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave;
+import edu.vanier.waveSim.models.SimRPC;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -155,7 +156,7 @@ public class FXMLMainAppController{
     }
     
     HashSet<Point> pointList;
-    CellularLogic[] simulationsList = new CellularLogic[3];
+    CellularLogic[] simulationsList = new CellularLogic[4];
     CellularLogic simulation;
     CellularAnimTimer animation;
     
@@ -218,7 +219,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -230,13 +231,16 @@ public class FXMLMainAppController{
 
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        
+        SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
         simulationsList[0] = simulation;
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
+        simulationsList[3] = RPC;
+        
+        
         
         // initialize default animation object
         animation = newAnimationTimer();
@@ -434,6 +438,10 @@ public class FXMLMainAppController{
                 case "Conway's Game of Life" -> {
                     simulation = simulations[2];
                     return simulation;
+                }
+                case "Rock-Paper-Scissors" ->{
+                    simulation = simulations[3];
+                    return simulation;                    
                 }
                 default -> {
                     return simulation;
@@ -846,7 +854,7 @@ public class FXMLMainAppController{
             isValid = false;
         }
         //Check simulation type
-        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life"};
+        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors"};
         boolean isOneOfTypes = false;
         for(String element:simulationTypes)
             if(element.equals(info[2]))
