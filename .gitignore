@@ -9,6 +9,9 @@ log/
 # Ignore render folders
 render*
 
+#ignore log, it causes too many merge conflicts
+app.log
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
