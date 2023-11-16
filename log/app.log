@@ -19,3 +19,9 @@
 21:35:10.056  [INFO ] e.v.w.u.Driver  msg: Bootstrapping the application...
 21:35:10.268  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
 21:35:10.270  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+08:04:39.229  [INFO ] e.v.w.u.Driver  msg: Bootstrapping the application...
+08:04:39.442  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+08:04:39.443  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+08:16:29.555  [INFO ] e.v.w.u.Driver  msg: Bootstrapping the application...
+08:16:29.768  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+08:16:29.770  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default

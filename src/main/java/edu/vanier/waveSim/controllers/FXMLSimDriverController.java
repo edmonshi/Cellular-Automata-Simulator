@@ -251,7 +251,9 @@ public class FXMLSimDriverController{
         simTypeChoice.setValue("Simple Ripple");
         simTypeChoice.setItems(simTypeChoiceItems);
         
-        
+        // set default btn disabled state
+        btnPause.setDisable(true);
+        btnReset.setDisable(true);
         
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
 //        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
@@ -262,10 +264,6 @@ public class FXMLSimDriverController{
         });
         SimTabPane.widthProperty().addListener((observable) -> {
             setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
-        });
-        
-        btnPlay.setOnAction((event) -> {
-            handlePlayBtn(simulation, animation);
         });
         
         itmRenderStart.setOnAction((event) -> {
@@ -281,7 +279,11 @@ public class FXMLSimDriverController{
             launchRenderSettings();
             
         });
-         
+        
+        btnPlay.setOnAction((event) -> {
+            handlePlayBtn(simulation, animation);
+        });
+        
         btnPause.setOnAction((event) -> {
             handlePauseBtn(animation);
         });
@@ -289,6 +291,7 @@ public class FXMLSimDriverController{
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
+        
         itmSave.setOnAction((event)->{
             try {
                 try {
@@ -302,6 +305,7 @@ public class FXMLSimDriverController{
                 System.out.println(ex.toString());
             }
         });
+        
         itmLoad.setOnAction((event)->{
             try {
                 handleLoadItm(simulation);
@@ -309,6 +313,7 @@ public class FXMLSimDriverController{
                 java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -547,7 +552,9 @@ public class FXMLSimDriverController{
         animation.start();
         
         pointList.clear();
- 
+        btnPlay.setDisable(true);
+        btnPause.setDisable(false);
+        btnReset.setDisable(false);
     }
     /**
      * Event that is activated when the pause button is clicked.
@@ -558,6 +565,9 @@ public class FXMLSimDriverController{
         System.out.println("Stop button pressed");
         animation.stop();
         animationRunning = false;
+        btnPlay.setDisable(false);
+        btnPause.setDisable(true);
+        btnReset.setDisable(false);
         System.out.println("Animation stopped");
     }
     /**
@@ -741,6 +751,9 @@ public class FXMLSimDriverController{
         simulation.clearScreen();
         pointList.clear();
         animation.stop();
+        btnPlay.setDisable(false);
+        btnPause.setDisable(true);
+        btnReset.setDisable(true);
         animationRunning = false;
         if (simulation.getRenderFlag()) {
             System.out.println("Stop Render");
