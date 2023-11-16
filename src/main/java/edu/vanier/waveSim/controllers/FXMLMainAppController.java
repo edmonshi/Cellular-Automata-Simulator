@@ -547,6 +547,7 @@ public class FXMLMainAppController{
     }
     
     /**
+     * TODO use the simulation parameter to check for valid simulation or something
      * Event that is activated when the play button is clicked.
      * The animation will play.
      * @param simulation the simulation on of the animation
