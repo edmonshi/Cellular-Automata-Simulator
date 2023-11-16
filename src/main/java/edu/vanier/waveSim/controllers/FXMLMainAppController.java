@@ -270,9 +270,7 @@ public class FXMLMainAppController{
         
         // waiting util for load points
         pause.setOnFinished((event) -> {
-            System.out.println("starting load points after wait");
             loadPointsUtil();
-            System.out.println("waited paused");
         });
         
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
@@ -711,10 +709,8 @@ public class FXMLMainAppController{
                     else
                         y=Integer.parseInt(settings[(counterIndex*2)+5]);
                 }
-                System.out.println("Points: x="+x+" and y="+y);
                 
                 newPoint((double)x, (double)y, simulation);
-                System.out.println("newPoint");
           }
     }
     
@@ -765,7 +761,6 @@ public class FXMLMainAppController{
             
             System.out.println(settings.length);
             
-            System.out.println("WHEAT");
         }catch(Exception e){
             System.out.println(e.toString());
         }
