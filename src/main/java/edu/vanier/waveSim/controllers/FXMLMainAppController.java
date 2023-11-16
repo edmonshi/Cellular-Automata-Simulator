@@ -7,6 +7,7 @@ import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave;
+import edu.vanier.waveSim.models.SimRPC;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -155,7 +156,7 @@ public class FXMLMainAppController{
     }
     
     HashSet<Point> pointList;
-    CellularLogic[] simulationsList = new CellularLogic[3];
+    CellularLogic[] simulationsList = new CellularLogic[4];
     CellularLogic simulation;
     CellularAnimTimer animation;
     
@@ -218,7 +219,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -230,13 +231,16 @@ public class FXMLMainAppController{
 
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        
+        SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
         simulationsList[0] = simulation;
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
+        simulationsList[3] = RPC;
+        
+        
         
         // initialize default animation object
         animation = newAnimationTimer();
@@ -251,7 +255,9 @@ public class FXMLMainAppController{
         simTypeChoice.setValue("Simple Ripple");
         simTypeChoice.setItems(simTypeChoiceItems);
         
-        
+        // set default btn disabled state
+        btnPause.setDisable(true);
+        btnReset.setDisable(true);
         
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
 //        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
@@ -262,10 +268,6 @@ public class FXMLMainAppController{
         });
         SimTabPane.widthProperty().addListener((observable) -> {
             setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
-        });
-        
-        btnPlay.setOnAction((event) -> {
-            handlePlayBtn(simulation, animation);
         });
         
         itmRenderStart.setOnAction((event) -> {
@@ -281,7 +283,11 @@ public class FXMLMainAppController{
             launchRenderSettings();
             
         });
-         
+        
+        btnPlay.setOnAction((event) -> {
+            handlePlayBtn(simulation, animation);
+        });
+        
         btnPause.setOnAction((event) -> {
             handlePauseBtn(animation);
         });
@@ -289,6 +295,7 @@ public class FXMLMainAppController{
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
+        
         itmSave.setOnAction((event)->{
             try {
                 try {
@@ -302,6 +309,7 @@ public class FXMLMainAppController{
                 System.out.println(ex.toString());
             }
         });
+        
         itmLoad.setOnAction((event)->{
             try {
                 handleLoadItm(simulation);
@@ -309,6 +317,7 @@ public class FXMLMainAppController{
                 java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -435,6 +444,10 @@ public class FXMLMainAppController{
                     simulation = simulations[2];
                     return simulation;
                 }
+                case "Rock-Paper-Scissors" ->{
+                    simulation = simulations[3];
+                    return simulation;                    
+                }
                 default -> {
                     return simulation;
                 }
@@ -547,7 +560,9 @@ public class FXMLMainAppController{
         animation.start();
         
         pointList.clear();
- 
+        btnPlay.setDisable(true);
+        btnPause.setDisable(false);
+        btnReset.setDisable(false);
     }
     /**
      * Event that is activated when the pause button is clicked.
@@ -558,6 +573,9 @@ public class FXMLMainAppController{
         System.out.println("Stop button pressed");
         animation.stop();
         animationRunning = false;
+        btnPlay.setDisable(false);
+        btnPause.setDisable(true);
+        btnReset.setDisable(false);
         System.out.println("Animation stopped");
     }
     /**
@@ -741,6 +759,9 @@ public class FXMLMainAppController{
         simulation.clearScreen();
         pointList.clear();
         animation.stop();
+        btnPlay.setDisable(false);
+        btnPause.setDisable(true);
+        btnReset.setDisable(true);
         animationRunning = false;
         if (simulation.getRenderFlag()) {
             System.out.println("Stop Render");
@@ -846,7 +867,7 @@ public class FXMLMainAppController{
             isValid = false;
         }
         //Check simulation type
-        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life"};
+        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors"};
         boolean isOneOfTypes = false;
         for(String element:simulationTypes)
             if(element.equals(info[2]))
