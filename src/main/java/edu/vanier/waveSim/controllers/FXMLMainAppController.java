@@ -7,6 +7,7 @@ import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.SimLogicWave;
+import edu.vanier.waveSim.models.SimRPC;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,11 +17,16 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
+import javafx.animation.PauseTransition;
+import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -40,6 +46,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,34 +55,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author TODO
  */
-public class FXMLSimDriverController{
+public class FXMLMainAppController{
 
-    private final static Logger logger = LoggerFactory.getLogger(FXMLSimDriverController.class);
+    private final static Logger logger = LoggerFactory.getLogger(FXMLMainAppController.class);
     
     private Stage primaryStage;
     
     private boolean animationRunning = false;
     
-    // File used to load the settings from.
-    private File fileLoad;
-
-    public File getFileLoad() {
-        return fileLoad;
-    }
-
-    public void setFileLoad(File fileLoad) {
-        this.fileLoad = fileLoad;
-    }
-    //Name of the csv file created by the user when using the save settings option
-    private String nameFile;
-
-    public String getNameFile() {
-        return nameFile;
-    }
-
-    public void setNameFile(String nameFile) {
-        this.nameFile = nameFile;
-    }
+    private final Transition pause = new PauseTransition(Duration.millis(5));
+    
     
     int scale = 1;
     int delayMillis = 1;
@@ -91,7 +80,7 @@ public class FXMLSimDriverController{
         this.settings = settings;
     }
     
-    public FXMLSimDriverController(Stage primaryStage) {
+    public FXMLMainAppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
@@ -176,7 +165,7 @@ public class FXMLSimDriverController{
     }
     
     HashSet<Point> pointList;
-    CellularLogic[] simulationsList = new CellularLogic[3];
+    CellularLogic[] simulationsList = new CellularLogic[4];
     CellularLogic simulation;
     CellularAnimTimer animation;
     
@@ -239,7 +228,7 @@ public class FXMLSimDriverController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -251,13 +240,16 @@ public class FXMLSimDriverController{
 
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        
+        SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
         simulationsList[0] = simulation;
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
+        simulationsList[3] = RPC;
+        
+        
         
         // initialize default animation object
         animation = newAnimationTimer();
@@ -272,7 +264,14 @@ public class FXMLSimDriverController{
         simTypeChoice.setValue("Simple Ripple");
         simTypeChoice.setItems(simTypeChoiceItems);
         
+        // set default btn disabled state
+        btnPause.setDisable(true);
+        btnReset.setDisable(true);
         
+        // waiting util for load points
+        pause.setOnFinished((event) -> {
+            loadPointsUtil();
+        });
         
         // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
 //        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
@@ -283,10 +282,6 @@ public class FXMLSimDriverController{
         });
         SimTabPane.widthProperty().addListener((observable) -> {
             setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
-        });
-        
-        btnPlay.setOnAction((event) -> {
-            handlePlayBtn(simulation, animation);
         });
         
         itmRenderStart.setOnAction((event) -> {
@@ -302,7 +297,11 @@ public class FXMLSimDriverController{
             launchRenderSettings();
             
         });
-         
+        
+        btnPlay.setOnAction((event) -> {
+            handlePlayBtn(simulation, animation);
+        });
+        
         btnPause.setOnAction((event) -> {
             handlePauseBtn(animation);
         });
@@ -310,26 +309,29 @@ public class FXMLSimDriverController{
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
+        
         itmSave.setOnAction((event)->{
             try {
                 try {
                     handleSaveItm(simulation);
                 } catch (FileNotFoundException ex) {
-                    java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                    java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CsvException ex) {
-                    java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                    java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (IOException ex) {
                 System.out.println(ex.toString());
             }
         });
+        
         itmLoad.setOnAction((event)->{
             try {
                 handleLoadItm(simulation);
             } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -395,7 +397,7 @@ public class FXMLSimDriverController{
             try {
                 handleGuideItm();
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         
@@ -410,9 +412,8 @@ public class FXMLSimDriverController{
             width --;
         }
         simulation.setWidth(width);
-        simulation.setScaling(simulation.getScaling());
         SimCanvas.setWidth(width);
-        simulation.clearScreen();
+        ResetScreenAndAnim(simulation, animation, scale);
         lblWidth.setText("Width: "+width);
     }
     /**TODO Documentation*/
@@ -427,9 +428,8 @@ public class FXMLSimDriverController{
         }
         int realHeight = height-HBoxHeight;
         simulation.setHeight(realHeight);
-        simulation.setScaling(simulation.getScaling());
         SimCanvas.setHeight(realHeight);
-        simulation.clearScreen();
+        ResetScreenAndAnim(simulation, animation, scale);
         lblHeight.setText("Height: "+realHeight);
     }
     
@@ -455,6 +455,10 @@ public class FXMLSimDriverController{
                 case "Conway's Game of Life" -> {
                     simulation = simulations[2];
                     return simulation;
+                }
+                case "Rock-Paper-Scissors" ->{
+                    simulation = simulations[3];
+                    return simulation;                    
                 }
                 default -> {
                     return simulation;
@@ -560,11 +564,12 @@ public class FXMLSimDriverController{
             }
             
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     /**
+     * TODO use the simulation parameter to check for valid simulation or something
      * Event that is activated when the play button is clicked.
      * The animation will play.
      * @param simulation the simulation on of the animation
@@ -578,7 +583,9 @@ public class FXMLSimDriverController{
         animation.start();
         
         pointList.clear();
- 
+        btnPlay.setDisable(true);
+        btnPause.setDisable(false);
+        btnReset.setDisable(false);
     }
     /**
      * Event that is activated when the pause button is clicked.
@@ -589,6 +596,9 @@ public class FXMLSimDriverController{
         System.out.println("Stop button pressed");
         animation.stop();
         animationRunning = false;
+        btnPlay.setDisable(false);
+        btnPause.setDisable(true);
+        btnReset.setDisable(false);
         System.out.println("Animation stopped");
     }
     /**
@@ -695,6 +705,33 @@ public class FXMLSimDriverController{
         primaryStage.setWidth(x);
         primaryStage.setHeight(y);
     }
+    
+    File fileLoad;
+
+    public File getFileLoad() {
+        return fileLoad;
+    }
+
+    public void setFileLoad(File fileLoad) {
+        this.fileLoad = fileLoad;
+    }
+    
+    private void loadPointsUtil() {
+        int x,y;
+            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
+                x=0;
+                y=0;
+                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
+                    if(counterCoordinates==0)
+                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
+                    else
+                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
+                }
+                
+                newPoint((double)x, (double)y, simulation);
+          }
+    }
+    
     /**
      * This method loads the settings from a csv file chosen by the user.
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
@@ -717,7 +754,7 @@ public class FXMLSimDriverController{
         }
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         int saveOption = 0;
-        String[] settings = reader.readAll().get(saveOption);
+        settings = reader.readAll().get(saveOption);
         verifyFileSettings(settings);
         this.primaryStage.setAlwaysOnTop(true);
         
@@ -735,21 +772,11 @@ public class FXMLSimDriverController{
             changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            //Set points
-            int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-9)/2); counterIndex++){
-                x=0;
-                y=0;
-                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
-                    if(counterCoordinates==0)
-                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
-                    else
-                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
-                }
-                System.out.println("Points: x="+x+" and y="+y);
-                
-                newPoint((double)x, (double)y, simulation);
-            }
+            
+            
+            //Set points, pause because the canvas needs to update its size
+            pause.play();
+            
             System.out.println(settings.length);
             
         }catch(Exception e){
@@ -769,6 +796,9 @@ public class FXMLSimDriverController{
         simulation.clearScreen();
         pointList.clear();
         animation.stop();
+        btnPlay.setDisable(false);
+        btnPause.setDisable(true);
+        btnReset.setDisable(true);
         animationRunning = false;
         if (simulation.getRenderFlag()) {
             System.out.println("Stop Render");
@@ -859,7 +889,7 @@ public class FXMLSimDriverController{
             isValid = false;
         }
         //Check simulation type
-        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life"};
+        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors"};
         boolean isOneOfTypes = false;
         for(String element:simulationTypes)
             if(element.equals(info[2]))

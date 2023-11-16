@@ -1,7 +1,7 @@
-# Cellular automation Simulator
+# Cellular Automation Simulator
 ## Simualtions:
-*# Wave Simulation
-*# Conway's Game of Life
+* ## Wave Simulation
+* ## Conway's Game of Life
 
 
 ### Works Cited
