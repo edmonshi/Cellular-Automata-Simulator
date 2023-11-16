@@ -16,9 +16,9 @@ import javafx.stage.Stage;
 public class FXMLRenderSettingsController {
     int frameLimit = Integer.MAX_VALUE;
     Stage self;
-    FXMLSimDriverController controller;
+    FXMLMainAppController controller;
 
-    public FXMLRenderSettingsController(FXMLSimDriverController controller) {
+    public FXMLRenderSettingsController(FXMLMainAppController controller) {
         this.controller = controller;
     }
     

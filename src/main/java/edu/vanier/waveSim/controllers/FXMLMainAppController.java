@@ -601,10 +601,26 @@ public class FXMLMainAppController{
         btnReset.setDisable(false);
         System.out.println("Animation stopped");
     }
+    String nameFile;
+
+    public String getNameFile() {
+        return nameFile;
+    }
+
+    public void setNameFile(String nameFile) {
+        this.nameFile = nameFile;
+    }
+    
     /**
      * This method saves the settings of a simulation in a CSV File.
      * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
-     * Source used as an example to learn how to use PrintWriter to write in a Csv File: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
+     * Source used as an example to learn how to use PrintWriter to write in a Csv File: 
+     * 1) - Few examples: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
+     * 2) - Putting conditions in paratheses of the try-catch: https://www.baeldung.com/java-csv
+     * 3) - Using .write() method: https://www.javatpoint.com/java-printwriter-write-method#:~:text=Java%20PrintWriter%20write(char%20%5B%5D%20buf%2C%20int%20off%2C%20int,of%20an%20array%20of%20characters.
+     * Sources To use file chooser and directory chooser:
+     * 1) https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+     * 2) https://docs.oracle.com/javase/8/javafx/api/javafx/stage/DirectoryChooser.html
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException, FileNotFoundException, CsvException {
         System.out.println("Save button clicked");

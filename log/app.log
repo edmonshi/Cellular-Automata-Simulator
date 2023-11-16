@@ -57,3 +57,7 @@
 09:45:31.561  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
 09:45:31.564  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
 09:45:31.566  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+11:07:15.521  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+11:07:15.763  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+11:07:15.765  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+11:07:15.768  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
