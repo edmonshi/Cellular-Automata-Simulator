@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author TODO
  */
-public class FXMLSimDriverController{
+public class FXMLMainAppController{
 
-    private final static Logger logger = LoggerFactory.getLogger(FXMLSimDriverController.class);
+    private final static Logger logger = LoggerFactory.getLogger(FXMLMainAppController.class);
     
     private Stage primaryStage;
     
@@ -70,7 +70,7 @@ public class FXMLSimDriverController{
         this.settings = settings;
     }
     
-    public FXMLSimDriverController(Stage primaryStage) {
+    public FXMLMainAppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
@@ -294,9 +294,9 @@ public class FXMLSimDriverController{
                 try {
                     handleSaveItm(simulation);
                 } catch (FileNotFoundException ex) {
-                    java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                    java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (CsvException ex) {
-                    java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                    java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (IOException ex) {
                 System.out.println(ex.toString());
@@ -306,7 +306,7 @@ public class FXMLSimDriverController{
             try {
                 handleLoadItm(simulation);
             } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
@@ -374,7 +374,7 @@ public class FXMLSimDriverController{
             try {
                 handleGuideItm();
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         
@@ -529,7 +529,7 @@ public class FXMLSimDriverController{
             }
             
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(FXMLSimDriverController.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
