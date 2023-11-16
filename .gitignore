@@ -218,3 +218,4 @@ DerivedData
 .update-config
 
 Contrib/**/
+log/app.log
