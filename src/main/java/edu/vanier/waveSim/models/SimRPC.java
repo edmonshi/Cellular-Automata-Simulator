@@ -22,7 +22,7 @@ public class SimRPC extends CellularLogic {
     private int nreOfDifferentEntities = 4;
     private int nreOfNeededPredator = 1;
     private int nreOfRandomPredator = 1;
-    Color[] colors = {Color.ORANGE, Color.YELLOW, Color.RED, Color.BLUE, Color.PURPLE, Color.GREEN, Color.GRAY, Color.HOTPINK};
+    Color[] colors = {Color.ORANGE, Color.YELLOW, Color.BLACK, Color.BLUE, Color.PURPLE, Color.GREEN, Color.GRAY, Color.HOTPINK};
     private final static Logger logger = LoggerFactory.getLogger(SimRPC.class);
     private Random random = new Random();
 
