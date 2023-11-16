@@ -13,10 +13,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -26,7 +24,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -301,9 +298,9 @@ public class FXMLSimDriverController{
         });
         
         itmRenderSettings.setOnAction((event) -> {
-            /*
+            
             launchRenderSettings();
-            */
+            
         });
          
         btnPause.setOnAction((event) -> {
