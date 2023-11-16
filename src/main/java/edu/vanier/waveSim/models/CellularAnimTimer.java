@@ -4,7 +4,7 @@
  */
 package edu.vanier.waveSim.models;
 
-import edu.vanier.waveSim.controllers.FXMLSimDriverController;
+import edu.vanier.waveSim.controllers.FXMLMainAppController;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +19,7 @@ import javafx.animation.AnimationTimer;
 public class CellularAnimTimer extends AnimationTimer {
 
     private CellularLogic logic;
-    private FXMLSimDriverController controller;
+    private FXMLMainAppController controller;
     private long delayMillis = 1;
     
     // use internally to regulate speed
@@ -38,7 +38,7 @@ public class CellularAnimTimer extends AnimationTimer {
      * Constructor of CellularAnimTimer
      * @param logic
      */
-    public CellularAnimTimer(CellularLogic logic, FXMLSimDriverController controller) {
+    public CellularAnimTimer(CellularLogic logic, FXMLMainAppController controller) {
         this.logic = logic;
         this.controller = controller;
     }

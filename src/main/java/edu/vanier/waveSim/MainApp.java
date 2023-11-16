@@ -1,11 +1,11 @@
 package edu.vanier.waveSim;
 
-import edu.vanier.waveSim.deprecated.MainAppController;
+import edu.vanier.waveSim.controllers.FXMLMainAppController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,11 @@ public class MainApp extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
 
+    FXMLMainAppController SDC;
     /**
-     * Override the abstract method start(Stage primaryStage) of Application.
-     * The main entry point for the JavaFX application.
+     * Override the abstract method start(Stage primaryStage) of Application.The main entry point for the JavaFX application.
      * 
-     * @param primaryStage the primary stage for this application, onto which the application scene can be set. 
-     * @exception Exception - If something goes wrong
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set.
      */
     @Override
     public void start(Stage primaryStage) {
@@ -35,18 +34,26 @@ public class MainApp extends Application {
             logger.info("Bootstrapping the application...");
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainApp_layout.fxml"));
-            loader.setController(new MainAppController());
-            Pane root = loader.load();
-            //-- 2) Create and set the scene to the stage.
-            Scene scene = new Scene(root, 500, 300);
-            primaryStage.setScene(scene);
-            primaryStage.sizeToScene();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppFXML.fxml"));
             primaryStage.setTitle("Cellular Automation Simulations Explorer");
+            SDC = new FXMLMainAppController(primaryStage);
+            loader.setController(SDC);
+            BorderPane root = loader.load();
+            
+            //-- 2) Create and set the scene to the stage.
+            Scene scene = new Scene(root, 700, 526);
+            primaryStage.setScene(scene);
+            primaryStage.setAlwaysOnTop(true);
+            primaryStage.sizeToScene();
             primaryStage.show();
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+    }
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        SDC.stopAnimation();
     }
     
     /**

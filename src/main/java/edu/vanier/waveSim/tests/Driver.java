@@ -1,6 +1,6 @@
-package edu.vanier.waveSim.ui;
+package edu.vanier.waveSim.tests;
 
-import edu.vanier.waveSim.controllers.FXMLSimDriverController;
+import edu.vanier.waveSim.controllers.FXMLMainAppController;
 import java.io.IOException;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -22,7 +22,7 @@ public class Driver extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(Driver.class);
 
-    FXMLSimDriverController SDC;
+    FXMLMainAppController SDC;
     /**
      * Override the abstract method start(Stage primaryStage) of Application.The main entry point for the JavaFX application.
      * 
@@ -34,9 +34,9 @@ public class Driver extends Application {
             logger.info("Bootstrapping the application...");
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppTest.fxml"));
-            primaryStage.setTitle("Wave simulator");
-            SDC = new FXMLSimDriverController(primaryStage);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainAppFXML.fxml"));
+            primaryStage.setTitle("Cellular Automation Simulations Explorer");
+            SDC = new FXMLMainAppController(primaryStage);
             loader.setController(SDC);
             BorderPane root = loader.load();
             
