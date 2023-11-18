@@ -24,7 +24,7 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Text layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click on the screen to create new points to start the simulation from. Press &quot;play&quot; or &quot;render&quot; to run the simulation. Rendering will save image files into the root folder of the app in a new unique folder. Use the save settings feature to recreate an identical simulation starting point. Import settings to open a previously created simulation settings file. You can modify the frame speed for slower, heavier simualtions." wrappingWidth="576.1918334960936" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="4.0" />
+                              <Text layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click on the screen to create new points to start the simulation from. Press &quot;play&quot; or &quot;render&quot; to run the simulation. Rendering will save image files into the root folder of the app in a new unique folder. Use the frme limit per simulation to modify the amount of frames rendred. Use the save settings feature to recreate an identical simulation starting point. Import settings to open a previously created simulation settings file. You can modify the frame speed for slower, heavier simualtions." wrappingWidth="576.1918334960936" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="4.0" />
                            </children></AnchorPane>
                   </content>
                 </TitledPane>

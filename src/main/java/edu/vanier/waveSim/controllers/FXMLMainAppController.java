@@ -1,4 +1,4 @@
-package edu.vanier.waveSim.controllers;
+                                                                    package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -24,9 +24,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -44,7 +41,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.slf4j.Logger;
@@ -175,52 +171,31 @@ public class FXMLMainAppController{
     }
     
 //    get elements from FXML
-    @FXML
-    private Canvas SimCanvas;
-    @FXML
-    private Button btnPlay;
-    @FXML
-    private Button btnPause;
-    @FXML
-    private Button btnReset;
-    @FXML
-    private ChoiceBox scaleChoice;
-    @FXML
-    private ChoiceBox simTypeChoice;
-    @FXML
-    private Slider sldrDamping;
-    @FXML
-    private Label lblDamping;
-    @FXML
-    private Slider sldrSpeed;
-    @FXML
-    private Label lblSpeed;
-    @FXML
-    private MenuItem itmSave;
-    @FXML
-    private MenuItem itmLoad;
-    @FXML
-    private MenuItem itmRenderStart;
-    @FXML
-    private MenuItem itmStopRender;
-    @FXML
-    private MenuItem itmRenderSettings;
-    @FXML
-    private Button btnSaveRender;
-    @FXML
-    private Button btnPauseRender;
-    @FXML
-    private Button btnResetRender;
-    @FXML
-    private Pane SimCanvasPane;
-    @FXML
-    private Label lblWi;
-    @FXML
-    private Label lblHi;
-    @FXML
-    private TabPane SimTabPane;
-    @FXML
-    private MenuItem guideItm;
+    @FXML private Canvas SimCanvas;
+    @FXML private Button btnPlay;
+    @FXML private Button btnPause;
+    @FXML private Button btnReset;
+    @FXML private ChoiceBox scaleChoice;
+    @FXML private ChoiceBox simTypeChoice;
+    @FXML private Slider sldrDamping;
+    @FXML private Label lblDamping;
+    @FXML private Slider sldrSpeed;
+    @FXML private Label lblSpeed;
+    @FXML private MenuItem itmSave;
+    @FXML private MenuItem itmLoad;
+    @FXML private MenuItem itmRenderStart;
+    @FXML private MenuItem itmStopRender;
+    @FXML private Button btnSaveRender;
+    @FXML private Button btnPauseRender;
+    @FXML private Button btnResetRender;
+    @FXML private Pane SimCanvasPane;
+    @FXML private Label lblWi;
+    @FXML private Label lblHi;
+    @FXML private TabPane SimTabPane;
+    @FXML private MenuItem guideItm;
+    @FXML private TextField txtBoxRippleLimit;
+    @FXML private TextField txtBoxConwayLimit;
+    @FXML private TextField txtBoxRPCLimit;
     @FXML
     private Label amplitudeLbl;
     @FXML
@@ -231,6 +206,10 @@ public class FXMLMainAppController{
     
     //list of simulation types, simple wave, etc
     ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors");
+    
+    
+    
+    
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -294,12 +273,6 @@ public class FXMLMainAppController{
             handleRenderStop();
         });
         
-        itmRenderSettings.setOnAction((event) -> {
-            
-            launchRenderSettings();
-            
-        });
-        
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
         });
@@ -312,13 +285,24 @@ public class FXMLMainAppController{
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
+        txtBoxRippleLimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxRippleLimit);
+            WaveSim.setFrameLimit(frameLimit);
+        });
+        txtBoxConwayLimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxConwayLimit);
+            Conway.setFrameLimit(frameLimit);
+        });
+        txtBoxRPCLimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxRPCLimit);
+            RPC.setFrameLimit(frameLimit);
+        });
+        
         itmSave.setOnAction((event)->{
             try {
                 try {
                     handleSaveItm(simulation);
-                } catch (FileNotFoundException ex) {
-                    java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (CsvException ex) {
+                } catch (FileNotFoundException | CsvException ex) {
                     java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (IOException ex) {
@@ -499,15 +483,17 @@ public class FXMLMainAppController{
                 // add the point to the ArrayList of current points.
                 pointList.add(clickPoint);
             }
-            // set the point in the simulation
-            simulation.setPoint(xFloor, yFloor);
-            // add the point to the canvas as Color.RED
-            // the scaling must be adjusted because colorCell uses array coorrdinates, not canvas coordinates
-            simulation.colorCell(xFloorScaled, yFloorScaled, Color.RED);
+            if (simulation != simulationsList[3]) {
+                // set the point in the simulation
+                simulation.setPoint(xFloor, yFloor);
+                // add the point to the canvas as Color.RED
+                // the scaling must be adjusted because colorCell uses array coorrdinates, not canvas coordinates
+                simulation.colorCell(xFloorScaled, yFloorScaled, Color.RED);
+            }
         }else if (animationRunning == false && pointList.contains(clickPoint)){
             pointList.remove(clickPoint);
             // if the point was removed from the array, remove from canvas.
-            if (simulation.removePoint(xFloor, yFloor)) {
+            if (simulation.removePoint(xFloor, yFloor) && simulation != simulationsList[3]) {
                 simulation.colorCell(xFloorScaled, yFloorScaled, simulation.getBackgroundColor());
             }
         }
@@ -549,37 +535,27 @@ public class FXMLMainAppController{
     public void setFrameLim(int frameLim) {
         this.frameLim = frameLim;
     }
+    
     /**
-     * TODO
+     * Validate integer from TextField as valid int
+     * @param input the input String from the TextField
+     * @param box the instance of the TextField
      */
-    private void launchRenderSettings() {
+    private int validateFrameLimit(String input, TextField box) {
+        if ("max".equals(input)) return Integer.MAX_VALUE;
         try {
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/FXMLRenderSettings.fxml"));
-            FXMLRenderSettingsController controller = new FXMLRenderSettingsController(this);
-            this.setFrameLim(controller.getFrameLimit());
-            loader.setController(controller);
-            
-            // could throw exception
-            Pane root = loader.load();
-            
-            Scene scene = new Scene(root, 400,400);
-            Stage renderSettings = new Stage();
-            renderSettings.setScene(scene);
-            renderSettings.setTitle("Rendering Settings");
-            renderSettings.setAlwaysOnTop(true);
-            renderSettings.sizeToScene();
-            renderSettings.initModality(Modality.APPLICATION_MODAL);
-            controller.setSelf(renderSettings);
-            renderSettings.showAndWait();
-            
-            for (CellularLogic sim: simulationsList) {
-                sim.setFrameLimit(controller.getFrameLimit());
+            int inputInt = Integer.parseInt(input);
+            if (inputInt > 0) {
+                return inputInt;
+            }else {
+                throw(new NumberFormatException());
             }
-            
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (NumberFormatException e) {
+            box.setText("max");
+            return Integer.MAX_VALUE;
         }
     }
+    
     
     /**
      * TODO use the simulation parameter to check for valid simulation or something
@@ -693,7 +669,7 @@ public class FXMLMainAppController{
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
-                    writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
+                writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
             //Write the properties of the canvas and the stage
             writer.write(Double.toString(simulation.getOperatingCanvas().getWidth())+",");
