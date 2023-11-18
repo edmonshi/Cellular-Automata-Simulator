@@ -19,7 +19,8 @@ public class SimLogicWave extends CellularLogic{
     /**Some damping value 0 to 1 non-integer
      */
     private float damping = (float) 0.98;
-    private final Color simColor = Color.BLUE;
+    private int amplitude = 1;
+    private Color simColor = adjustColorAmplitude(Color.BLUE);
     
     private final static Logger logger = LoggerFactory.getLogger(SimLogicWave.class);
     
@@ -39,6 +40,31 @@ public class SimLogicWave extends CellularLogic{
      */
     public void setDamping(float damping) {
         this.damping = damping;
+    }
+
+    public int getAmplitude() {
+        return amplitude;
+    }
+
+    public void setAmplitude(int amplitude) {
+        this.amplitude = amplitude;
+        simColor = adjustColorAmplitude(Color.BLUE);
+    }
+    public Color adjustColorAmplitude(Color initial){
+        Color finColor = initial;
+        if(getAmplitude()==5){
+            return finColor;
+        }
+        else if(getAmplitude()>5){
+            for(int counter=0; counter<getAmplitude()-5; counter++){
+                finColor = finColor.darker();
+            }
+        }
+        else
+            for(int counter=5;counter>getAmplitude(); counter--){
+                finColor = finColor.brighter();
+            }
+        return finColor;
     }
 
 
@@ -89,12 +115,13 @@ public class SimLogicWave extends CellularLogic{
                 if(pixelValue != 0) {
                     // sim Color
                     color = simColor;
+                    // getHue(). getSAturation(), getBrightness(), getOpacity();
                 } else{
                     // background Color
                     color = backgroundColor;
                 }
                 // get colour update
-                colorCell(x, y, color); // TODO colour mapping
+                colorCell(x,y,color);// TODO colour mapping
                 
             }
         }

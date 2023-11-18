@@ -64,8 +64,6 @@ public class FXMLMainAppController{
     private boolean animationRunning = false;
     
     private final Transition pause = new PauseTransition(Duration.millis(5));
-    
-    
     int scale = 1;
     int delayMillis = 1;
     int sceneHeight;
@@ -223,6 +221,10 @@ public class FXMLMainAppController{
     private TabPane SimTabPane;
     @FXML
     private MenuItem guideItm;
+    @FXML
+    private Label amplitudeLbl;
+    @FXML
+    private Slider amplitudeSldr;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -343,6 +345,17 @@ public class FXMLMainAppController{
                       // map damping
                       WaveSim.setDamping(1-newValue.floatValue());
                   }
+        });
+        
+        amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
+            @Override
+            public void changed(
+                    ObservableValue<? extends Number> observableValue,
+                    Number oldValue,
+                    Number newValue){
+                WaveSim.setAmplitude((int) amplitudeSldr.getValue());
+                
+            }
         });
         
         // add listener to speed slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
