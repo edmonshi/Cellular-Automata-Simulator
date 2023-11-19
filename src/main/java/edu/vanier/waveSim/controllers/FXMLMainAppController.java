@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import javafx.animation.PauseTransition;
 import javafx.animation.Transition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +37,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -379,12 +381,15 @@ public class FXMLMainAppController{
         });
         guideItm.setOnAction((event)->{
             try {
-                handleGuideItm();
+                handleGuideItm(guideItm);
             } catch (IOException ex) {
                 java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         
+        primaryStage.setOnCloseRequest(event -> {
+            System.exit(0);
+        });
     }
     
     /**TODO Documentation*/
@@ -996,17 +1001,22 @@ public class FXMLMainAppController{
     /**
      * This method creates a help dialog for the user.
      */
-    private void handleGuideItm() throws IOException{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
+    private void handleGuideItm(MenuItem guideItm) throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide2.fxml"));
         loader.setController(new FXMLHelpGuideController());
         Pane root = loader.load();
+        guideItm.setDisable(true);
         
-        Scene scene = new Scene(root, 400,400);
+        Scene scene = new Scene(root, 600,400);
         Stage guideDialog = new Stage();
         guideDialog.setTitle("Help Dialog");
         guideDialog.setScene(scene);
         guideDialog.setAlwaysOnTop(true);
         guideDialog.sizeToScene();
+        guideDialog.setResizable(false);
+        guideDialog.setOnCloseRequest(event -> {
+        guideItm.setDisable(false);
+        });
         guideDialog.showAndWait();
     }
 }

@@ -220,3 +220,4 @@ DerivedData
 Contrib/**/
 log/app.log
 *.log
+log/app.log
