@@ -14,10 +14,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -38,6 +44,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -62,6 +70,8 @@ public class FXMLMainAppController{
     private boolean animationRunning = false;
     
     private final Transition pause = new PauseTransition(Duration.millis(5));
+    
+    private boolean hasLoadedViewFolder = false;
     
     
     int scale = 1;
@@ -162,10 +172,74 @@ public class FXMLMainAppController{
         
     }
     
-    HashSet<Point> pointList;
-    CellularLogic[] simulationsList = new CellularLogic[4];
-    CellularLogic simulation;
-    CellularAnimTimer animation;
+    private HashSet<Point> pointList;
+    private CellularLogic[] simulationsList = new CellularLogic[4];
+    private CellularLogic simulation;
+    private CellularAnimTimer animation;
+    private Integer viewRenderFrameDelay = 100;
+    private EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame;
+    private Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay));
+    
+    private List<String> folderFiles = new ArrayList<String>();
+    private String csvViewRender = null;
+    private int imageSequenceIndex = 0;
+    
+    private void nextViewRenderFrame(ActionEvent event) {
+        if (!hasLoadedViewFolder) {
+            return;
+        }
+        System.out.println(folderFiles.size());
+        if (imageSequenceIndex < folderFiles.size()) {
+            imageViewSequence.setImage(new Image(folderFiles.get(imageSequenceIndex)));
+            imageSequenceIndex++;
+        }else {
+            imageSequenceIndex = 0; // restart from beginning
+        }
+    }
+    
+    private boolean getFileList() {
+        File folder = new File("");
+        Stage stage = new Stage();
+        DirectoryChooser dc = new DirectoryChooser();
+        primaryStage.setAlwaysOnTop(false);
+        stage.setAlwaysOnTop(true);
+        dc.setInitialDirectory(dc.showDialog(stage));
+        stage.setAlwaysOnTop(false);
+        primaryStage.setAlwaysOnTop(true);
+        folder = dc.getInitialDirectory();
+        System.out.println(folder);
+        if (!folder.exists() && !folder.canRead()) {
+            return false;
+        }
+        
+        int csvs = 0;
+        File[] files = folder.listFiles();
+        Arrays.sort(files, Comparator.comparingLong(File::lastModified));
+        // get list of subfolders
+        folderFiles.clear();
+        for (File file:files) {
+            folderFiles.add(file.getName());
+        }
+        
+        System.out.println(folderFiles.toString());
+        for (String nFile:folderFiles) {
+            if (!nFile.endsWith(".bmp")) {
+                if (nFile.endsWith(".csv")) {
+                    csvs++;
+                    folderFiles.remove(nFile);
+                    if (csvs > 1) {
+                        //bad, more than one csv
+                        csvViewRender = null;
+                    }
+                    csvViewRender = nFile;
+                }
+                folderFiles.remove(nFile);
+            }else {
+                folderFiles.set(folderFiles.indexOf(nFile), folder + "\\" + nFile);
+            }
+        }
+        return !folderFiles.isEmpty();
+    }
     
     /**
      * Utility for creating new refreshed animation timers
@@ -200,6 +274,56 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxRippleLimit;
     @FXML private TextField txtBoxConwayLimit;
     @FXML private TextField txtBoxRPCLimit;
+    @FXML
+    private Canvas SimCanvas;
+    @FXML
+    private Button btnPlay;
+    @FXML
+    private Button btnPause;
+    @FXML
+    private Button btnReset;
+    @FXML
+    private ChoiceBox scaleChoice;
+    @FXML
+    private ChoiceBox simTypeChoice;
+    @FXML
+    private Slider sldrDamping;
+    @FXML
+    private Label lblDamping;
+    @FXML
+    private Slider sldrSpeed;
+    @FXML
+    private Label lblSpeed;
+    @FXML
+    private MenuItem itmSave;
+    @FXML
+    private MenuItem itmLoad;
+    @FXML
+    private MenuItem itmRenderStart;
+    @FXML
+    private MenuItem itmStopRender;
+    @FXML
+    private MenuItem itmRenderSettings;
+    @FXML
+    private Button btnPlayRender;
+    @FXML
+    private Button btnPauseRender;
+    @FXML
+    private Button btnResetRender;
+    @FXML
+    private Button btnLoad;
+    @FXML
+    private Pane SimCanvasPane;
+    @FXML
+    private Label lblWi;
+    @FXML
+    private Label lblHi;
+    @FXML
+    private TabPane SimTabPane;
+    @FXML
+    private MenuItem guideItm;
+    @FXML
+    private ImageView imageViewSequence;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -230,7 +354,7 @@ public class FXMLMainAppController{
         simulationsList[2] = Conway;
         simulationsList[3] = RPC;
         
-        
+        viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
         // initialize default animation object
         animation = newAnimationTimer();
@@ -254,10 +378,11 @@ public class FXMLMainAppController{
             loadPointsUtil();
         });
         
-        // https://stackoverflow.com/questions/37678704/how-to-embed-javafx-canvas-into-borderpane
-//        SimCanvas.widthProperty().bind(SimCanvasPane.widthProperty());
-//        SimCanvas.heightProperty().bind(SimCanvasPane.heightProperty());
-  
+        // handle play render button
+        btnPlayRender.setOnAction((event) -> {
+            
+        });
+                  
         SimTabPane.heightProperty().addListener((observable) -> {
             setHeight(SimTabPane.heightProperty().getValue().intValue(), simulation, animation, lblHi);
         });
@@ -272,6 +397,7 @@ public class FXMLMainAppController{
         itmStopRender.setOnAction((event) -> {
             handleRenderStop();
         });
+        
         
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(simulation, animation);
@@ -296,6 +422,35 @@ public class FXMLMainAppController{
         txtBoxRPCLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxRPCLimit);
             RPC.setFrameLimit(frameLimit);
+        btnLoad.setOnAction((event) -> {
+            
+            hasLoadedViewFolder = getFileList();
+            
+        });
+        
+        btnPauseRender.setDisable(true);
+        btnResetRender.setDisable(true);
+        
+        btnPlayRender.setOnAction((event) -> {
+            viewRenderTimer.play();
+            btnPlayRender.setDisable(true);
+            btnPauseRender.setDisable(false);
+            btnResetRender.setDisable(false);
+        });
+        
+        btnPauseRender.setOnAction((event) -> {
+            viewRenderTimer.pause();
+            btnPlayRender.setDisable(false);
+            btnPauseRender.setDisable(true);
+            btnResetRender.setDisable(true);
+        });
+        
+        btnResetRender.setOnAction((event) -> {
+            viewRenderTimer.stop();
+            btnPlayRender.setDisable(false);
+            btnPauseRender.setDisable(true);
+            btnResetRender.setDisable(true);
+            imageSequenceIndex = 0;
         });
         
         itmSave.setOnAction((event)->{
