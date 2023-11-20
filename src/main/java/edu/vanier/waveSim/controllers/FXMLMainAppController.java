@@ -31,6 +31,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -274,56 +276,9 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxRippleLimit;
     @FXML private TextField txtBoxConwayLimit;
     @FXML private TextField txtBoxRPCLimit;
-    @FXML
-    private Canvas SimCanvas;
-    @FXML
-    private Button btnPlay;
-    @FXML
-    private Button btnPause;
-    @FXML
-    private Button btnReset;
-    @FXML
-    private ChoiceBox scaleChoice;
-    @FXML
-    private ChoiceBox simTypeChoice;
-    @FXML
-    private Slider sldrDamping;
-    @FXML
-    private Label lblDamping;
-    @FXML
-    private Slider sldrSpeed;
-    @FXML
-    private Label lblSpeed;
-    @FXML
-    private MenuItem itmSave;
-    @FXML
-    private MenuItem itmLoad;
-    @FXML
-    private MenuItem itmRenderStart;
-    @FXML
-    private MenuItem itmStopRender;
-    @FXML
-    private MenuItem itmRenderSettings;
-    @FXML
-    private Button btnPlayRender;
-    @FXML
-    private Button btnPauseRender;
-    @FXML
-    private Button btnResetRender;
-    @FXML
-    private Button btnLoad;
-    @FXML
-    private Pane SimCanvasPane;
-    @FXML
-    private Label lblWi;
-    @FXML
-    private Label lblHi;
-    @FXML
-    private TabPane SimTabPane;
-    @FXML
-    private MenuItem guideItm;
-    @FXML
-    private ImageView imageViewSequence;
+    @FXML private ImageView imageViewSequence;
+    @FXML private Button btnPlayRender;
+    @FXML private Button btnLoad;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -422,6 +377,7 @@ public class FXMLMainAppController{
         txtBoxRPCLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxRPCLimit);
             RPC.setFrameLimit(frameLimit);
+        });
         btnLoad.setOnAction((event) -> {
             
             hasLoadedViewFolder = getFileList();
@@ -545,7 +501,7 @@ public class FXMLMainAppController{
         primaryStage.setOnCloseRequest(event -> {
             System.exit(0);
         });
-    }
+}
     
     /**TODO Documentation*/
     private void setWidth(int width, CellularLogic simulation, CellularAnimTimer animation, Label lblWidth) {
