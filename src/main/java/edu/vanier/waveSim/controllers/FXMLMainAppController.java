@@ -6,6 +6,7 @@ import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
+import edu.vanier.waveSim.models.SimLangtonAnt;
 import edu.vanier.waveSim.models.SimLogicWave;
 import edu.vanier.waveSim.models.SimRPC;
 import java.io.File;
@@ -159,7 +160,7 @@ public class FXMLMainAppController{
     }
     
     HashSet<Point> pointList;
-    CellularLogic[] simulationsList = new CellularLogic[4];
+    CellularLogic[] simulationsList = new CellularLogic[5];
     CellularLogic simulation;
     CellularAnimTimer animation;
     
@@ -205,7 +206,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Langton's Ant");
     
     
     
@@ -222,6 +223,7 @@ public class FXMLMainAppController{
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimLangtonAnt SLA = new SimLangtonAnt(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
@@ -229,6 +231,7 @@ public class FXMLMainAppController{
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
         simulationsList[3] = RPC;
+        simulationsList[4] = SLA;
         
         
         
@@ -456,6 +459,10 @@ public class FXMLMainAppController{
                 case "Rock-Paper-Scissors" ->{
                     simulation = simulations[3];
                     return simulation;                    
+                }
+                case "Langton's Ant"->{
+                    simulation = simulations[4];
+                    return simulation;
                 }
                 default -> {
                     return simulation;

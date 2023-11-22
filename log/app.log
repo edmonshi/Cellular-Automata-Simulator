@@ -93,3 +93,118 @@
 17:10:10.061  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
 17:10:10.062  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
 17:10:10.064  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:10:45.717  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:10:45.944  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:10:45.945  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:10:45.946  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:13:48.080  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:13:48.324  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:13:48.325  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:13:48.327  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:13:48.335  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:13:48.336  [ERROR] e.v.w.MainApp   msg: 
+/C:/Users/loovd/OneDrive/Documents/GitHub/wave-simulation/build/resources/main/fxml/mainAppFXML.fxml
+
+javafx.fxml.LoadException: 
+/C:/Users/loovd/OneDrive/Documents/GitHub/wave-simulation/build/resources/main/fxml/mainAppFXML.fxml
+
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2722)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2692)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531)
+	at edu.vanier.waveSim.MainApp.start(MainApp.java:41)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:839)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:483)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:456)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:455)
+	at javafx.graphics@20.0.2/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95)
+	at javafx.graphics@20.0.2/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics@20.0.2/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: java.lang.reflect.InvocationTargetException: null
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at com.sun.javafx.reflect.Trampoline.invoke(MethodUtil.java:72)
+	at jdk.internal.reflect.GeneratedMethodAccessor2.invoke(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at javafx.base@20.0.2/com.sun.javafx.reflect.MethodUtil.invoke(MethodUtil.java:270)
+	at javafx.fxml@20.0.2/com.sun.javafx.fxml.MethodHelper.invoke(MethodHelper.java:84)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2688)
+	... 12 common frames omitted
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4
+	at edu.vanier.waveSim.controllers.FXMLMainAppController.initialize(FXMLMainAppController.java:234)
+	... 23 common frames omitted
+15:14:22.594  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:14:22.816  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:14:22.818  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:14:22.825  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:14:22.827  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:16:46.896  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:16:47.141  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:16:47.143  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:16:47.151  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:16:47.153  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:23:19.456  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:23:19.689  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:23:19.690  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:23:19.691  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:23:19.699  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:25:36.268  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:25:36.508  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:25:36.509  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:25:36.510  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:25:36.518  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:27:56.644  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:27:56.878  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:27:56.878  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:27:56.879  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:27:56.888  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:29:25.065  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:29:25.328  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:29:25.329  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:29:25.337  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:29:25.340  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:30:07.812  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:30:08.073  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:30:08.074  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:30:08.076  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:30:08.084  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+15:31:40.987  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+15:31:41.233  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+15:31:41.234  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+15:31:41.241  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+15:31:41.243  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+16:01:29.576  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+16:01:29.820  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+16:01:29.821  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+16:01:29.829  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+16:01:29.831  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+16:02:06.774  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+16:02:07.001  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+16:02:07.002  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+16:02:07.003  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+16:02:07.011  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+16:04:45.962  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+16:04:46.208  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+16:04:46.209  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+16:04:46.216  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+16:04:46.218  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+16:05:33.866  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+16:05:34.090  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+16:05:34.090  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+16:05:34.091  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+16:05:34.098  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+16:06:07.126  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+16:06:07.354  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+16:06:07.355  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+16:06:07.356  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+16:06:07.364  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
+16:08:28.210  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+16:08:28.455  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+16:08:28.457  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+16:08:28.466  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+16:08:28.469  [INFO ] e.v.w.m.SimLangtonAnt msg: scaling is not set, setting to 1 by default
