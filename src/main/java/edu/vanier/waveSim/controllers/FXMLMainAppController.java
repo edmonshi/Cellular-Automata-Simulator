@@ -289,7 +289,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Langton's Ant");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire");
     
     
     
@@ -578,7 +578,7 @@ public class FXMLMainAppController{
                     simulation = simulations[3];
                     return simulation;                    
                 }
-                case "Langton's Ant"->{
+                case "Forest Fire"->{
                     simulation = simulations[4];
                     return simulation;
                 }

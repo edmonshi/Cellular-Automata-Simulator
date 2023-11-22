@@ -258,3 +258,23 @@ Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for l
 16:51:19.531  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
 16:51:19.541  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
 16:51:19.543  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+18:35:31.632  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+18:35:31.760  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+18:35:31.761  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+18:35:31.762  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+18:35:31.763  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+18:40:13.898  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+18:40:14.027  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+18:40:14.029  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+18:40:14.030  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+18:40:14.034  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+18:40:40.696  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+18:40:40.826  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+18:40:40.827  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+18:40:40.828  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+18:40:40.829  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+18:41:39.833  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+18:41:39.959  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+18:41:39.960  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+18:41:39.961  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+18:41:39.967  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
