@@ -39,7 +39,7 @@ public class DiffusionLimitedAggregation extends CellularLogic {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
                     Random random = new Random();
                     int chance = random.nextInt(100);
-                    if (chance >= 92) {
+                    if (chance >= 90) {
                         this.current[counterX][counterY] = 1;
                         colorCell(counterX, counterY, Color.BLUE);
                     } else {
