@@ -9,6 +9,7 @@ import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.ForestFire;
 import edu.vanier.waveSim.models.SimLogicWave;
 import edu.vanier.waveSim.models.SimRPC;
+import edu.vanier.waveSim.models.DiffusionLimitedAggregation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -176,7 +177,7 @@ public class FXMLMainAppController{
     }
     
     private HashSet<Point> pointList;
-    private CellularLogic[] simulationsList = new CellularLogic[5];
+    private CellularLogic[] simulationsList = new CellularLogic[6];
     private CellularLogic simulation;
     private CellularAnimTimer animation;
     private Integer viewRenderFrameDelay = 100;
@@ -289,7 +290,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Langton's Ant");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation");
     
     
     
@@ -307,6 +308,7 @@ public class FXMLMainAppController{
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ForestFire SLA = new ForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        DiffusionLimitedAggregation DLA = new DiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
@@ -315,6 +317,7 @@ public class FXMLMainAppController{
         simulationsList[2] = Conway;
         simulationsList[3] = RPC;
         simulationsList[4] = SLA;
+        simulationsList[5] = DLA;
         
         viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
@@ -578,8 +581,12 @@ public class FXMLMainAppController{
                     simulation = simulations[3];
                     return simulation;                    
                 }
-                case "Langton's Ant"->{
+                case "Forest Fire"->{
                     simulation = simulations[4];
+                    return simulation;
+                }
+                case "Diffusion Limited Aggregation"->{
+                    simulation = simulations[5];
                     return simulation;
                 }
                 default -> {

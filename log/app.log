@@ -258,3 +258,67 @@ Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for l
 16:51:19.531  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
 16:51:19.541  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
 16:51:19.543  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+19:47:34.537  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+19:47:34.681  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+19:47:34.682  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:47:34.683  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+19:47:34.684  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+19:47:34.690  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:47:34.690  [ERROR] e.v.w.MainApp   msg: 
+/C:/Users/edmon/Documents/GitHub/wave-simulation/build/resources/main/fxml/mainAppFXML.fxml
+
+javafx.fxml.LoadException: 
+/C:/Users/edmon/Documents/GitHub/wave-simulation/build/resources/main/fxml/mainAppFXML.fxml
+
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2722)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2692)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531)
+	at edu.vanier.waveSim.MainApp.start(MainApp.java:41)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:839)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:483)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:456)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics@20.0.2/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:455)
+	at javafx.graphics@20.0.2/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95)
+	at javafx.graphics@20.0.2/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics@20.0.2/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: java.lang.reflect.InvocationTargetException: null
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:119)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:577)
+	at com.sun.javafx.reflect.Trampoline.invoke(MethodUtil.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:577)
+	at javafx.base@20.0.2/com.sun.javafx.reflect.MethodUtil.invoke(MethodUtil.java:270)
+	at javafx.fxml@20.0.2/com.sun.javafx.fxml.MethodHelper.invoke(MethodHelper.java:84)
+	at javafx.fxml@20.0.2/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2688)
+	... 12 common frames omitted
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5
+	at edu.vanier.waveSim.controllers.FXMLMainAppController.initialize(FXMLMainAppController.java:320)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	... 19 common frames omitted
+19:48:22.216  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+19:48:22.344  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+19:48:22.345  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:48:22.345  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+19:48:22.347  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+19:48:22.353  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:49:59.969  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+19:50:00.118  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+19:50:00.120  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:50:00.131  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+19:50:00.132  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+19:50:00.132  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:54:18.267  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+19:54:18.402  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+19:54:18.402  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:54:18.403  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+19:54:18.404  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+19:54:18.410  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:56:15.537  [INFO ] e.v.w.MainApp   msg: Bootstrapping the application...
+19:56:15.693  [INFO ] e.v.w.m.SimLogicWave msg: scaling is not set, setting to 1 by default
+19:56:15.694  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default
+19:56:15.697  [INFO ] e.v.w.m.SimRPC  msg: scaling is not set, setting to 1 by default
+19:56:15.713  [INFO ] e.v.w.m.ForestFire msg: scaling is not set, setting to 1 by default
+19:56:15.714  [INFO ] e.v.w.m.ConwayGameOfLifeLogic msg: scaling is not set, setting to 1 by default

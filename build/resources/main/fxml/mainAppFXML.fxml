@@ -43,7 +43,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Edit">
                      <items>
-                        <MenuItem fx:id="prefItm" mnemonicParsing="false" text="Preferences" />
+                        <MenuItem mnemonicParsing="false" text="Preferences" />
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
