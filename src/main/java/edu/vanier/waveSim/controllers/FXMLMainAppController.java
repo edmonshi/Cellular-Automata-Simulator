@@ -9,7 +9,7 @@ import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.ForestFire;
 import edu.vanier.waveSim.models.SimLogicWave;
 import edu.vanier.waveSim.models.SimRPC;
-import edu.vanier.waveSim.models.DiffusionLimitedAggregation;
+import edu.vanier.waveSim.models.SimDiffusionLimitedAggregation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -308,7 +308,7 @@ public class FXMLMainAppController{
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ForestFire SLA = new ForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        DiffusionLimitedAggregation DLA = new DiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
