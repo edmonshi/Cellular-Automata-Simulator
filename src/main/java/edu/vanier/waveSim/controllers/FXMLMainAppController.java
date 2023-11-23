@@ -615,7 +615,7 @@ public class FXMLMainAppController{
                 // add the point to the ArrayList of current points.
                 pointList.add(clickPoint);
             }
-            if (simulation != simulationsList[3]) {
+            if (simulation != simulationsList[3] && simulation != simulationsList[5]) {
                 // set the point in the simulation
                 simulation.setPoint(xFloor, yFloor);
                 // add the point to the canvas as Color.RED
@@ -625,7 +625,7 @@ public class FXMLMainAppController{
         }else if (animationRunning == false && pointList.contains(clickPoint)){
             pointList.remove(clickPoint);
             // if the point was removed from the array, remove from canvas.
-            if (simulation.removePoint(xFloor, yFloor) && simulation != simulationsList[3]) {
+            if (simulation.removePoint(xFloor, yFloor) && simulation != simulationsList[3] && simulation != simulationsList[5]) {
                 simulation.colorCell(xFloorScaled, yFloorScaled, simulation.getBackgroundColor());
             }
         }
@@ -928,7 +928,7 @@ public class FXMLMainAppController{
      * @param scaling scaling by which to reset the animation with
      */
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
-        for (int i=0;i<this.simulationsList.length;i++) {}
+        for (int i=0;i<this.simulationsList.length;i++) {
         simulation.setScaling(scaling);
         simulation.clearScreen();
         pointList.clear();
@@ -945,6 +945,7 @@ public class FXMLMainAppController{
         }
         simulation.setFrameNumber(0);
         System.out.println("Stopped Animation");
+        }
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

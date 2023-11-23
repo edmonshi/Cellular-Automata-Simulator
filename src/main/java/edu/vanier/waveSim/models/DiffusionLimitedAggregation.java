@@ -4,6 +4,8 @@
  */
 package edu.vanier.waveSim.models;
 
+import java.util.Date;
+import java.util.Random;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -17,6 +19,8 @@ public class DiffusionLimitedAggregation extends CellularLogic {
 
     private final static Logger logger = LoggerFactory.getLogger(ConwayGameOfLifeLogic.class);
 
+    private boolean needToInitialize = true;
+
     public DiffusionLimitedAggregation(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
@@ -27,21 +31,31 @@ public class DiffusionLimitedAggregation extends CellularLogic {
         }
     }
 
-    boolean needToInitialize = true;
-
     @Override
     public void simFrame() {
         if (needToInitialize) {
+            needToInitialize = false;
             for (int counterX = 1; counterX < scaledX - 1; counterX++) {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
-                    this.current[counterX][counterY] = 0;
-                    colorCell(counterX, counterY, Color.BLACK);
+                    Random random = new Random();
+                    int chance = random.nextInt(100);
+                    if (chance >= 92) {
+                        this.current[counterX][counterY] = 1;
+                        colorCell(counterX, counterY, Color.BLUE);
+                    } else {
+                        this.current[counterX][counterY] = 0;
+                        colorCell(counterX, counterY, Color.BLACK);
+                    }
                 }
             }
+            this.current[scaledX/2][scaledY/2] = 3;
+            colorCell(scaledY/2, scaledY/2, Color.ORANGE);
         }
-        for (int counterX = 1; counterX<scaledX-1; counterX++) {
-            for(int counterY =1; counterY<scaledY-1; counterY++){
-                
+        for (int counterX = 1; counterX < scaledX - 1; counterX++) {
+            for (int counterY = 1; counterY < scaledY - 1; counterY++) {
+                //if () {
+                    
+                //}
             }
         }
 
@@ -51,4 +65,27 @@ public class DiffusionLimitedAggregation extends CellularLogic {
 
     }
 
+    private boolean isEmpty(int x, int y) {
+        if (this.current[x][y] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isParticle(int x, int y) {
+        if (this.current[x][y] == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isDendrite(int x, int y) {
+        if (this.current[x][y] == 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
