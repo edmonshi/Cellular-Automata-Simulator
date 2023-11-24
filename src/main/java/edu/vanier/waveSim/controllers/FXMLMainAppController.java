@@ -1,4 +1,4 @@
-                                                                    package edu.vanier.waveSim.controllers;
+package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -932,25 +932,26 @@ public class FXMLMainAppController{
         this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
         this.animation = newAnimationTimer();
         this.animation.setDelayMillis(delayMillis);
-        for (int i=0;i<this.simulationsList.length;i++) {
-        simulation.setScaling(scaling);
-        simulation.clearScreen();
-        pointList.clear();
-        animation.stop();
-        btnPlay.setDisable(false);
-        btnPause.setDisable(true);
-        btnReset.setDisable(true);
-        animationRunning = false;
-        if (simulation.getRenderFlag()) {
-            System.out.println("Stop Render");
-            for (CellularLogic sim: simulationsList) {
-                sim.setRenderFlag(false);
+        for (int i=1;i<this.simulationsList.length;i++) {
+            simulationsList[i].setScaling(scaling);
+            simulationsList[i].clearScreen();
+            pointList.clear();
+            animation.stop();
+            btnPlay.setDisable(false);
+            btnPause.setDisable(true);
+            btnReset.setDisable(true);
+            animationRunning = false;
+            if (simulation.getRenderFlag()) {
+                System.out.println("Stop Render");
+                for (CellularLogic sim: simulationsList) {
+                    sim.setRenderFlag(false);
+                }
             }
+            simulation.setFrameNumber(0);
         }
-        simulation.setFrameNumber(0);
-        System.out.println("Stopped Animation");
-        }
-
+        System.out.println(simulationsList[5].getScaling());
+        System.out.println(simulationsList[2].getScaling());
+        System.out.println(simulationsList[1].getScaling());
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
