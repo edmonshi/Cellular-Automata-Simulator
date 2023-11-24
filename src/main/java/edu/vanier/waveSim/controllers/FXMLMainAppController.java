@@ -942,16 +942,12 @@ public class FXMLMainAppController{
             btnReset.setDisable(true);
             animationRunning = false;
             if (simulation.getRenderFlag()) {
-                System.out.println("Stop Render");
                 for (CellularLogic sim: simulationsList) {
                     sim.setRenderFlag(false);
                 }
             }
             simulation.setFrameNumber(0);
         }
-        System.out.println(simulationsList[5].getScaling());
-        System.out.println(simulationsList[2].getScaling());
-        System.out.println(simulationsList[1].getScaling());
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
