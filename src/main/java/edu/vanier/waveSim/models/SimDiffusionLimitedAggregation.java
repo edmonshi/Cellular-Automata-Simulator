@@ -52,18 +52,6 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
             this.y = y;
         }
 
-        //TODO return list of neighbouring points
-        public List<Point> getDendriteNeighbours() {
-            List<Point> neighbours = new ArrayList<Point>();
-            for (Point point : entities) {
-                if (!point.equals(this)) {
-                    if ((point.getX() == this.getX() && point.getY() == this.getY()-1) || (point.getX() == this.getX() && point.getY() == this.getY()+1)) {
-                        neighbours.add(point);
-                    }
-                }
-            }
-            return neighbours;
-        }
     }
 
     private class Particle extends Point {
@@ -76,13 +64,24 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
 
     private class Dendrite extends Point {
 
+        private int age = 0;
+
         public Dendrite(int x, int y) {
             super(x, y);
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
         }
 
     }
 
     private List<Point> entities = new ArrayList<Point>();
+    private List<Dendrite> dendrites = new ArrayList<>();
 
     public SimDiffusionLimitedAggregation(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
@@ -98,12 +97,14 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     public void simFrame() {
         //Initialize the simulation with particles and a root dendrite
         if (needToInitialize) {
+            entities.clear();
+            dendrites.clear();
             needToInitialize = false;
             for (int counterX = 1; counterX < scaledX - 1; counterX++) {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
                     Random random = new Random();
                     int chance = random.nextInt(100);
-                    if (chance >= 90) {
+                    if (chance >= 87) {
                         colorCell(counterX, counterY, Color.BLUE);
                         entities.add(new Particle(counterX, counterY));
                     } else {
@@ -114,41 +115,57 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
             this.current[(scaledX - 2) / 2][(scaledY - 2) / 2] = 3;
             colorCell((scaledX - 2) / 2, (scaledY - 2) / 2, Color.ORANGE);
             entities.add(new Dendrite((scaledX - 2) / 2, (scaledY - 2) / 2));
+            dendrites.add(new Dendrite((scaledX - 2) / 2, (scaledY - 2) / 2));
         }
-        //Check if particle becoming dendrite
-        //particles.forEach((t) -> {
-//            if(t.getType().equals(particles)){
-//                List<Point> neighbours = t.getNeighbours();
-//                for (Point neighbour : neighbours) {
-//                    if(neighbour.getType().equals("dendrite")){
-//                        particles.remove(t);
-//                        this.current[t.getX()][t.getY()] = 3;
-//                        colorCell(t.getX()/ 2, t.getX() / 2, Color.ORANGE);
-//                    }
-//                }
-//                
-//            }
-
-        //});
-        
         checkNeighbours();
-        //move();
+        move();
+        for (Dendrite dendrite : dendrites) {
+            dendrite.setAge(dendrite.getAge()+1);
+        }
+        System.out.println("Entities: " + entities.size());
+        System.out.println("Dendrites: " + dendrites.size());
     }
 
     private void checkNeighbours() {
-        for (Point point : entities) {
-            if (point instanceof Dendrite) {
-                List<Point> neighbours = point.getDendriteNeighbours();
-                System.out.println(neighbours.size());
-                for (Point neighbour : neighbours) {
-                    if (neighbour instanceof Particle) {
-                        entities.remove(neighbour);
-                        entities.add(new Dendrite(neighbour.getX(), neighbour.getY()));
-                        colorCell(neighbour.getX(), neighbour.getY(), Color.ORANGE);
+        List<Point> neighbours = new ArrayList<Point>();
+        for (Dendrite dendrite : dendrites) {
+            if (dendrite.getAge() < 1000) {
+                for (Point particle : entities) {
+                    if (particle instanceof Particle) {
+                        if ((particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() + 1)) {
+                            if (!neighbours.contains(particle)) {
+                                neighbours.add(particle);
+                            }
+                            break;
+                        } else if ((particle.getY() == dendrite.getY() && particle.getX() == dendrite.getX() - 1) || (particle.getY() == dendrite.getY() && particle.getX() == dendrite.getX() + 1)) {
+                            if (!neighbours.contains(particle)) {
+                                neighbours.add(particle);
+                            }
+                            break;
+                        } else if ((particle.getX() == dendrite.getX() - 1 && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() - 1 && particle.getY() == dendrite.getY() + 1)) {
+                            if (!neighbours.contains(particle)) {
+                                neighbours.add(particle);
+                            }
+                            break;
+                        } else if ((particle.getX() == dendrite.getX() + 1 && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() + 1 && particle.getY() == dendrite.getY() + 1)) {
+                            if (!neighbours.contains(particle)) {
+                                neighbours.add(particle);
+                            }
+                            break;
+                        }
                     }
                 }
             }
         }
+        entities.removeAll(neighbours);
+        for (Point neighbour : neighbours) {
+            Dendrite newDendrite = new Dendrite(neighbour.getX(), neighbour.getY());
+            if (!dendrites.contains(newDendrite)) {
+                dendrites.add(new Dendrite(neighbour.getX(), neighbour.getY()));
+                colorCell(neighbour.getX(), neighbour.getY(), Color.ORANGE);
+            }
+        }
+        neighbours.clear();
     }
 
     private void move() {
@@ -175,21 +192,26 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                         break;
                 }
 
-                x %= (scaledX - 1);
-                y %= (scaledY - 1);
                 if (x == 0) {
                     x = scaledX - 2;
                 }
                 if (y == 0) {
                     y = scaledY - 2;
                 }
+                if (x > scaledX - 2) {
+                    x -= (scaledX - 2);
+                }
+                if (y > scaledY - 2) {
+                    y -= (scaledY - 2);
+                }
                 particle.setX(x);
                 particle.setY(y);
                 moved.add(particle);
-                entities = moved;
                 colorCell(x, y, Color.BLUE);
             }
         }
+        entities = moved;
+        entities.addAll(dendrites);
     }
 
     private boolean isParticle(int x, int y) {

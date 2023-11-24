@@ -928,6 +928,10 @@ public class FXMLMainAppController{
      * @param scaling scaling by which to reset the animation with
      */
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
+        simulationsList[5] = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
+        this.animation = newAnimationTimer();
+        this.animation.setDelayMillis(delayMillis);
         for (int i=0;i<this.simulationsList.length;i++) {
         simulation.setScaling(scaling);
         simulation.clearScreen();
@@ -946,6 +950,7 @@ public class FXMLMainAppController{
         simulation.setFrameNumber(0);
         System.out.println("Stopped Animation");
         }
+
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
