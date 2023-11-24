@@ -930,6 +930,7 @@ public class FXMLMainAppController{
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
         simulationsList[5] = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
+        this.animation.stop();
         this.animation = newAnimationTimer();
         this.animation.setDelayMillis(delayMillis);
         for (int i=1;i<this.simulationsList.length;i++) {
@@ -941,12 +942,10 @@ public class FXMLMainAppController{
             btnPause.setDisable(true);
             btnReset.setDisable(true);
             animationRunning = false;
-            if (simulation.getRenderFlag()) {
-                for (CellularLogic sim: simulationsList) {
-                    sim.setRenderFlag(false);
-                }
+            if (simulationsList[i].getRenderFlag()){
+                simulationsList[i].setRenderFlag(false);
             }
-            simulation.setFrameNumber(0);
+            simulationsList[i].setFrameNumber(0);
         }
     }
     private void showAlert(String message) {

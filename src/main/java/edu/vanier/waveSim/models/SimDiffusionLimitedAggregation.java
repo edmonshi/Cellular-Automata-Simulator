@@ -21,7 +21,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     //Diffusion Limited Aggregation https://en.wikipedia.org/wiki/Diffusion-limited_aggregation
     //Code inspired from https://github.com/Computer-Kurzweil/computer_kurzweil
 
-    private final static Logger logger = LoggerFactory.getLogger(ConwayGameOfLifeLogic.class);
+    private final static Logger logger = LoggerFactory.getLogger(SimDiffusionLimitedAggregation.class);
 
     private boolean needToInitialize = true;
 
@@ -122,8 +122,6 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
         for (Dendrite dendrite : dendrites) {
             dendrite.setAge(dendrite.getAge()+1);
         }
-        System.out.println("Entities: " + entities.size());
-        System.out.println("Dendrites: " + dendrites.size());
     }
 
     private void checkNeighbours() {
