@@ -6,6 +6,7 @@ import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
+import edu.vanier.waveSim.models.ForestFire;
 import edu.vanier.waveSim.models.SimLogicWave;
 import edu.vanier.waveSim.models.SimRPC;
 import java.io.File;
@@ -175,7 +176,7 @@ public class FXMLMainAppController{
     }
     
     private HashSet<Point> pointList;
-    private CellularLogic[] simulationsList = new CellularLogic[4];
+    private CellularLogic[] simulationsList = new CellularLogic[5];
     private CellularLogic simulation;
     private CellularAnimTimer animation;
     private Integer viewRenderFrameDelay = 100;
@@ -275,6 +276,10 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxRippleLimit;
     @FXML private TextField txtBoxConwayLimit;
     @FXML private TextField txtBoxRPCLimit;
+    @FXML
+    private Label amplitudeLbl;
+    @FXML
+    private Slider amplitudeSldr;
     @FXML private ImageView imageViewSequence;
     @FXML private Button btnPlayRender;
     @FXML private Button btnLoad;
@@ -283,7 +288,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire");
     
     
     
@@ -300,6 +305,7 @@ public class FXMLMainAppController{
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        ForestFire SLA = new ForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
@@ -307,6 +313,7 @@ public class FXMLMainAppController{
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
         simulationsList[3] = RPC;
+        simulationsList[4] = SLA;
         
         viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
@@ -436,6 +443,17 @@ public class FXMLMainAppController{
                   }
         });
         
+        amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
+            @Override
+            public void changed(
+                    ObservableValue<? extends Number> observableValue,
+                    Number oldValue,
+                    Number newValue){
+                WaveSim.setAmplitude((int) amplitudeSldr.getValue());
+                
+            }
+        });
+        
         // add listener to speed slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
         sldrSpeed.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -553,6 +571,10 @@ public class FXMLMainAppController{
                 case "Rock-Paper-Scissors" ->{
                     simulation = simulations[3];
                     return simulation;                    
+                }
+                case "Forest Fire"->{
+                    simulation = simulations[4];
+                    return simulation;
                 }
                 default -> {
                     return simulation;
