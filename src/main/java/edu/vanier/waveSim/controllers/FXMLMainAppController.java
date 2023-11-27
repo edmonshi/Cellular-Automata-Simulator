@@ -209,8 +209,7 @@ public class FXMLMainAppController{
         stage.setAlwaysOnTop(false);
         primaryStage.setAlwaysOnTop(true);
         folder = dc.getInitialDirectory();
-        System.out.println(folder);
-        if (!folder.exists() && !folder.canRead()) {
+        if (folder == null || !folder.exists() || !folder.canRead()) {
             return false;
         }
         
@@ -331,11 +330,6 @@ public class FXMLMainAppController{
         // waiting util for load points
         pause.setOnFinished((event) -> {
             loadPointsUtil();
-        });
-        
-        // handle play render button
-        btnPlayRender.setOnAction((event) -> {
-            
         });
                   
         SimTabPane.heightProperty().addListener((observable) -> {
