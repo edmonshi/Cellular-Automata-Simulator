@@ -129,7 +129,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     private void checkNeighbours() {
         List<Point> neighbours = new ArrayList<Point>();
         for (Dendrite dendrite : dendrites) {
-            if (dendrite.getAge() < 400) {
+            if (dendrite.getAge() < 200) {
                 for (Point particle : entities) {
                     if (particle instanceof Particle) {
                         if ((particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() + 1)) {
