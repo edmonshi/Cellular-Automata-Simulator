@@ -210,6 +210,14 @@ public abstract class CellularLogic {
         this.heightY = heightY;
     }
 
+    public boolean getHasInitialized() {
+        return hasInitialized;
+    }
+
+    public void setHasInitialized(boolean hasInitialized) {
+        this.hasInitialized = hasInitialized;
+    }
+
     /**
      * Get the width of the simulation and return it.
      *

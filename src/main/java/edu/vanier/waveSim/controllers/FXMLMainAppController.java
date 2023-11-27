@@ -924,6 +924,7 @@ public class FXMLMainAppController{
         btnPause.setDisable(true);
         btnReset.setDisable(true);
         animationRunning = false;
+        simulation.setHasInitialized(false);
         if (simulation.getRenderFlag()) {
             System.out.println("Stop Render");
             for (CellularLogic sim: simulationsList) {
