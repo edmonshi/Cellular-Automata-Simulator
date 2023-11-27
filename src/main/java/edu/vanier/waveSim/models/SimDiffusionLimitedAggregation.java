@@ -74,10 +74,6 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
             return age;
         }
 
-        public void setAge(int age) {
-            this.age = age;
-        }
-
     }
 
     private List<Point> entities = new ArrayList<Point>();
@@ -104,7 +100,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
                     Random random = new Random();
                     int chance = random.nextInt(100);
-                    if (chance >= 87) {
+                    if (chance >= 95) {
                         colorCell(counterX, counterY, Color.BLUE);
                         entities.add(new Particle(counterX, counterY));
                     } else {
@@ -119,38 +115,34 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
         }
         checkNeighbours();
         move();
-        for (Dendrite dendrite : dendrites) {
-            dendrite.setAge(dendrite.getAge()+1);
-        }
     }
 
     private void checkNeighbours() {
         List<Point> neighbours = new ArrayList<Point>();
         for (Dendrite dendrite : dendrites) {
-            if (dendrite.getAge() < 1000) {
-                for (Point particle : entities) {
-                    if (particle instanceof Particle) {
-                        if ((particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() + 1)) {
-                            if (!neighbours.contains(particle)) {
-                                neighbours.add(particle);
-                            }
-                            break;
-                        } else if ((particle.getY() == dendrite.getY() && particle.getX() == dendrite.getX() - 1) || (particle.getY() == dendrite.getY() && particle.getX() == dendrite.getX() + 1)) {
-                            if (!neighbours.contains(particle)) {
-                                neighbours.add(particle);
-                            }
-                            break;
-                        } else if ((particle.getX() == dendrite.getX() - 1 && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() - 1 && particle.getY() == dendrite.getY() + 1)) {
-                            if (!neighbours.contains(particle)) {
-                                neighbours.add(particle);
-                            }
-                            break;
-                        } else if ((particle.getX() == dendrite.getX() + 1 && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() + 1 && particle.getY() == dendrite.getY() + 1)) {
-                            if (!neighbours.contains(particle)) {
-                                neighbours.add(particle);
-                            }
-                            break;
+
+            for (Point particle : entities) {
+                if (particle instanceof Particle) {
+                    if ((particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() + 1)) {
+                        if (!neighbours.contains(particle)) {
+                            neighbours.add(particle);
                         }
+                        break;
+                    } else if ((particle.getY() == dendrite.getY() && particle.getX() == dendrite.getX() - 1) || (particle.getY() == dendrite.getY() && particle.getX() == dendrite.getX() + 1)) {
+                        if (!neighbours.contains(particle)) {
+                            neighbours.add(particle);
+                        }
+                        break;
+                    } else if ((particle.getX() == dendrite.getX() - 1 && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() - 1 && particle.getY() == dendrite.getY() + 1)) {
+                        if (!neighbours.contains(particle)) {
+                            neighbours.add(particle);
+                        }
+                        break;
+                    } else if ((particle.getX() == dendrite.getX() + 1 && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() + 1 && particle.getY() == dendrite.getY() + 1)) {
+                        if (!neighbours.contains(particle)) {
+                            neighbours.add(particle);
+                        }
+                        break;
                     }
                 }
             }
