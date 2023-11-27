@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class SimRPC extends CellularLogic {
 
     private int frameNumber = 0;
-    private int nreOfDifferentEntities = 4;
+    private int nreOfDifferentEntities = 3;
     private int nreOfNeededPredator = 1;
     private int nreOfRandomPredator = 1;
     Color[] colors = {Color.ORANGE, Color.YELLOW, Color.BLACK, Color.BLUE, Color.PURPLE, Color.GREEN, Color.GRAY, Color.HOTPINK};
@@ -34,7 +34,6 @@ public class SimRPC extends CellularLogic {
             setScaling(scaling);
         }
     }
-
     public void InitializeRandomColor() {
         for (int i = 0; i < scaledX; i++) {
             for (int j = 0; j < scaledY; j++) {
@@ -53,7 +52,7 @@ public class SimRPC extends CellularLogic {
     public void simFrame() {
 
         if (hasInitialized == false) {
-            InitializeRandomColor();
+            //InitializeRandomColor();
             hasInitialized = true;
         }
 
@@ -63,9 +62,9 @@ public class SimRPC extends CellularLogic {
                 devouredOrNot(i, j);
             }
         }
-        
+
         paintTheCanvas(scaledX, scaledY);
-        
+
         if (this.current.equals(this.nextFrame)) {
             System.out.println("the same");
         }
@@ -120,7 +119,7 @@ public class SimRPC extends CellularLogic {
         for (int i = 0; i < x; i++) {
 
             for (int j = 0; j < y; j++) {
-                colorCell(i, j, colors[(int)getCellState(i,j)]);
+                colorCell(i, j, colors[(int) getCellState(i, j)]);
             }
         }
     }
@@ -128,12 +127,12 @@ public class SimRPC extends CellularLogic {
     public int lookAround(int x, int y) {
         int c = 0;
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j<3; j++) {
+            for (int j = 0; j < 3; j++) {
                 //Catches < 3; j++) {
                 if (i != 1 || j != 1) {
                     //Catches all the index that will be out of bound and ignore them
                     try {
-                        if (getCellState(x + j - 1, y + i - 1) == getCellState(x,y)) {
+                        if (getCellState(x + j - 1, y + i - 1) == getCellState(x, y)) {
                             c++;
                         }
                     } catch (ArrayIndexOutOfBoundsException e) {
@@ -147,8 +146,8 @@ public class SimRPC extends CellularLogic {
     public float getCellState(int x, int y) {
         return current[x][y];
     }
-    @Override 
-    public void setPoint(int x, int y){
+    @Override
+    public void setPoint(int x, int y) {
         //Do nothing
     }
 }
