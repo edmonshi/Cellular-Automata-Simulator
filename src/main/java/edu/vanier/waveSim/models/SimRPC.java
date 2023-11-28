@@ -19,12 +19,13 @@ import org.slf4j.LoggerFactory;
 public class SimRPC extends CellularLogic {
 
     private int frameNumber = 0;
-    private int nreOfDifferentEntities = 4;
-    private int nreOfNeededPredator = 1;
+    private int nreOfDifferentEntities = 3;
+    private int nreOfNeededPredator = 10;
     private int nreOfRandomPredator = 1;
-    Color[] colors = {Color.ORANGE, Color.YELLOW, Color.BLACK, Color.BLUE, Color.PURPLE, Color.GREEN, Color.GRAY, Color.HOTPINK};
+    Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
     private final static Logger logger = LoggerFactory.getLogger(SimRPC.class);
     private Random random = new Random();
+    private PerlinNoise perlin = new PerlinNoise();
 
     public SimRPC(Canvas operatingCanvas, int widthX, int heightY, int scaling) {
         super(operatingCanvas, widthX, heightY);
@@ -38,9 +39,20 @@ public class SimRPC extends CellularLogic {
     public void InitializeRandomColor() {
         for (int i = 0; i < scaledX; i++) {
             for (int j = 0; j < scaledY; j++) {
-                int color = (random.nextInt(nreOfDifferentEntities));
-                current[i][j] = (float) color;
+                int color;
+                double value = perlin.noise(i, j);
+                if (value >= -1 && value < -0.3) {
+                    color = 0;
+                } else if (value >= -0.3 && value < 0.3) {
+                    color = 1;
+                } else if (value >= 0.3 && value <= 1) {
+                    color = 2;
+                } else {
+                    color = 0;
+                }
+                current[i][j] = color;
                 colorCell(i, j, colors[color]);
+
             }
         }
     }
@@ -63,15 +75,11 @@ public class SimRPC extends CellularLogic {
                 devouredOrNot(i, j);
             }
         }
-        
-        paintTheCanvas(scaledX, scaledY);
-        
-        if (this.current.equals(this.nextFrame)) {
-            System.out.println("the same");
-        }
+        System.out.println(current[0][0]);
         float[][] temp = this.current;
         this.current = this.nextFrame;
         this.nextFrame = temp;
+        paintTheCanvas(scaledX, scaledY);
     }
 
     /**
@@ -80,75 +88,62 @@ public class SimRPC extends CellularLogic {
      * @param y
      */
     public void devouredOrNot(int x, int y) {
+        int predators;
 
-        int predatorStates = (nreOfDifferentEntities - 0) / 2;
-        int[] predators = new int[predatorStates];
-        int[] predatorsInt = new int[predatorStates];
-        int nearPredators = 0;
-        int predatorColorInt;
-
-        //Count number if neighbour predators for each predator state
-        for (int k = 0; k < predatorStates; k++) {
-
-            predatorColorInt = (int) (getCellState(x, y) + 1 + k);
-            if (predatorColorInt >= nreOfDifferentEntities) {
-                predatorColorInt = predatorColorInt - nreOfDifferentEntities;
+        if (current[x][y] == 0) {
+            predators = lookAround(x, y, 1);
+            //System.out.println(predators);
+            if (predators > nreOfNeededPredator) {
+                this.nextFrame[x][y] = 1;
             }
-            predatorsInt[k] = predatorColorInt;
-
-            predators[k] = lookAround(x, y);
-            nearPredators += predators[k];
-        }
-        int randomMinimum = random.nextInt(nreOfRandomPredator);
-
-        //If there are more neighbour predators than the threshold, change current cell to a random predator cell (weighted)
-        if (nearPredators >= nreOfNeededPredator + randomMinimum && nearPredators > 0) {
-            int r = random.nextInt(nearPredators);
-            int k = -1;
-            while (r >= 0) {
-                k++;
-                r -= predators[k];
+        } else if (current[x][y] == 1) {
+            predators = lookAround(x, y, 2);
+            if (predators > nreOfNeededPredator) {
+                this.nextFrame[x][y] = 2;
             }
-            this.nextFrame[x][y] = (float) predatorsInt[k];
-            //colorCell(x, y, colors[predatorsInt[k]]);
-
+        } else if (current[x][y] == 2) {
+            predators = lookAround(x, y, 0);
+            if (predators > nreOfNeededPredator) {
+                this.nextFrame[x][y] = 0;
+            }
         }
 
     }
 
     public void paintTheCanvas(int x, int y) {
         for (int i = 0; i < x; i++) {
-
             for (int j = 0; j < y; j++) {
-                colorCell(i, j, colors[(int)getCellState(i,j)]);
+                colorCell(i, j, colors[(int)(current[i][j])]);
             }
         }
     }
 
-    public int lookAround(int x, int y) {
+    public int lookAround(int x, int y, int predatorInt) {
         int c = 0;
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j<3; j++) {
+            for (int j = 0; j < 3; j++) {
                 //Catches < 3; j++) {
                 if (i != 1 || j != 1) {
                     //Catches all the index that will be out of bound and ignore them
                     try {
-                        if (getCellState(x + j - 1, y + i - 1) == getCellState(x,y)) {
+                        if (current[x + j - 1][y + i - 1] != current[x][y] && current[x + j - 1][y + i - 1] == predatorInt) {
                             c++;
                         }
                     } catch (ArrayIndexOutOfBoundsException e) {
                     }
+
                 }
             }
         }
+        if (x == 1 && y == 1) {
+            System.out.println(c);
+        }
         return c;
+
     }
 
-    public float getCellState(int x, int y) {
-        return current[x][y];
-    }
-    @Override 
-    public void setPoint(int x, int y){
+    @Override
+    public void setPoint(int x, int y) {
         //Do nothing
     }
 }

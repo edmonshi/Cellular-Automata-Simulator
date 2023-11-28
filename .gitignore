@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 *.ser
 =======
@@ -225,4 +225,4 @@ Contrib/**/
 log/app.log
 *.log
 log/app.log
->>>>>>> 4fd8f6db6cf5ad2091928aa96a45092777cc684e
+

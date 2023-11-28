@@ -211,8 +211,7 @@ public class FXMLMainAppController{
         stage.setAlwaysOnTop(false);
         primaryStage.setAlwaysOnTop(true);
         folder = dc.getInitialDirectory();
-        System.out.println(folder);
-        if (!folder.exists() && !folder.canRead()) {
+        if (folder == null || !folder.exists() || !folder.canRead()) {
             return false;
         }
         
@@ -291,6 +290,7 @@ public class FXMLMainAppController{
     
     //list of simulation types, simple wave, etc
     ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation");
+
     
     
     
@@ -341,11 +341,6 @@ public class FXMLMainAppController{
         // waiting util for load points
         pause.setOnFinished((event) -> {
             loadPointsUtil();
-        });
-        
-        // handle play render button
-        btnPlayRender.setOnAction((event) -> {
-            
         });
                   
         SimTabPane.heightProperty().addListener((observable) -> {
@@ -939,11 +934,13 @@ public class FXMLMainAppController{
             pointList.clear();
             animation.stop();
             btnPlay.setDisable(false);
+            simulationsList[i].setHasInitialized(false);
             btnPause.setDisable(true);
             btnReset.setDisable(true);
             animationRunning = false;
             if (simulationsList[i].getRenderFlag()){
                 simulationsList[i].setRenderFlag(false);
+
             }
             simulationsList[i].setFrameNumber(0);
         }
