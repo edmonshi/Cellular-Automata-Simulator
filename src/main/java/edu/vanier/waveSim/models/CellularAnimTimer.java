@@ -57,7 +57,7 @@ public class CellularAnimTimer extends AnimationTimer {
     }
     
     /**
-     * Call the simFrame method to generate frame
+     * Call the simFrame method to generate frame in animation loop
      */
     private void doHandle(){
         if (logic.frameNumber < logic.frameLimit) {

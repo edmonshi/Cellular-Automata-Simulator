@@ -157,6 +157,12 @@ public abstract class CellularLogic {
         return scaling;
     }
 
+    public int getFrameLimit() {
+        return frameLimit;
+    }
+    
+    
+
     /**
      * Set the width of the simulation to the specified width.
      *

@@ -87,7 +87,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     public SimDiffusionLimitedAggregation(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
-        if (scale < 1 || scale % 2 != 0) {
+        if (scale < 1 || scale % 2 != 0 && scale != 1) {
             logger.info("scaling is not set, setting to 1 by default");
         } else {
             setScaling(scale);

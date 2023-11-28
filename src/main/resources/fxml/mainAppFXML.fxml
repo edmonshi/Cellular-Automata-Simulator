@@ -166,10 +166,47 @@
                            </children></AnchorPane>
                      </content>
                   </TitledPane>
-                  <TitledPane animated="false" text="Simulation 4">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                    </content>
+                  <TitledPane animated="false" layoutX="10.0" layoutY="64.0" text="Forest Fire">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ScrollPane prefHeight="88.0" prefWidth="153.0">
+                                 <content>
+                                    <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                       <children>
+                                          <Label text="Frame Limit" />
+                                          <TextField fx:id="txtBoxSLALimit" text="max" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane animated="false" layoutX="10.0" layoutY="91.0" text="Diffusion Aggregation">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ScrollPane prefHeight="88.0" prefWidth="153.0">
+                                 <content>
+                                    <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                       <children>
+                                          <Label text="Frame Limit" />
+                                          <TextField fx:id="txtBoxDLALimit" text="max" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
                   </TitledPane>
                </panes>
             </Accordion>
