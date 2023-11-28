@@ -1,4 +1,4 @@
-                                                                    package edu.vanier.waveSim.controllers;
+package edu.vanier.waveSim.controllers;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -9,6 +9,7 @@ import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
 import edu.vanier.waveSim.models.ForestFire;
 import edu.vanier.waveSim.models.SimLogicWave;
 import edu.vanier.waveSim.models.SimRPC;
+import edu.vanier.waveSim.models.SimDiffusionLimitedAggregation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -176,7 +177,7 @@ public class FXMLMainAppController{
     }
     
     private HashSet<Point> pointList;
-    private CellularLogic[] simulationsList = new CellularLogic[5];
+    private CellularLogic[] simulationsList = new CellularLogic[6];
     private CellularLogic simulation;
     private CellularAnimTimer animation;
     private Integer viewRenderFrameDelay = 100;
@@ -288,7 +289,8 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation");
+
     
     
     
@@ -306,6 +308,7 @@ public class FXMLMainAppController{
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ForestFire SLA = new ForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         // initialize default simulation
         simulation = WaveSim;
         
@@ -314,6 +317,7 @@ public class FXMLMainAppController{
         simulationsList[2] = Conway;
         simulationsList[3] = RPC;
         simulationsList[4] = SLA;
+        simulationsList[5] = DLA;
         
         viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
@@ -576,6 +580,10 @@ public class FXMLMainAppController{
                     simulation = simulations[4];
                     return simulation;
                 }
+                case "Diffusion Limited Aggregation"->{
+                    simulation = simulations[5];
+                    return simulation;
+                }
                 default -> {
                     return simulation;
                 }
@@ -602,7 +610,7 @@ public class FXMLMainAppController{
                 // add the point to the ArrayList of current points.
                 pointList.add(clickPoint);
             }
-            if (simulation != simulationsList[3]) {
+            if (simulation != simulationsList[3] && simulation != simulationsList[5]) {
                 // set the point in the simulation
                 simulation.setPoint(xFloor, yFloor);
                 // add the point to the canvas as Color.RED
@@ -612,7 +620,7 @@ public class FXMLMainAppController{
         }else if (animationRunning == false && pointList.contains(clickPoint)){
             pointList.remove(clickPoint);
             // if the point was removed from the array, remove from canvas.
-            if (simulation.removePoint(xFloor, yFloor) && simulation != simulationsList[3]) {
+            if (simulation.removePoint(xFloor, yFloor) && simulation != simulationsList[3] && simulation != simulationsList[5]) {
                 simulation.colorCell(xFloorScaled, yFloorScaled, simulation.getBackgroundColor());
             }
         }
@@ -915,24 +923,27 @@ public class FXMLMainAppController{
      * @param scaling scaling by which to reset the animation with
      */
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
-        for (int i=0;i<this.simulationsList.length;i++) {}
-        simulation.setScaling(scaling);
-        simulation.clearScreen();
-        pointList.clear();
-        animation.stop();
-        btnPlay.setDisable(false);
-        btnPause.setDisable(true);
-        btnReset.setDisable(true);
-        animationRunning = false;
-        simulation.setHasInitialized(false);
-        if (simulation.getRenderFlag()) {
-            System.out.println("Stop Render");
-            for (CellularLogic sim: simulationsList) {
-                sim.setRenderFlag(false);
+        simulationsList[5] = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
+        this.animation.stop();
+        this.animation = newAnimationTimer();
+        this.animation.setDelayMillis(delayMillis);
+        for (int i=1;i<this.simulationsList.length;i++) {
+            simulationsList[i].setScaling(scaling);
+            simulationsList[i].clearScreen();
+            pointList.clear();
+            animation.stop();
+            btnPlay.setDisable(false);
+            simulationsList[i].setHasInitialized(false);
+            btnPause.setDisable(true);
+            btnReset.setDisable(true);
+            animationRunning = false;
+            if (simulationsList[i].getRenderFlag()){
+                simulationsList[i].setRenderFlag(false);
+
             }
+            simulationsList[i].setFrameNumber(0);
         }
-        simulation.setFrameNumber(0);
-        System.out.println("Stopped Animation");
     }
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
