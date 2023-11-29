@@ -23,8 +23,6 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
 
     private final static Logger logger = LoggerFactory.getLogger(SimDiffusionLimitedAggregation.class);
 
-    private boolean needToInitialize = true;
-
     //Point class to use to keep track of points
     private class Point {
 
@@ -87,7 +85,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     public SimDiffusionLimitedAggregation(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
-        if (scale < 1 || scale % 2 != 0 && scale != 1) {
+        if (scale < 1 || scale % 2 != 0) {
             logger.info("scaling is not set, setting to 1 by default");
         } else {
             setScaling(scale);
@@ -97,10 +95,10 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     @Override
     public void simFrame() {
         //Initialize the simulation with particles and a root dendrite
-        if (needToInitialize) {
+        if (!hasInitialized) {
             entities.clear();
             dendrites.clear();
-            needToInitialize = false;
+            hasInitialized = true;
             for (int counterX = 1; counterX < scaledX - 1; counterX++) {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
                     Random random = new Random();
@@ -224,4 +222,8 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     private boolean isDendrite(int x, int y) {
         return true;
     }
+
+    
+    
+    
 }

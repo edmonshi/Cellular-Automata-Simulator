@@ -1,7 +1,6 @@
 
 
 *.ser
-=======
 ### Gradle template
 .gradle/
 build/

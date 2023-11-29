@@ -41,7 +41,7 @@ public class MainApp extends Application {
             BorderPane root = loader.load();
             
             //-- 2) Create and set the scene to the stage.
-            Scene scene = new Scene(root, 700, 526);
+            Scene scene = new Scene(root, 700, 600);
             primaryStage.setScene(scene);
             primaryStage.setAlwaysOnTop(true);
             primaryStage.sizeToScene();

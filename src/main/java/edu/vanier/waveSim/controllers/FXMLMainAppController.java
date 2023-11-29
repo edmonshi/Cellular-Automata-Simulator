@@ -27,7 +27,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.animation.Transition;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,7 +46,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -62,69 +60,102 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Controller class of the MainApp's UI.
+ * Contains the logic for most visual elements 
  *
- * @author TODO
+ * @author William Carbonneau and Loovdrish Sujore
  */
 public class FXMLMainAppController{
 
     private final static Logger logger = LoggerFactory.getLogger(FXMLMainAppController.class);
     
-    private Stage primaryStage;
+    private Stage primaryStage; // instance of the stage which uses this controller
     
-    private boolean animationRunning = false;
+    private boolean animationRunning = false; // is the animation running?
     
-    private final Transition pause = new PauseTransition(Duration.millis(5));
+    private final Transition pause = new PauseTransition(Duration.millis(5)); // pause necessary for a workaround with rendering the canvas after resize
     
-    private boolean hasLoadedViewFolder = false;
+    private boolean hasLoadedViewFolder = false; // boolean fo rif the viewing folder has been loaded to use
     
     
-    int scale = 1;
-    int delayMillis = 1;
+    int scale = 1; // scale of canvas cells
+    int delayMillis = 1; // delay of animation to be set
     int sceneHeight;
     int sceneWidth;
     String[] settings;
 
+    /**
+     * TODO documentation
+     */
     public String[] getSettings() {
         return settings;
     }
-
+    /**
+     * TODO documentation
+     */
     public void setSettings(String[] settings) {
         this.settings = settings;
     }
     
+    /**
+     * Constructor of main controller 
+     */
     public FXMLMainAppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    /**
+     * Get height of the scene
+     * @return type int
+     */
     public int getSceneHeight() {
         return sceneHeight;
     }
 
+    /**
+     * Set height of the scene in pixels
+     * @param sceneHeight type int - new height of scene in pixels
+     */
     public void setSceneHeight(int sceneHeight) {
         this.sceneHeight = sceneHeight;
     }
 
+    /**
+     * Get width of the scene
+     * @return type int
+     */
     public int getSceneWidth() {
         return sceneWidth;
     }
 
+    /**
+     * Set width of the scene in pixels
+     * @param sceneWidth type int - new width of scene in pixels
+     */
     public void setSceneWidth(int sceneWidth) {
         this.sceneWidth = sceneWidth;
     }
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
 
+    /**
+     * Get the instance of PrimaryStage
+     * @return type Stage (javaFX) 
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Stop the running animation of the canvas and viewRender - to exit the application
+     */
     public void stopAnimation() {
         animation.stop();
+        viewRenderTimer.stop();
     }
 
     
-    /**Point object for use in array of origin points*/
+    /**
+     * Point class for use in array of origin points
+     * Only useful as a private class because nothing else uses this
+     */
     private class Point{
         private int x;
         private int y;
@@ -176,18 +207,20 @@ public class FXMLMainAppController{
         
     }
     
-    private HashSet<Point> pointList;
-    private CellularLogic[] simulationsList = new CellularLogic[6];
-    private CellularLogic simulation;
-    private CellularAnimTimer animation;
-    private Integer viewRenderFrameDelay = 100;
-    private EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame;
-    private Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay));
+    private HashSet<Point> pointList; // list of origin points on screen
+    private CellularLogic[] simulationsList = new CellularLogic[6]; // list of all simulations - active simulation is always instance 0
+    private CellularLogic simulation; // the current active simulation
+    private CellularAnimTimer animation; // the animation of the canvas
+    private Integer viewRenderFrameDelay = 100; // delay for each frame of view render tab
+    private EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame; // event handler for view render
+    private Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay)); // timer fo runiform frame for view render tab
     
-    private List<String> folderFiles = new ArrayList<String>();
-    private String csvViewRender = null;
-    private int imageSequenceIndex = 0;
+    private List<String> folderFiles = new ArrayList<String>(); // list of all files to load view render images from selected folder
+    private int imageSequenceIndex = 0; // index of current image in sequence for view render
     
+    /**
+     * TODO documentation
+     */
     private void nextViewRenderFrame(ActionEvent event) {
         if (!hasLoadedViewFolder) {
             return;
@@ -201,8 +234,12 @@ public class FXMLMainAppController{
         }
     }
     
+    /**
+     * Get and verify a list of files from a directory and save that curated list to
+     * the instance variable. This will be used for the View Render animation
+     */
     private boolean getFileList() {
-        File folder = new File("");
+        File folder;
         Stage stage = new Stage();
         DirectoryChooser dc = new DirectoryChooser();
         primaryStage.setAlwaysOnTop(false);
@@ -231,10 +268,7 @@ public class FXMLMainAppController{
                     csvs++;
                     folderFiles.remove(nFile);
                     if (csvs > 1) {
-                        //bad, more than one csv
-                        csvViewRender = null;
                     }
-                    csvViewRender = nFile;
                 }
                 folderFiles.remove(nFile);
             }else {
@@ -266,10 +300,8 @@ public class FXMLMainAppController{
     @FXML private MenuItem itmLoad;
     @FXML private MenuItem itmRenderStart;
     @FXML private MenuItem itmStopRender;
-    @FXML private Button btnSaveRender;
     @FXML private Button btnPauseRender;
     @FXML private Button btnResetRender;
-    @FXML private Pane SimCanvasPane;
     @FXML private Label lblWi;
     @FXML private Label lblHi;
     @FXML private TabPane SimTabPane;
@@ -279,10 +311,8 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxRPCLimit;
     @FXML private TextField txtBoxDLALimit;
     @FXML private TextField txtBoxSLALimit;
-    @FXML
-    private Label amplitudeLbl;
-    @FXML
-    private Slider amplitudeSldr;
+    @FXML private Label amplitudeLbl;
+    @FXML private Slider amplitudeSldr;
     @FXML private ImageView imageViewSequence;
     @FXML private Button btnPlayRender;
     @FXML private Button btnLoad;
@@ -292,11 +322,6 @@ public class FXMLMainAppController{
     
     //list of simulation types, simple wave, etc
     ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation");
-
-    
-    
-    
-    
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -311,9 +336,11 @@ public class FXMLMainAppController{
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ForestFire SLA = new ForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        
         // initialize default simulation
         simulation = WaveSim;
         
+        // add simualtion objects to the list
         simulationsList[0] = simulation;
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
@@ -321,6 +348,7 @@ public class FXMLMainAppController{
         simulationsList[4] = SLA;
         simulationsList[5] = DLA;
         
+        // view render works indefinitely
         viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
         // initialize default animation object
@@ -333,8 +361,9 @@ public class FXMLMainAppController{
         scaleChoice.setValue(1);
         scaleChoice.setItems(scaleChoiceItems);
         
+        // default simulation
         simTypeChoice.setValue("Simple Ripple");
-        simTypeChoice.setItems(simTypeChoiceItems);
+        simTypeChoice.setItems(simTypeChoiceItems); // create drop-down values
         
         // set default btn disabled state
         btnPause.setDisable(true);
@@ -344,35 +373,37 @@ public class FXMLMainAppController{
         pause.setOnFinished((event) -> {
             loadPointsUtil();
         });
-                  
+        
+        // bind height of simaultion to tab pane height
         SimTabPane.heightProperty().addListener((observable) -> {
             setHeight(SimTabPane.heightProperty().getValue().intValue(), simulation, animation, lblHi);
         });
+        // bind width of simaultion to tab pane width
         SimTabPane.widthProperty().addListener((observable) -> {
             setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
         });
-        
+        // handle render start from top menu bar
         itmRenderStart.setOnAction((event) -> {
             handleRenderStart();
         });
-        
+        // handle render stop from top menu bar
         itmStopRender.setOnAction((event) -> {
             handleRenderStop();
         });
-        
-        
+        // handle play simulation button
         btnPlay.setOnAction((event) -> {
-            handlePlayBtn(simulation, animation);
+            handlePlayBtn(animation);
         });
-        
+        // handle pause simulation button
         btnPause.setOnAction((event) -> {
             handlePauseBtn(animation);
         });
-        
+        // handle reset simulation button
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
+        // handle text boxes for simulation limits
         txtBoxRippleLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxRippleLimit);
             WaveSim.setFrameLimit(frameLimit);
@@ -393,29 +424,31 @@ public class FXMLMainAppController{
             int frameLimit = validateFrameLimit(input, txtBoxSLALimit);
             SLA.setFrameLimit(frameLimit);
         });
+        
+        // handle load button in view render tab 
         btnLoad.setOnAction((event) -> {
-            
             hasLoadedViewFolder = getFileList();
-            
         });
         
+        // change activity of buttons by default view render tab
         btnPauseRender.setDisable(true);
         btnResetRender.setDisable(true);
         
+        // handle play view render button
         btnPlayRender.setOnAction((event) -> {
             viewRenderTimer.play();
             btnPlayRender.setDisable(true);
             btnPauseRender.setDisable(false);
             btnResetRender.setDisable(false);
         });
-        
+        //handle pause view render button
         btnPauseRender.setOnAction((event) -> {
             viewRenderTimer.pause();
             btnPlayRender.setDisable(false);
             btnPauseRender.setDisable(true);
             btnResetRender.setDisable(true);
         });
-        
+        // handle reset view render button 
         btnResetRender.setOnAction((event) -> {
             viewRenderTimer.stop();
             btnPlayRender.setDisable(false);
@@ -423,7 +456,7 @@ public class FXMLMainAppController{
             btnResetRender.setDisable(true);
             imageSequenceIndex = 0;
         });
-        
+        // handle save settings button from top menu bar 
         itmSave.setOnAction((event)->{
             try {
                 try {
@@ -457,6 +490,7 @@ public class FXMLMainAppController{
                   }
         });
         
+        // add listenner to amplitude slider and bind to the amplitude of the ripple simulation
         amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(
@@ -516,6 +550,7 @@ public class FXMLMainAppController{
         SimCanvas.setOnMouseClicked((event) -> {
             newPoint(event.getX(),event.getY(), simulation);
         });
+        // handle guide button in top menu bar
         guideItm.setOnAction((event)->{
             try {
                 handleGuideItm(guideItm);
@@ -523,26 +558,37 @@ public class FXMLMainAppController{
                 java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
-        primaryStage.setOnCloseRequest(event -> {
-            System.exit(0);
-        });
 }
     
-    /**TODO Documentation*/
+    /**
+     * Set the width of the canvas for the simulation - also sets the width of the grid contained in the simulations
+     * @param width type int the new width
+     * @param simualtion type CellularLogic the current simulation
+     * @param animation type CellularAnimTimer the animation of the canvas
+     * @param lblWidth type Label (javaFX) the label to update
+     */
     private void setWidth(int width, CellularLogic simulation, CellularAnimTimer animation, Label lblWidth) {
         animation.stop();
         pointList.clear();
         animationRunning = false;
+        // make the width an even number
         if (width % 2 == 1) {
             width --;
         }
         simulation.setWidth(width);
         SimCanvas.setWidth(width);
+        // reset the screen and simulations
         ResetScreenAndAnim(simulation, animation, scale);
+        // set width label
         lblWidth.setText("Width: "+width);
     }
-    /**TODO Documentation*/
+    /**
+     * Set the height of the canvas for the simulation - also sets the height of the grid contained in the simulations
+     * @param height type int the new height
+     * @param simualtion type CellularLogic the current simulation
+     * @param animation type CellularAnimTimer the animation of the canvas
+     * @param lblHeight type Label (javaFX) the label to update
+     */
     private void setHeight(int height, CellularLogic simulation, CellularAnimTimer animation, Label lblHeight) {
         int HBoxHeight = 100;
 
@@ -559,7 +605,11 @@ public class FXMLMainAppController{
         lblHeight.setText("Height: "+realHeight);
     }
     
-    /**TODO Documentation -> switched the active simulation
+    /**
+     * Switches the active simulation based on logic from drop-down menu
+     * @param newValue type String the name of the simulation to switch to
+     * @param simulations type CellularLogic[] a list of all simulations
+     * @param simulation type CellularLogic the instance of current simulation
      */
     private CellularLogic changeSim(String newValue, CellularLogic[] simulations, CellularLogic simulation) {
         int Height, Width;
@@ -650,11 +700,11 @@ public class FXMLMainAppController{
         
         // create directory
         new File(path).mkdirs();
-        handlePlayBtn(simulation, animation);
+        handlePlayBtn(animation);
     }
     
     /**
-     * TODO
+     * Handle the render stop button operation
      */
     private void handleRenderStop() {
         System.out.println("Stop Render");
@@ -663,12 +713,19 @@ public class FXMLMainAppController{
         }
         ResetScreenAndAnim(simulation, animation, scale);
     }
-    private int frameLim;
+    
+    private int frameLim; // TODO docs comment explain this
 
+    /**
+     * TODO documentation
+     */
     public int getFrameLim() {
         return frameLim;
     }
 
+    /**
+     * TODO documentation
+     */
     public void setFrameLim(int frameLim) {
         this.frameLim = frameLim;
     }
@@ -695,13 +752,11 @@ public class FXMLMainAppController{
     
     
     /**
-     * TODO use the simulation parameter to check for valid simulation or something
      * Event that is activated when the play button is clicked.
      * The animation will play.
-     * @param simulation the simulation on of the animation
      * @param animation the animation it will handle
      */
-    private void handlePlayBtn(CellularLogic simulation, CellularAnimTimer animation){
+    private void handlePlayBtn(CellularAnimTimer animation){
         System.out.println("STARTING THE SIMULATION");
         
         animationRunning = true;
@@ -729,10 +784,20 @@ public class FXMLMainAppController{
     }
     String nameFile;
 
+    /**
+     * TODO
+     * Return the value of nameFile
+     * @return type String
+     */
     public String getNameFile() {
         return nameFile;
     }
 
+    /**
+     * TODO 
+     * Set the value of nameFile
+     * @param nameFile type String - new value
+     */
     public void setNameFile(String nameFile) {
         this.nameFile = nameFile;
     }
@@ -933,7 +998,7 @@ public class FXMLMainAppController{
      * @param scaling scaling by which to reset the animation with
      */
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
-        simulationsList[5] = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        simulationsList[5].setHasInitialized(false);
         this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
         this.animation.stop();
         this.animation = newAnimationTimer();

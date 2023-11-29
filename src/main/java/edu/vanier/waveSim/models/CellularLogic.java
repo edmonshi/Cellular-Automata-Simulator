@@ -40,6 +40,7 @@ public abstract class CellularLogic {
     
     protected boolean renderFlag = false;
 
+
     protected Color backgroundColor = Color.WHITE;
     
     // create defaut render path
@@ -157,11 +158,29 @@ public abstract class CellularLogic {
         return scaling;
     }
 
+    /**
+     * Get the value of frame limit for the current simulation
+     * @return type int frame limit
+     */
     public int getFrameLimit() {
         return frameLimit;
     }
-    
-    
+
+    /**
+     * Get the frame number of this simulation - used in the animation only
+     * @return type int frame number
+     */
+    public int getFrameNumber() {
+        return frameNumber;
+    }
+
+    /**
+     * Return the value of hasInitialized
+     * @return type boolean
+     */
+    public boolean isHasInitialized() {
+        return hasInitialized;
+    }
 
     /**
      * Set the width of the simulation to the specified width.
@@ -174,7 +193,7 @@ public abstract class CellularLogic {
     }
 
     /**
-     * TODO
+     * Set the frame number parameter - used within the animation only to calculate frame limit
      * @param frameNumber
      */
     public void setFrameNumber(int frameNumber) {
