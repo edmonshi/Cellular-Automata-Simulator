@@ -51,7 +51,6 @@ public class SimRPC extends CellularLogic {
                     color = 0;
                 }
                 current[i][j] = color;
-                colorCell(i, j, colors[color]);
 
             }
         }
@@ -66,16 +65,15 @@ public class SimRPC extends CellularLogic {
 
         if (hasInitialized == false) {
             InitializeRandomColor();
+            System.out.println("Initialized");
             hasInitialized = true;
         }
 
         for (int i = 0; i < scaledX; i++) {
-
             for (int j = 0; j < scaledY; j++) {
                 devouredOrNot(i, j);
             }
         }
-        System.out.println(current[0][0]);
         float[][] temp = this.current;
         this.current = this.nextFrame;
         this.nextFrame = temp;
@@ -88,6 +86,19 @@ public class SimRPC extends CellularLogic {
      * @param y
      */
     public void devouredOrNot(int x, int y) {
+        
+        if (current[x][y] == 0) {
+            this.nextFrame[x][y] = 1;
+        }
+        else if (current[x][y] == 1) {
+            this.nextFrame[x][y] = 2;
+        }
+        else if (current[x][y] == 2) {
+            this.nextFrame[x][y] = 0;
+        }
+        
+        
+        
         int predators;
 
         if (current[x][y] == 0) {
@@ -106,14 +117,17 @@ public class SimRPC extends CellularLogic {
             if (predators > nreOfNeededPredator) {
                 this.nextFrame[x][y] = 0;
             }
+        } else {
+            this.nextFrame[x][y] = this.current[x][y];
+            System.out.println("Not eaten");
         }
-
+         
     }
 
     public void paintTheCanvas(int x, int y) {
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                colorCell(i, j, colors[(int)(current[i][j])]);
+                colorCell(i, j, colors[(int) (current[i][j])]);
             }
         }
     }
