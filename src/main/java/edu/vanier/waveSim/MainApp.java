@@ -39,7 +39,6 @@ public class MainApp extends Application {
             SDC = new FXMLMainAppController(primaryStage);
             loader.setController(SDC);
             BorderPane root = loader.load();
-            
             //-- 2) Create and set the scene to the stage.
             Scene scene = new Scene(root, 700, 600);
             primaryStage.setScene(scene);

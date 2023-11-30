@@ -43,18 +43,6 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
             }
         
         }
-//        if (isAlive(1,1)) {
-//            colorCell(1,1,Color.GREEN);
-//        }
-//        if (isAlive(1,2)) {
-//            colorCell(1,2,Color.GREEN);
-//        }
-//        if (isAlive(2,2)) {
-//            colorCell(2,2,Color.GREEN);
-//        }
-//        if (isAlive(2,1)) {
-//            colorCell(2,1,Color.GREEN);
-//        }
 
         float[][] temp = this.current;
         this.current = this.nextFrame;

@@ -1,12 +1,12 @@
 package edu.vanier.waveSim.controllers;
-
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import edu.vanier.waveSim.models.CellularAnimTimer;
 import edu.vanier.waveSim.models.CellularLogic;
 import javafx.fxml.FXML;
 import edu.vanier.waveSim.models.ConwayGameOfLifeLogic;
-import edu.vanier.waveSim.models.ForestFire;
+import edu.vanier.waveSim.models.SimBriansBrain;
+import edu.vanier.waveSim.models.SimForestFire;
 import edu.vanier.waveSim.models.SimLogicWave;
 import edu.vanier.waveSim.models.SimRPC;
 import edu.vanier.waveSim.models.SimDiffusionLimitedAggregation;
@@ -48,6 +48,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -218,13 +219,24 @@ public class FXMLMainAppController{
     private List<String> folderFiles = new ArrayList<String>(); // list of all files to load view render images from selected folder
     private int imageSequenceIndex = 0; // index of current image in sequence for view render
     
-    /**
-     * TODO documentation
-     */
+    private void adjustDimensionsRender(String pathCsv){
+        try{
+        File file = new File(pathCsv);
+        CSVReader reader = new CSVReader(new FileReader(file.getPath()));
+        String[] settingsRender = reader.readAll().get(0);
+        primaryStage.setWidth(Double.parseDouble(settingsRender[0]));
+        primaryStage.setHeight(Double.parseDouble(settingsRender[1]));
+        viewRenderAnchorPane.setPrefWidth(Double.parseDouble(settingsRender[2]));
+        viewRenderAnchorPane.setPrefHeight(Double.parseDouble(settingsRender[3]));
+        }catch(Exception e){
+            System.out.println("File not found. Dimensions stay the same");
+        }
+    }
     private void nextViewRenderFrame(ActionEvent event) {
         if (!hasLoadedViewFolder) {
             return;
         }
+        
         System.out.println(folderFiles.size());
         if (imageSequenceIndex < folderFiles.size()) {
             imageViewSequence.setImage(new Image(folderFiles.get(imageSequenceIndex)));
@@ -269,6 +281,9 @@ public class FXMLMainAppController{
                     folderFiles.remove(nFile);
                     if (csvs > 1) {
                     }
+                    System.out.println("Done without exceptions thrown!");
+                    Transition pause2  = new PauseTransition(Duration.millis(1000));
+                    pause2.play();
                 }
                 folderFiles.remove(nFile);
             }else {
@@ -313,9 +328,14 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxSLALimit;
     @FXML private Label amplitudeLbl;
     @FXML private Slider amplitudeSldr;
+    @FXML private TextField txtBoxBBLimit;
+    @FXML private TextField txtBoxFFLimit;
     @FXML private ImageView imageViewSequence;
     @FXML private Button btnPlayRender;
     @FXML private Button btnLoad;
+    @FXML private AnchorPane viewRenderAnchorPane;
+    @FXML private Slider fireSldr;
+    @FXML private Slider treeSldr;
     
     // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -333,8 +353,9 @@ public class FXMLMainAppController{
 
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimBriansBrain Brain = new SimBriansBrain(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        ForestFire SLA = new ForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimForestFire SLA = new SimForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         
         // initialize default simulation
@@ -436,6 +457,7 @@ public class FXMLMainAppController{
         
         // handle play view render button
         btnPlayRender.setOnAction((event) -> {
+            
             viewRenderTimer.play();
             btnPlayRender.setDisable(true);
             btnPauseRender.setDisable(false);
@@ -489,8 +511,20 @@ public class FXMLMainAppController{
                       WaveSim.setDamping(1-newValue.floatValue());
                   }
         });
-        
-        // add listenner to amplitude slider and bind to the amplitude of the ripple simulation
+        /*
+        fireSldr.valueProperty().addListener(new ChangeListener<Number>(){
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
+                SLA.setFire(newValue.doubleValue()/10);
+            }
+        });
+        treeSldr.valueProperty().addListener(new ChangeListener<Number>(){
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
+                SLA.setFire(newValue.doubleValue()/10);
+            }
+        });
+        */
         amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(
@@ -702,7 +736,16 @@ public class FXMLMainAppController{
         new File(path).mkdirs();
         handlePlayBtn(animation);
     }
-    
+    public void saveDimensions(String path){
+        try(FileWriter fw = new FileWriter(path+"\\"+"dimensions.csv");
+            PrintWriter writer = new PrintWriter(fw);){
+            writer.write(Double.toString(primaryStage.getWidth())+",");
+            writer.write(Double.toString(primaryStage.getHeight())+",");
+            writer.write(Double.toString(viewRenderAnchorPane.getWidth())+",");
+            writer.write(Double.toString(viewRenderAnchorPane.getHeight()));
+        }catch(Exception e){
+        }
+    }
     /**
      * Handle the render stop button operation
      */
@@ -856,6 +899,16 @@ public class FXMLMainAppController{
                 System.out.println("Error in the program: "+ex.toString());
        }
         }
+        // Order:
+        /*
+        Damping
+        scale choice
+        sim type
+        speed
+        width and height of canvas and parimary stage
+        frame limit
+        points
+        */
         try(FileWriter fw = new FileWriter(file.getPath());
             PrintWriter writer = new PrintWriter(fw);){
             //Erase previous save settings
@@ -868,19 +921,29 @@ public class FXMLMainAppController{
             writer.write(simTypeChoice.getValue().toString()+",");
             // Write speed
             writer.write(Double.toString(sldrSpeed.getValue())+",");
-            //Write points
-            for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
-                Point currentPoint = points.next();
-                writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
-            }
             //Write the properties of the canvas and the stage
-            writer.write(Double.toString(simulation.getOperatingCanvas().getWidth())+",");
-            writer.write(Double.toString(simulation.getOperatingCanvas().getHeight())+",");
             writer.write(Double.toString(primaryStage.getWidth())+",");
             writer.write(Double.toString(primaryStage.getHeight())+",");
             //Write the frame limit
-            writer.write(Integer.toString(this.getFrameLim()));
+            writer.write(Integer.toString(this.getFrameLim())+",");
+            // txtBoxRippleLimit, txtBoxConwayLimit, txtBoxRPCLimit, txtBoxBBLimit, txtBoxFFLimit
+            writer.write(txtBoxRippleLimit.getText()+",");
+            writer.write(txtBoxConwayLimit.getText()+",");
+            writer.write(txtBoxRPCLimit.getText()+",");
+            writer.write(txtBoxBBLimit.getText()+",");
+            writer.write(txtBoxFFLimit.getText()+",");
+            //Write points
+            for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
+                Point currentPoint = points.next();
+                if(!points.hasNext()){
+                    writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling()));
+                    break;
+                }
+                writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
+            }
             writer.write("\n");
+        }catch(Exception e){
+            System.out.println(e.toString());
         }
     }
     /**
@@ -925,14 +988,14 @@ public class FXMLMainAppController{
     
     private void loadPointsUtil() {
         int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-8)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-12)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
                     if(counterCoordinates==0)
-                        x=Integer.parseInt(settings[(counterIndex*2)+4]);
+                        x=Integer.parseInt(settings[(counterIndex*2)+12]);
                     else
-                        y=Integer.parseInt(settings[(counterIndex*2)+5]);
+                        y=Integer.parseInt(settings[(counterIndex*2)+13]);
                 }
                 
                 newPoint((double)x, (double)y, simulation);
@@ -960,13 +1023,23 @@ public class FXMLMainAppController{
             return;
         }
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
-        int saveOption = 0;
-        settings = reader.readAll().get(saveOption);
+        settings = reader.readAll().get(0);
+        /*
         verifyFileSettings(settings);
+        */
         this.primaryStage.setAlwaysOnTop(true);
-        
+        // Order:
+        /*
+        Damping
+        scale choice
+        sim type
+        speed
+        width and height of canvas and parimary stage
+        frame limit
+        points
+        */
             // Set height and width
-            setStageDimensions(Double.parseDouble(settings[settings.length-3]),Double.parseDouble(settings[settings.length-2]));
+            setStageDimensions(Double.parseDouble(settings[4]),Double.parseDouble(settings[5]));
             //Set scaling
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
@@ -979,8 +1052,12 @@ public class FXMLMainAppController{
             changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            
-            
+            // txtBoxRippleLimit, txtBoxConwayLimit, txtBoxRPCLimit, txtBoxBBLimit, txtBoxFFLimit
+            txtBoxRippleLimit.setText(settings[7]);
+            txtBoxConwayLimit.setText(settings[8]);
+            txtBoxRPCLimit.setText(settings[9]);
+            txtBoxBBLimit.setText(settings[10]);
+            txtBoxFFLimit.setText(settings[11]);
             //Set points, pause because the canvas needs to update its size
             pause.play();
             
@@ -1067,11 +1144,18 @@ public class FXMLMainAppController{
         return isValid;
     }
     private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
+        /*
+        Damping
+        scale choice
+        sim type
+        speed
+        width and height of canvas and parimary stage
+        frame limit
+        points
+        */
         boolean isValid=true;
-        if(info.length<8){
-            showAlert("The file does not contain enough information for the load settings to work. Please use another one, "
-                    + "containing at least the damping, the scaling, the simulation type, the speed, zero or more "
-                    + "points coordinates, the width and height of the canvas and the window.");
+        if(info.length<9){
+            showAlert("The file does not contain the minimum amount of information required to load a simulation.");
             isValid = false;
         }
             
@@ -1100,7 +1184,7 @@ public class FXMLMainAppController{
             isValid = false;
         }
         //Check simulation type
-        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors"};
+        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Brian's Brain", "Forest Fire"};
         boolean isOneOfTypes = false;
         for(String element:simulationTypes)
             if(element.equals(info[2]))
@@ -1131,46 +1215,46 @@ public class FXMLMainAppController{
         double widthCanvas=0;
         double heightCanvas=0;
         try{
-            widthCanvas = Double.parseDouble(info[info.length-5]);
+            widthCanvas = Double.parseDouble(info[4]);
             if(widthCanvas<1){
-                showAlert("The value at the "+(info.length-4)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(3)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-4)+"th position should be a number corresponding to the width of the canvas. However, it does not look like a number.");
+            showAlert("The value at the "+(3)+"th position should be a number corresponding to the width of the canvas. However, it does not look like a number.");
             isValid=false;
         }
         //Height
         try{
-            heightCanvas = Double.parseDouble(info[info.length-4]);
+            heightCanvas = Double.parseDouble(info[5]);
             if(heightCanvas<1){
-                showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(4)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-3)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
+            showAlert("The value at the "+(4)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
             isValid=false;
         }
         // Go through every point to check if they are valid
         if(numOfCoordinates!=0){
             for(int counter=0; counter<numOfCoordinates; counter++){
                 try{
-                    int coordinate = Integer.parseInt(info[4+counter]);
+                    int coordinate = Integer.parseInt(info[9+counter]);
                     // Verify of the coordinates are within the proper bounds
                     //x value
                     if(counter%2==0){
                         if((double)coordinate>(widthCanvas)||coordinate<0){
-                            showAlert("The x-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+widthCanvas);
+                            showAlert("The x-coordinate at the "+(10+counter)+"th position is out of bounds. It should be between 0 and "+widthCanvas);
                             isValid = false;
                         }
                     }
                     //y value
                     if(counter%2==1){
                         if((double)coordinate>(heightCanvas)||coordinate<0){
-                            showAlert("The y-coordinate at the "+(counter+5)+"th position is out of bounds. It should be between 0 and "+heightCanvas);
+                            showAlert("The y-coordinate at the "+(10+counter)+"th position is out of bounds. It should be between 0 and "+heightCanvas);
                             isValid = false;
                         }
                     }
                 }catch(Exception e){
-                    showAlert("The value at the "+(5+counter)+"th position should be an integer corresponding to a coordinate inside the canvas. However, it does not look like an integer. Please try again, using a valid file.");
+                    showAlert("The value at the "+(11+counter)+"th position should be an integer corresponding to a coordinate inside the canvas. However, it does not look like an integer. Please try again, using a valid file.");
                     isValid=false;
                 }
             }
@@ -1179,35 +1263,35 @@ public class FXMLMainAppController{
         // Verify stage dimensions
         // Width
         try{
-            double widthStage = Double.parseDouble(info[info.length-3]);
+            double widthStage = Double.parseDouble(info[6]);
             if(widthStage<1){
-                showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the width of the window. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(5)+"th position should be a number corresponding to the width of the window. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-2)+"th position should be a number corresponding to the width of the window. However, it does not look like a number.");
+            showAlert("The value at the "+(5)+"th position should be a number corresponding to the width of the window. However, it does not look like a number.");
             isValid=false;
         }
         //Height
         try{
-            double heightStage = Double.parseDouble(info[info.length-2]);
+            double heightStage = Double.parseDouble(info[7]);
             if(heightStage<1){
-                showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the height of the window. It should be bigger than 0. However, it is inferior to 1.");
+                showAlert("The value at the "+(6)+"th position should be a number corresponding to the height of the window. It should be bigger than 0. However, it is inferior to 1.");
             }
         }catch(Exception e){
-            showAlert("The value at the "+(info.length-1)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
+            showAlert("The value at the "+(6)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
             isValid=false;
         }
         //Verification for the frame limit here
         try{
-            int frameLim = Integer.parseInt(info[info.length-1]);
+            int frameLim = Integer.parseInt(info[8]);
             if(frameLim<0){
                 showAlert("The value of the frame limit is invalid, because it is negative. Please try again with a file that has a positive value for the frame limit.");
-                System.out.println("Frame limit ="+info[info.length-1]);
+                System.out.println("Frame limit ="+info[8]);
                 isValid=false;
             }
         }catch(Exception e){
             showAlert("The value corresponding to the frame limit is invalid. It does not appear to be a number. Please try again with a valid file.");
-            System.out.println("Frame limit ="+info[info.length-1]);
+            System.out.println("Frame limit ="+info[8]);
             isValid = false;
         }
         return isValid;
@@ -1216,7 +1300,7 @@ public class FXMLMainAppController{
      * This method creates a help dialog for the user.
      */
     private void handleGuideItm(MenuItem guideItm) throws IOException{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
         loader.setController(new FXMLHelpGuideController());
         Pane root = loader.load();
         guideItm.setDisable(true);
