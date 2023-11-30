@@ -53,6 +53,11 @@ public class SimBriansBrain extends CellularLogic{
                         this.nextFrame[counterX][counterY]=255;
                         colorCell(counterX, counterY, Color.BLACK);
                     }
+                    // is Dead Next
+                    else{
+                        this.nextFrame[counterX][counterY] = 0;
+                        colorCell(counterX, counterY, Color.WHITE);
+                    }
                 }
         }
         }

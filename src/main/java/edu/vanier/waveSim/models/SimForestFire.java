@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 public class SimForestFire extends CellularLogic{
     private final static Logger logger = LoggerFactory.getLogger(SimForestFire.class);
-    private boolean needToInitialize = true;
     private double fire = 0.00001;
     private double tree=0.5;
     
@@ -67,11 +66,14 @@ public class SimForestFire extends CellularLogic{
                            this.nextFrame[counterX][counterY]=2;
                            colorCell(counterX, counterY, Color.GREEN);
                        }
+                       else{
+                           this.nextFrame[counterX][counterY]=0;
+                           colorCell(counterX, counterY, Color.BLACK);
+                       }
                    }
                }
            }
            this.current = this.nextFrame;
-        this.nextFrame = this.current;
     }
 
     private boolean isAlive(int x, int y) {
