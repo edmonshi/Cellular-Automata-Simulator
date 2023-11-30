@@ -34,16 +34,7 @@ public class SimForestFire extends CellularLogic{
 
     @Override
        public void simFrame() {
-           if(needToInitialize){
-               needToInitialize=false;
-               for(int counterX = 0; counterX<scaledX; counterX++){
-                   for(int counterY = 0; counterY<scaledY; counterY++){
-                       this.current[counterX][counterY]=2;
-                       colorCell(counterX, counterY, Color.GREEN);
-                   }
-                   }
-               
-           }
+           
            for(int counterX = 1; counterX<scaledX-1; counterX++){
                for(int counterY =1; counterY<scaledY-1; counterY++){
                    // 3 states
@@ -58,6 +49,10 @@ public class SimForestFire extends CellularLogic{
                            if(f>0&&f<fire){
                                this.nextFrame[counterX][counterY]=1;
                                colorCell(counterX, counterY, Color.RED);
+                           }
+                           else{
+                               this.nextFrame[counterX][counterY] = 2;
+                               colorCell(counterX, counterY, Color.GREEN);
                            }
                        }
                    }

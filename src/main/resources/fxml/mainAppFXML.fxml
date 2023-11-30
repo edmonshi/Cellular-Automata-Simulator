@@ -86,7 +86,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="169.0" prefWidth="154.0">
+                              <ScrollPane prefHeight="169.0" prefWidth="154.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                  <content>
                                     <VBox alignment="TOP_CENTER" prefHeight="207.0" prefWidth="135.0" style="-fx-alignment: top-center;">
                                        <children>
@@ -131,7 +131,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="88.0" prefWidth="153.0">
+                              <ScrollPane prefHeight="88.0" prefWidth="153.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                  <content>
                                     <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
                                        <padding>
@@ -151,7 +151,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="88.0" prefWidth="153.0">
+                              <ScrollPane prefHeight="88.0" prefWidth="153.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                  <content>
                                     <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
                                        <padding>
@@ -171,7 +171,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="149.0" prefWidth="154.0">
+                              <ScrollPane prefHeight="149.0" prefWidth="154.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                  <content>
                                     <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
                                        <padding>
@@ -179,7 +179,7 @@
                                        </padding>
                                        <children>
                                           <Label text="Frame Limit" />
-                                          <TextField fx:id="txtBoxSLALimit" text="max" />
+                                          <TextField fx:id="txtBoxSLALimit" promptText="txtBoxForestFrameLimit" text="max" />
                                           <Label text="Fire Probability" />
                                           <Slider fx:id="fireSldr" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="5" prefWidth="135.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
                                           <Label text="Tree Probability" />
@@ -196,7 +196,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="88.0" prefWidth="153.0">
+                              <ScrollPane prefHeight="88.0" prefWidth="153.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                  <content>
                                     <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
                                        <padding>
@@ -204,7 +204,7 @@
                                        </padding>
                                        <children>
                                           <Label text="Frame Limit" />
-                                          <TextField fx:id="txtBoxDLALimit" text="max" />
+                                          <TextField fx:id="txtBoxDLALimit" promptText="txtBoxDLALimit" text="max" />
                                        </children>
                                     </VBox>
                                  </content>
@@ -217,12 +217,12 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                              <ScrollPane layoutY="29.6" prefHeight="142.0" prefWidth="150.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                  <content>
-                                    <VBox alignment="TOP_CENTER" prefHeight="82.0" prefWidth="153.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="149.0" prefWidth="150.0">
                                        <children>
                                           <Label text="Frame Limit" />
-                                          <TextField text="max" />
+                                          <TextField fx:id="txtBoxBrainFrameLimit" promptText="txtBoxBrianFrameLimit" text="max" />
                                        </children>
                                     </VBox>
                                  </content>

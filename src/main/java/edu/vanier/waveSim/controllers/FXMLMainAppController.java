@@ -335,10 +335,9 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxRPCLimit;
     @FXML private TextField txtBoxDLALimit;
     @FXML private TextField txtBoxSLALimit;
+    @FXML private TextField txtBoxBrainFrameLimit;
     @FXML private Label amplitudeLbl;
     @FXML private Slider amplitudeSldr;
-    @FXML private TextField txtBoxBBLimit;
-    @FXML private TextField txtBoxFFLimit;
     @FXML private ImageView imageViewSequence;
     @FXML private Button btnPlayRender;
     @FXML private Button btnLoad;
@@ -448,15 +447,18 @@ public class FXMLMainAppController{
             int frameLimit = validateFrameLimit(input, txtBoxRPCLimit);
             RPC.setFrameLimit(frameLimit);
         });
-        txtBoxDLALimit.textProperty().addListener((observable, previous, input) -> {
-            int frameLimit = validateFrameLimit(input, txtBoxDLALimit);
-            DLA.setFrameLimit(frameLimit);
-        });
         txtBoxSLALimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxSLALimit);
             SLA.setFrameLimit(frameLimit);
         });
-        
+        txtBoxBrainFrameLimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxBrainFrameLimit);
+            SBB.setFrameLimit(frameLimit);
+        });
+        txtBoxDLALimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxDLALimit);
+            DLA.setFrameLimit(frameLimit);
+        });
         // handle load button in view render tab 
         btnLoad.setOnAction((event) -> {
             hasLoadedViewFolder = getFileList();
@@ -709,6 +711,10 @@ public class FXMLMainAppController{
                     simulation = simulations[5];
                     return simulation;
                 }
+                case "Brian's Brain"->{
+                    simulation = simulations[6];
+                    return simulation;
+                }
                 default -> {
                     return simulation;
                 }
@@ -880,9 +886,7 @@ public class FXMLMainAppController{
      * This method saves the settings of a simulation in a CSV File.
      * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: 
-     * 1) - Few examples: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
      * 2) - Putting conditions in paratheses of the try-catch: https://www.baeldung.com/java-csv
-     * 3) - Using .write() method: https://www.javatpoint.com/java-printwriter-write-method#:~:text=Java%20PrintWriter%20write(char%20%5B%5D%20buf%2C%20int%20off%2C%20int,of%20an%20array%20of%20characters.
      * Sources To use file chooser and directory chooser:
      * 1) https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
      * 2) https://docs.oracle.com/javase/8/javafx/api/javafx/stage/DirectoryChooser.html
@@ -930,18 +934,7 @@ public class FXMLMainAppController{
                 System.out.println("Error in the program: "+ex.toString());
        }
         }
-        // Order:
-        /*
-        Damping
-        scale choice
-        sim type
-        speed
-        width and height of canvas and parimary stage
-        frame limit
-        points
-        */
-        try(FileWriter fw = new FileWriter(file.getPath());
-            PrintWriter writer = new PrintWriter(fw);){
+        try(FileWriter writer = new FileWriter(file.getAbsolutePath())){
             //Erase previous save settings
             writer.flush();
             //Write damping
@@ -956,13 +949,17 @@ public class FXMLMainAppController{
             writer.write(Double.toString(primaryStage.getWidth())+",");
             writer.write(Double.toString(primaryStage.getHeight())+",");
             //Write the frame limit
-            writer.write(Integer.toString(this.getFrameLim())+",");
-            // txtBoxRippleLimit, txtBoxConwayLimit, txtBoxRPCLimit, txtBoxBBLimit, txtBoxFFLimit
             writer.write(txtBoxRippleLimit.getText()+",");
             writer.write(txtBoxConwayLimit.getText()+",");
             writer.write(txtBoxRPCLimit.getText()+",");
-            writer.write(txtBoxBBLimit.getText()+",");
-            writer.write(txtBoxFFLimit.getText()+",");
+            writer.write(txtBoxSLALimit.getText()+",");
+            writer.write(txtBoxDLALimit.getText()+",");
+            writer.write(txtBoxBrainFrameLimit.getText()+",");
+            // Write value of sliders for Forest Fire
+            writer.write(Double.toString(fireSldr.getValue())+",");
+            writer.write(Double.toString(treeSldr.getValue())+",");
+            //Write Amplitude
+            writer.write(Double.toString(amplitudeSldr.getValue())+",");
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
@@ -972,7 +969,6 @@ public class FXMLMainAppController{
                 }
                 writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
-            writer.write("\n");
         }catch(Exception e){
             System.out.println(e.toString());
         }
@@ -1019,14 +1015,14 @@ public class FXMLMainAppController{
     
     private void loadPointsUtil() {
         int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-12)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-15)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
                     if(counterCoordinates==0)
-                        x=Integer.parseInt(settings[(counterIndex*2)+12]);
+                        x=Integer.parseInt(settings[(counterIndex*2)+15]);
                     else
-                        y=Integer.parseInt(settings[(counterIndex*2)+13]);
+                        y=Integer.parseInt(settings[(counterIndex*2)+16]);
                 }
                 
                 newPoint((double)x, (double)y, simulation);
@@ -1059,16 +1055,6 @@ public class FXMLMainAppController{
         verifyFileSettings(settings);
         */
         this.primaryStage.setAlwaysOnTop(true);
-        // Order:
-        /*
-        Damping
-        scale choice
-        sim type
-        speed
-        width and height of canvas and parimary stage
-        frame limit
-        points
-        */
             // Set height and width
             setStageDimensions(Double.parseDouble(settings[4]),Double.parseDouble(settings[5]));
             //Set scaling
@@ -1083,12 +1069,18 @@ public class FXMLMainAppController{
             changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            // txtBoxRippleLimit, txtBoxConwayLimit, txtBoxRPCLimit, txtBoxBBLimit, txtBoxFFLimit
-            txtBoxRippleLimit.setText(settings[7]);
-            txtBoxConwayLimit.setText(settings[8]);
-            txtBoxRPCLimit.setText(settings[9]);
-            txtBoxBBLimit.setText(settings[10]);
-            txtBoxFFLimit.setText(settings[11]);
+            // Set Limits
+            txtBoxRippleLimit.setText(settings[6]);
+            txtBoxConwayLimit.setText(settings[7]);
+            txtBoxRPCLimit.setText(settings[8]);
+            txtBoxSLALimit.setText(settings[9]);
+            txtBoxDLALimit.setText(settings[10]);
+            txtBoxBrainFrameLimit.setText(settings[11]);
+            //Set Sliders for Forest Fire
+            fireSldr.setValue(Double.parseDouble(settings[12]));
+            treeSldr.setValue(Double.parseDouble(settings[13]));
+            //Set amplitude
+            amplitudeSldr.setValue(Double.parseDouble(settings[14]));
             //Set points, pause because the canvas needs to update its size
             pause.play();
             
