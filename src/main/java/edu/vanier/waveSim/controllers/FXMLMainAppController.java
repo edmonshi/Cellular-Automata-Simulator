@@ -209,7 +209,7 @@ public class FXMLMainAppController{
     }
     
     private HashSet<Point> pointList; // list of origin points on screen
-    private CellularLogic[] simulationsList = new CellularLogic[6]; // list of all simulations - active simulation is always instance 0
+    private CellularLogic[] simulationsList = new CellularLogic[7]; // list of all simulations - active simulation is always instance 0
     private CellularLogic simulation; // the current active simulation
     private CellularAnimTimer animation; // the animation of the canvas
     private Integer viewRenderFrameDelay = 100; // delay for each frame of view render tab
@@ -219,19 +219,6 @@ public class FXMLMainAppController{
     private List<String> folderFiles = new ArrayList<String>(); // list of all files to load view render images from selected folder
     private int imageSequenceIndex = 0; // index of current image in sequence for view render
     
-    private void adjustDimensionsRender(String pathCsv){
-        try{
-        File file = new File(pathCsv);
-        CSVReader reader = new CSVReader(new FileReader(file.getPath()));
-        String[] settingsRender = reader.readAll().get(0);
-        primaryStage.setWidth(Double.parseDouble(settingsRender[0]));
-        primaryStage.setHeight(Double.parseDouble(settingsRender[1]));
-        viewRenderAnchorPane.setPrefWidth(Double.parseDouble(settingsRender[2]));
-        viewRenderAnchorPane.setPrefHeight(Double.parseDouble(settingsRender[3]));
-        }catch(Exception e){
-            System.out.println("File not found. Dimensions stay the same");
-        }
-    }
     private void nextViewRenderFrame(ActionEvent event) {
         if (!hasLoadedViewFolder) {
             return;
@@ -271,9 +258,7 @@ public class FXMLMainAppController{
         int counter=0;
         for(File file: temp){
             if(file.toString().endsWith(".csv")){
-                System.out.println("Surprise");
                 System.out.println(file.getAbsolutePath());
-                System.out.println("Surprise");
                 adjustSizeIV(file.getAbsolutePath());
             }
             else{
@@ -298,9 +283,6 @@ public class FXMLMainAppController{
                     if (csvs > 1) {
                     }
                     System.out.println(folder+"\\"+nFile.toString());
-                    /*
-                    adjustSizeIV(folder+"\\"+nFile.toString());
-                    */
                 }
                 folderFiles.remove(nFile);
             }else {
@@ -368,7 +350,7 @@ public class FXMLMainAppController{
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
     //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation");
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation", "Brian's Brain");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -384,6 +366,7 @@ public class FXMLMainAppController{
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimForestFire SLA = new SimForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
+        SimBriansBrain SBB = new SimBriansBrain(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         
         // initialize default simulation
         simulation = WaveSim;
@@ -395,6 +378,7 @@ public class FXMLMainAppController{
         simulationsList[3] = RPC;
         simulationsList[4] = SLA;
         simulationsList[5] = DLA;
+        simulationsList[6] = SBB;
         
         // view render works indefinitely
         viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
@@ -560,20 +544,18 @@ public class FXMLMainAppController{
                       WaveSim.setDamping(1-newValue.floatValue());
                   }
         });
-        /*
         fireSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
-                SLA.setFire(newValue.doubleValue()/10);
+                SLA.setFire(newValue.doubleValue()/1000);
             }
         });
         treeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
-                SLA.setFire(newValue.doubleValue()/10);
+                SLA.setTree(newValue.doubleValue()/100);
             }
         });
-        */
         amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(

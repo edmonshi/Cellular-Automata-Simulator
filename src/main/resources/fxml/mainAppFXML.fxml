@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<BorderPane prefHeight="669.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="636.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox prefHeight="26.0" prefWidth="862.0" BorderPane.alignment="CENTER">
          <children>
@@ -171,7 +171,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="88.0" prefWidth="153.0">
+                              <ScrollPane prefHeight="149.0" prefWidth="154.0">
                                  <content>
                                     <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="135.0" style="-fx-alignment: top-center;">
                                        <padding>
@@ -180,6 +180,10 @@
                                        <children>
                                           <Label text="Frame Limit" />
                                           <TextField fx:id="txtBoxSLALimit" text="max" />
+                                          <Label text="Fire Probability" />
+                                          <Slider fx:id="fireSldr" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="5" prefWidth="135.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                                          <Label text="Tree Probability" />
+                                          <Slider fx:id="treeSldr" majorTickUnit="5.0" max="10.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="5.0" />
                                        </children>
                                     </VBox>
                                  </content>
@@ -209,13 +213,31 @@
                         </AnchorPane>
                      </content>
                   </TitledPane>
+                  <TitledPane animated="false" text="Brian's Brain">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                 <content>
+                                    <VBox alignment="TOP_CENTER" prefHeight="82.0" prefWidth="153.0">
+                                       <children>
+                                          <Label text="Frame Limit" />
+                                          <TextField text="max" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
                </panes>
             </Accordion>
          </children>
       </VBox>
    </left>
    <center>
-      <TabPane fx:id="SimTabPane" prefHeight="100.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="SimTabPane" prefHeight="602.0" prefWidth="546.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
             <Tab text="Simulation">
                <content>

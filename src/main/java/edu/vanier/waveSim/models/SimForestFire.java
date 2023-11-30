@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class SimForestFire extends CellularLogic{
     private final static Logger logger = LoggerFactory.getLogger(SimForestFire.class);
     private boolean needToInitialize = true;
-    private double fire=0.5;
+    private double fire = 0.00001;
     private double tree=0.5;
     
 
@@ -36,8 +36,8 @@ public class SimForestFire extends CellularLogic{
        public void simFrame() {
            if(needToInitialize){
                needToInitialize=false;
-               for(int counterX = 1; counterX<scaledX-1; counterX++){
-                   for(int counterY =1; counterY<scaledY-1; counterY++){
+               for(int counterX = 0; counterX<scaledX; counterX++){
+                   for(int counterY = 0; counterY<scaledY; counterY++){
                        this.current[counterX][counterY]=2;
                        colorCell(counterX, counterY, Color.GREEN);
                    }
@@ -75,9 +75,8 @@ public class SimForestFire extends CellularLogic{
                    }
                }
            }
-        float[][] temp = this.current;
-        this.current = this.nextFrame;
-        this.nextFrame = temp;
+           this.current = this.nextFrame;
+        this.nextFrame = this.current;
     }
 
     private boolean isAlive(int x, int y) {
@@ -100,28 +99,29 @@ public class SimForestFire extends CellularLogic{
         if (this.current[x - 1][y - 1] == 1) {
             return true;
         }
-        if (this.current[x - 1][y] == 1) {
+        else if (this.current[x - 1][y] == 1) {
             return true;
         }
-        if (this.current[x - 1][y + 1] == 1) {
+        else if (this.current[x - 1][y + 1] == 1) {
             return true;
         }
-        if (this.current[x][y - 1] == 1) {
+        else if (this.current[x][y - 1] == 1) {
             return true;
         }
-        if (this.current[x][y + 1] == 1) {
+        else if (this.current[x][y + 1] == 1) {
             return true;
         }
-        if (this.current[x + 1][y - 1] == 1) {
+        else if (this.current[x + 1][y - 1] == 1) {
             return true;
         }
-        if (this.current[x + 1][y] == 1) {
+        else if (this.current[x + 1][y] == 1) {
             return true;
         }
-        if (this.current[x + 1][y + 1] == 1) {
+        else if (this.current[x + 1][y + 1] == 1) {
             return true;
         }
-        return false;
+        else 
+            return false;
     }
 
 }
