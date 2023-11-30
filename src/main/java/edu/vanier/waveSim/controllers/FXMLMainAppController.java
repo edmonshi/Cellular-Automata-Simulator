@@ -934,16 +934,6 @@ public class FXMLMainAppController{
                 System.out.println("Error in the program: "+ex.toString());
        }
         }
-        // Order:
-        /*
-        Damping
-        scale choice
-        sim type
-        speed
-        width and height of canvas and parimary stage
-        frame limit
-        points
-        */
         try(FileWriter writer = new FileWriter(file.getAbsolutePath())){
             //Erase previous save settings
             writer.flush();
@@ -959,15 +949,17 @@ public class FXMLMainAppController{
             writer.write(Double.toString(primaryStage.getWidth())+",");
             writer.write(Double.toString(primaryStage.getHeight())+",");
             //Write the frame limit
-            writer.write(Integer.toString(this.getFrameLim())+",");
-            // txtBoxRippleLimit, txtBoxConwayLimit, txtBoxRPCLimit, txtBoxBBLimit, txtBoxFFLimit
             writer.write(txtBoxRippleLimit.getText()+",");
             writer.write(txtBoxConwayLimit.getText()+",");
             writer.write(txtBoxRPCLimit.getText()+",");
-            /*
-            writer.write(txtBoxBBLimit.getText()+",");
-            writer.write(txtBoxFFLimit.getText()+",");
-            */
+            writer.write(txtBoxSLALimit.getText()+",");
+            writer.write(txtBoxDLALimit.getText()+",");
+            writer.write(txtBoxBrainFrameLimit.getText()+",");
+            // Write value of sliders for Forest Fire
+            writer.write(Double.toString(fireSldr.getValue())+",");
+            writer.write(Double.toString(treeSldr.getValue())+",");
+            //Write Amplitude
+            writer.write(Double.toString(amplitudeSldr.getValue())+",");
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
@@ -977,7 +969,6 @@ public class FXMLMainAppController{
                 }
                 writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
-            writer.write("\n");
         }catch(Exception e){
             System.out.println(e.toString());
         }
@@ -1024,14 +1015,14 @@ public class FXMLMainAppController{
     
     private void loadPointsUtil() {
         int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-12)/2); counterIndex++){
+            for(int counterIndex = 0; counterIndex<((settings.length-15)/2); counterIndex++){
                 x=0;
                 y=0;
                 for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
                     if(counterCoordinates==0)
-                        x=Integer.parseInt(settings[(counterIndex*2)+12]);
+                        x=Integer.parseInt(settings[(counterIndex*2)+15]);
                     else
-                        y=Integer.parseInt(settings[(counterIndex*2)+13]);
+                        y=Integer.parseInt(settings[(counterIndex*2)+16]);
                 }
                 
                 newPoint((double)x, (double)y, simulation);
@@ -1064,16 +1055,6 @@ public class FXMLMainAppController{
         verifyFileSettings(settings);
         */
         this.primaryStage.setAlwaysOnTop(true);
-        // Order:
-        /*
-        Damping
-        scale choice
-        sim type
-        speed
-        width and height of canvas and parimary stage
-        frame limit
-        points
-        */
             // Set height and width
             setStageDimensions(Double.parseDouble(settings[4]),Double.parseDouble(settings[5]));
             //Set scaling
@@ -1088,12 +1069,18 @@ public class FXMLMainAppController{
             changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
             // Set simulation speed
             sldrSpeed.adjustValue(Double.parseDouble(settings[3]));
-            // txtBoxRippleLimit, txtBoxConwayLimit, txtBoxRPCLimit, txtBoxBBLimit, txtBoxFFLimit
-            txtBoxRippleLimit.setText(settings[7]);
-            txtBoxConwayLimit.setText(settings[8]);
-            txtBoxRPCLimit.setText(settings[9]);
-            //txtBoxBBLimit.setText(settings[10]);
-            //txtBoxFFLimit.setText(settings[11]);
+            // Set Limits
+            txtBoxRippleLimit.setText(settings[6]);
+            txtBoxConwayLimit.setText(settings[7]);
+            txtBoxRPCLimit.setText(settings[8]);
+            txtBoxSLALimit.setText(settings[9]);
+            txtBoxDLALimit.setText(settings[10]);
+            txtBoxBrainFrameLimit.setText(settings[11]);
+            //Set Sliders for Forest Fire
+            fireSldr.setValue(Double.parseDouble(settings[12]));
+            treeSldr.setValue(Double.parseDouble(settings[13]));
+            //Set amplitude
+            amplitudeSldr.setValue(Double.parseDouble(settings[14]));
             //Set points, pause because the canvas needs to update its size
             pause.play();
             
