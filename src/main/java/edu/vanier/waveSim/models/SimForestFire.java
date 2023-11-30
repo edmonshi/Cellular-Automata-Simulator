@@ -50,6 +50,10 @@ public class SimForestFire extends CellularLogic{
                                this.nextFrame[counterX][counterY]=1;
                                colorCell(counterX, counterY, Color.RED);
                            }
+                           else{
+                               this.nextFrame[counterX][counterY] = 2;
+                               colorCell(counterX, counterY, Color.GREEN);
+                           }
                        }
                    }
                    else if(isBurning(counterX, counterY)){
