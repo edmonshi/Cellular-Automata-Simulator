@@ -277,13 +277,11 @@ public class FXMLMainAppController{
         for (String nFile:folderFiles) {
             if (!nFile.endsWith(".bmp")) {
                 if (nFile.endsWith(".csv")) {
+                    System.out.println(nFile.toString());
                     csvs++;
                     folderFiles.remove(nFile);
                     if (csvs > 1) {
                     }
-                    System.out.println("Done without exceptions thrown!");
-                    Transition pause2  = new PauseTransition(Duration.millis(1000));
-                    pause2.play();
                 }
                 folderFiles.remove(nFile);
             }else {
@@ -450,7 +448,22 @@ public class FXMLMainAppController{
         btnLoad.setOnAction((event) -> {
             hasLoadedViewFolder = getFileList();
         });
-        
+        // Source for understanding how the syntax would look like:
+        // https://stackoverflow.com/questions/22993550/how-to-resize-an-image-when-resizing-the-window-in-javafx
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+
+                imageViewSequence.setFitWidth(newValue.doubleValue()-167);
+            }
+        });
+
+        primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                imageViewSequence.setFitHeight(newValue.doubleValue()-150);
+            }
+        });
         // change activity of buttons by default view render tab
         btnPauseRender.setDisable(true);
         btnResetRender.setDisable(true);
@@ -462,6 +475,13 @@ public class FXMLMainAppController{
             btnPlayRender.setDisable(true);
             btnPauseRender.setDisable(false);
             btnResetRender.setDisable(false);
+            System.out.println(primaryStage.getWidth()-imageViewSequence.getFitWidth());
+            /*
+            primaryStage.setHeight(250);
+            primaryStage.setWidth(250);
+            System.out.println(imageViewSequence.getFitHeight());
+            imageViewSequence.setFitHeight(200);
+            */
         });
         //handle pause view render button
         btnPauseRender.setOnAction((event) -> {
@@ -726,7 +746,7 @@ public class FXMLMainAppController{
     private void handleRenderStart() {
         System.out.println("Start Render");
         String path = new File("").getAbsolutePath()+"/render"+System.currentTimeMillis();
-
+        saveDimensions(path);
         for (CellularLogic sim: simulationsList) {
             sim.setRenderFlag(true);
             sim.setRenderPath(path);
@@ -737,12 +757,12 @@ public class FXMLMainAppController{
         handlePlayBtn(animation);
     }
     public void saveDimensions(String path){
-        try(FileWriter fw = new FileWriter(path+"\\"+"dimensions.csv");
+        File file = new File(path+"\\"+"dimensions.csv");
+        System.out.println(file.getAbsolutePath());
+        try(FileWriter fw = new FileWriter(file);
             PrintWriter writer = new PrintWriter(fw);){
             writer.write(Double.toString(primaryStage.getWidth())+",");
-            writer.write(Double.toString(primaryStage.getHeight())+",");
-            writer.write(Double.toString(viewRenderAnchorPane.getWidth())+",");
-            writer.write(Double.toString(viewRenderAnchorPane.getHeight()));
+            writer.write(Double.toString(primaryStage.getHeight()));
         }catch(Exception e){
         }
     }
