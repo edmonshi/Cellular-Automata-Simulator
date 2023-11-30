@@ -265,7 +265,22 @@ public class FXMLMainAppController{
         }
         
         int csvs = 0;
-        File[] files = folder.listFiles();
+        //Find the .csn file here
+        File[] temp = folder.listFiles();
+        File[] files = new File[temp.length-1];
+        int counter=0;
+        for(File file: temp){
+            if(file.toString().endsWith(".csv")){
+                System.out.println("Surprise");
+                System.out.println(file.getAbsolutePath());
+                System.out.println("Surprise");
+                adjustSizeIV(file.getAbsolutePath());
+            }
+            else{
+                files[counter] = file;
+                counter++;
+            }
+        }
         Arrays.sort(files, Comparator.comparingLong(File::lastModified));
         // get list of subfolders
         folderFiles.clear();
@@ -282,6 +297,10 @@ public class FXMLMainAppController{
                     folderFiles.remove(nFile);
                     if (csvs > 1) {
                     }
+                    System.out.println(folder+"\\"+nFile.toString());
+                    /*
+                    adjustSizeIV(folder+"\\"+nFile.toString());
+                    */
                 }
                 folderFiles.remove(nFile);
             }else {
@@ -289,6 +308,16 @@ public class FXMLMainAppController{
             }
         }
         return !folderFiles.isEmpty();
+    }
+    private void adjustSizeIV(String path){
+        try(CSVReader reader = new CSVReader(new FileReader(path))){
+            String[] stageDimensions = reader.readNext();
+            System.out.println(stageDimensions.toString());
+            primaryStage.setWidth(Double.parseDouble(stageDimensions[0]));
+            primaryStage.setHeight(Double.parseDouble(stageDimensions[1]));
+        }catch(Exception e){
+            System.out.println("File not read");
+        }
     }
     
     /**
@@ -746,7 +775,6 @@ public class FXMLMainAppController{
     private void handleRenderStart() {
         System.out.println("Start Render");
         String path = new File("").getAbsolutePath()+"/render"+System.currentTimeMillis();
-        saveDimensions(path);
         for (CellularLogic sim: simulationsList) {
             sim.setRenderFlag(true);
             sim.setRenderPath(path);
@@ -754,6 +782,7 @@ public class FXMLMainAppController{
         
         // create directory
         new File(path).mkdirs();
+        saveDimensions(path);
         handlePlayBtn(animation);
     }
     public void saveDimensions(String path){
