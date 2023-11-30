@@ -335,10 +335,9 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxRPCLimit;
     @FXML private TextField txtBoxDLALimit;
     @FXML private TextField txtBoxSLALimit;
+    @FXML private TextField txtBoxBrainFrameLimit;
     @FXML private Label amplitudeLbl;
     @FXML private Slider amplitudeSldr;
-    @FXML private TextField txtBoxBBLimit;
-    @FXML private TextField txtBoxFFLimit;
     @FXML private ImageView imageViewSequence;
     @FXML private Button btnPlayRender;
     @FXML private Button btnLoad;
@@ -448,15 +447,18 @@ public class FXMLMainAppController{
             int frameLimit = validateFrameLimit(input, txtBoxRPCLimit);
             RPC.setFrameLimit(frameLimit);
         });
-        txtBoxDLALimit.textProperty().addListener((observable, previous, input) -> {
-            int frameLimit = validateFrameLimit(input, txtBoxDLALimit);
-            DLA.setFrameLimit(frameLimit);
-        });
         txtBoxSLALimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxSLALimit);
             SLA.setFrameLimit(frameLimit);
         });
-        
+        txtBoxBrainFrameLimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxBrainFrameLimit);
+            SBB.setFrameLimit(frameLimit);
+        });
+        txtBoxDLALimit.textProperty().addListener((observable, previous, input) -> {
+            int frameLimit = validateFrameLimit(input, txtBoxDLALimit);
+            DLA.setFrameLimit(frameLimit);
+        });
         // handle load button in view render tab 
         btnLoad.setOnAction((event) -> {
             hasLoadedViewFolder = getFileList();
@@ -709,6 +711,10 @@ public class FXMLMainAppController{
                     simulation = simulations[5];
                     return simulation;
                 }
+                case "Brian's Brain"->{
+                    simulation = simulations[6];
+                    return simulation;
+                }
                 default -> {
                     return simulation;
                 }
@@ -880,9 +886,7 @@ public class FXMLMainAppController{
      * This method saves the settings of a simulation in a CSV File.
      * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: 
-     * 1) - Few examples: https://stackoverflow.com/questions/68218102/how-can-i-write-data-to-csv-in-chunks-via-printwriter-in-java
      * 2) - Putting conditions in paratheses of the try-catch: https://www.baeldung.com/java-csv
-     * 3) - Using .write() method: https://www.javatpoint.com/java-printwriter-write-method#:~:text=Java%20PrintWriter%20write(char%20%5B%5D%20buf%2C%20int%20off%2C%20int,of%20an%20array%20of%20characters.
      * Sources To use file chooser and directory chooser:
      * 1) https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
      * 2) https://docs.oracle.com/javase/8/javafx/api/javafx/stage/DirectoryChooser.html
@@ -940,8 +944,7 @@ public class FXMLMainAppController{
         frame limit
         points
         */
-        try(FileWriter fw = new FileWriter(file.getPath());
-            PrintWriter writer = new PrintWriter(fw);){
+        try(FileWriter writer = new FileWriter(file.getAbsolutePath())){
             //Erase previous save settings
             writer.flush();
             //Write damping
@@ -961,8 +964,10 @@ public class FXMLMainAppController{
             writer.write(txtBoxRippleLimit.getText()+",");
             writer.write(txtBoxConwayLimit.getText()+",");
             writer.write(txtBoxRPCLimit.getText()+",");
+            /*
             writer.write(txtBoxBBLimit.getText()+",");
             writer.write(txtBoxFFLimit.getText()+",");
+            */
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
@@ -1087,8 +1092,8 @@ public class FXMLMainAppController{
             txtBoxRippleLimit.setText(settings[7]);
             txtBoxConwayLimit.setText(settings[8]);
             txtBoxRPCLimit.setText(settings[9]);
-            txtBoxBBLimit.setText(settings[10]);
-            txtBoxFFLimit.setText(settings[11]);
+            //txtBoxBBLimit.setText(settings[10]);
+            //txtBoxFFLimit.setText(settings[11]);
             //Set points, pause because the canvas needs to update its size
             pause.play();
             

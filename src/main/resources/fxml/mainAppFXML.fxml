@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<BorderPane prefHeight="636.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="636.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox prefHeight="26.0" prefWidth="862.0" BorderPane.alignment="CENTER">
          <children>
@@ -179,7 +179,7 @@
                                        </padding>
                                        <children>
                                           <Label text="Frame Limit" />
-                                          <TextField fx:id="txtBoxSLALimit" text="max" />
+                                          <TextField fx:id="txtBoxSLALimit" promptText="txtBoxForestFrameLimit" text="max" />
                                           <Label text="Fire Probability" />
                                           <Slider fx:id="fireSldr" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="5" prefWidth="135.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
                                           <Label text="Tree Probability" />
@@ -204,7 +204,7 @@
                                        </padding>
                                        <children>
                                           <Label text="Frame Limit" />
-                                          <TextField fx:id="txtBoxDLALimit" text="max" />
+                                          <TextField fx:id="txtBoxDLALimit" promptText="txtBoxDLALimit" text="max" />
                                        </children>
                                     </VBox>
                                  </content>
@@ -222,7 +222,7 @@
                                     <VBox alignment="TOP_CENTER" prefHeight="149.0" prefWidth="150.0">
                                        <children>
                                           <Label text="Frame Limit" />
-                                          <TextField fx:id="txtBoxBrainFrameLimit" text="max" />
+                                          <TextField fx:id="txtBoxBrainFrameLimit" promptText="txtBoxBrianFrameLimit" text="max" />
                                        </children>
                                     </VBox>
                                  </content>
