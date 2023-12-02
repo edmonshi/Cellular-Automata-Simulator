@@ -25,29 +25,18 @@ public class FXMLHelpGuideController extends Stage{
     private TextFlow saveLoadTxtFlw;
     @FXML
     private TextFlow renderTxtFlw;
-
+    /**
+     * Constructor for the FXMLMainAppController
+     * Non-param constructor
+     */
     public FXMLHelpGuideController() {
     }
-    
-    /*
-    SimTabPane.heightProperty().addListener((observable) -> {
-            setHeight(SimTabPane.heightProperty().getValue().intValue(), simulation, animation, lblHi);
-        });
-        SimTabPane.widthProperty().addListener((observable) -> {
-            setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
-        });
-    */
+    /**
+     * Initializes the controller
+     * @deprecated 
+     */
     @FXML
     private void initialize(){
-        /*
-        this.widthProperty().addListener((observable)->{
-            System.out.println("working...");
-            pane.setPrefWidth(this.getWidth());
-            vBox.setPrefWidth(this.getWidth());
-            accordion.setPrefWidth(this.getWidth());
-            howUseAppTPane.setPrefWidth(this.getWidth());
-        });
-*/
         this.pane.widthProperty().addListener((observable)->{
             System.out.println("working..."+this.pane.getWidth());
             accordion.setPrefWidth(this.pane.getWidth());
