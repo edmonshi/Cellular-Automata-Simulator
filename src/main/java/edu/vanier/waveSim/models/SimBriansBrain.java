@@ -11,16 +11,18 @@ import org.slf4j.LoggerFactory;
  * Only a cell that is dead can be turned on (alive) again.
  * To do so, the cell must have 2 cells in the cell's moore neighborhood in order to be turned alive again.
  * Sources for rules:
- * https://en.wikipedia.org/wiki/Brian%27s_Brain
- * https://www.arnevogel.com/brians-brain-cellular-automaton/#:~:text=Rules%3A%20There%20are%20three%20cell,dies%20in%20the%20next%20iteration.
- * For other cellular automata:
- * https://en.wikipedia.org/wiki/Day_and_Night_(cellular_automaton)
- * https://datarepository.wolframcloud.com/resources/Famous-2D-Cellular-Automata
+ * Wikipedia, n.d.
+ * Vogel, 2018
  */
 public class SimBriansBrain extends CellularLogic{
     private final static Logger logger = LoggerFactory.getLogger(SimBriansBrain.class);
-    private boolean toInitialize = true;
-    //Copied from ConwayGameOfLife
+    /**
+     * Constructor for the simulation.
+     * @param operatingCanvas The canvas on which the animation will run
+     * @param widthX The width of the canvas
+     * @param heightY The height of the canvas
+     * @param scale The scaling used
+     */
     public SimBriansBrain(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
@@ -30,30 +32,34 @@ public class SimBriansBrain extends CellularLogic{
             setScaling(scale);
         }
     }
-
+    /**
+     * This method is an overriden method which represents the logic of the simulation
+     * The idea of checking whether the cells are going to be alive or dead in the next frame using methods comes from: Algosome, n.d. (Which was used in Conway's Game of Life)
+     */
     @Override
     public void simFrame() {
+        // Goes through every single cell
         for(int counterX=1; counterX<scaledX-1; counterX++){
             for(int counterY=1; counterY<scaledY-1; counterY++){
-                // is alive
+                // If the cell is alive in the current frame, set it to the dying state for the next frame
                 if(isAlive(counterX, counterY)){
                     //Set to dying state
                     this.nextFrame[counterX][counterY]=1;
                     colorCell(counterX, counterY, Color.GREY);
                 }
-                // is dying
+                // If the cell is in a dying state, set the cell to dead for the next frame
                 else if(isDying(counterX, counterY)){
                     this.nextFrame[counterX][counterY]=0;
                     colorCell(counterX, counterY, Color.WHITE);
                 }
-                // is Dead-> can be set alive again
+                // If the cell is dead, it can be set alive again-> Check the conditions
                 else{
-                    // check neighbourhood
+                    // If it respects the conditions to be alive in the next frame, set the cell to alive in the next frame
                     if(isAliveNext(counterX, counterY)){
                         this.nextFrame[counterX][counterY]=255;
                         colorCell(counterX, counterY, Color.BLACK);
                     }
-                    // is Dead Next
+                    // If the conditions are not respected, it remains dead
                     else{
                         this.nextFrame[counterX][counterY] = 0;
                         colorCell(counterX, counterY, Color.WHITE);
@@ -65,18 +71,39 @@ public class SimBriansBrain extends CellularLogic{
         this.current = this.nextFrame;
         this.nextFrame = temp;
     }
+    /**
+     * Verifies whether the cell is alive.
+     * The cell is alive is it has a value of 255.
+     * @param x type int, corresponds to the position of the cell on the x-axis
+     * @param y type int, corresponds to the position of the cell on the y-axis
+     * @return Boolean that represents whether the cell is alive or not
+     */
     public boolean isAlive(int x, int y){
         if(this.current[x][y]==255)
             return true;
         else
             return false;
     }
+    /**
+     * Verifies whether the cell is dying.
+     * The cell is dying is it has a value of 1.
+     * @param x type int, corresponds to the position of the cell on the x-axis
+     * @param y type int, corresponds to the position of the cell on the y-axis
+     * @return boolean that represents whether the cell is dying or not
+     */
     public boolean isDying(int x, int y){
         if(this.current[x][y]==1){
             return true;
         }
         else return false;
     }
+    /**
+     * Verifies whether the cell is going to be alive in the next frame.
+     * The cell is going to be alive in the next frame if 2 of its neighbours are alive.
+     * @param x type int, corresponds to the position of the cell on the x-axis
+     * @param y type int, corresponds to the position of the cell on the y-axis
+     * @return boolean that represents whether the cell is going t be alive or not
+     */
     public boolean isAliveNext(int x, int y){
         // check moore neighbourhood
         int neighbours=0;
@@ -109,53 +136,4 @@ public class SimBriansBrain extends CellularLogic{
         else
             return false;
     }
-    public void initializeSim(){
-        for(int counterX=1; counterX<scaledX-1; counterX++){
-            for(int counterY=1; counterY<scaledY-1; counterY++){
-                double num = Math.random()*3;
-                // is alive
-                if(num>=0&&num<1.0){
-                    this.current[counterX][counterY]=255;
-                    colorCell(counterX, counterY, Color.BLACK);
-                }
-                // is dying
-                else if(num<2.0){
-                    this.current[counterX][counterY]=1;
-                    colorCell(counterX, counterY, Color.GREY);
-                }
-                // is Dead-> can be set alive again
-                else{
-                    this.current[counterX][counterY]=0;
-                    colorCell(counterX, counterY, Color.WHITE);
-                }
-        }
-        }
-    }
 }
-/*
-Unused code:
-if(this.current[x-1][y-1]==255||this.current[x-1][y-1]==1){
-            neighbours++;
-        }
-        if(this.current[x-1][y]==255||this.current[x-1][y]==1){
-            neighbours++;
-        }
-        if(this.current[x-1][y+1]==255||this.current[x-1][y+1]==1){
-            neighbours++;
-        }
-        if(this.current[x][y-1]==255||this.current[x][y-1]==1){
-            neighbours++;
-        }
-        if(this.current[x][y+1]==255||this.current[x][y+1]==1){
-            neighbours++;
-        }
-        if(this.current[x+1][y-1]==255||this.current[x+1][y-1]==1){
-            neighbours++;
-        }
-        if(this.current[x+1][y]==255||this.current[x+1][y]==1){
-            neighbours++;
-        }
-        if(this.current[x+1][y+1]==255||this.current[x+1][y+1]==1){
-            neighbours++;
-        }
-*/
