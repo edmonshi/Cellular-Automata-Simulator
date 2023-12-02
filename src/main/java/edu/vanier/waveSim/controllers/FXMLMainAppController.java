@@ -484,6 +484,8 @@ public class FXMLMainAppController{
             hasLoadedViewFolder = getFileList();
         });
         // Bind the dimensions of the primary stage to the image view
+        // Source used to understand the syntax: StackOverFlow 22993550, July 2017
+        // The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
         //Width
         primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -493,6 +495,8 @@ public class FXMLMainAppController{
             }
         });
         //Height
+        // Source used to understand the syntax: StackOverFlow 22993550, July 2017
+        // The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
         primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -912,11 +916,13 @@ public class FXMLMainAppController{
     /**
      * This method saves the settings of a simulation in a CSV File.
      * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
-     * Source used as an example to learn how to use PrintWriter to write in a Csv File: 
-     * 1) - Putting paratheses in the try-catch somehow makes the code work: https://www.baeldung.com/java-csv
-     * Sources To use file chooser and directory chooser:
-     * 1) https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
-     * 2) https://docs.oracle.com/javase/8/javafx/api/javafx/stage/DirectoryChooser.html
+     * Source that gave the idea to initialize the file writer in the try-catch parentheses, which made the code work:  Baeldung, n.d.
+     * Source to use file chooser: Redko, n.d.
+     * Source to use directory chooser: Oracle, n.d.
+     * @param simulation The simulation being used, which is necessary to get the scaling
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws CsvException
      */
     private void handleSaveItm(CellularLogic simulation) throws IOException, FileNotFoundException, CsvException {
         System.out.println("Save button clicked");
@@ -1002,7 +1008,9 @@ public class FXMLMainAppController{
     }
     /**
      * This method creates a dialog that is responsible of letting the user choose a name for the file he wants to create.
-     * It returns the name of the csv file, and is meant to be used in the save settings method, of the user wants to create a new csv file.
+     * It returns the name of the csv file, and is meant to be used in the save settings method, if the user wants to create a new csv file.
+     * It creates a new stage which will be used as a window to contain the text field used to write the name of the file.
+     * @return nameFile, which corresponds to the name of the file
      */
     public String chooseNameDialog(){
         Stage stage = new Stage();
@@ -1024,22 +1032,19 @@ public class FXMLMainAppController{
     }
     /**
      * This method sets the height and the width of the stage.
+     * @param x The width of the stage
+     * @param y The height of the stage
      */
     public void setStageDimensions(double x, double y){
         primaryStage.setWidth(x);
         primaryStage.setHeight(y);
     }
-    
-    File fileLoad;
-
-    public File getFileLoad() {
-        return fileLoad;
-    }
-
-    public void setFileLoad(File fileLoad) {
-        this.fileLoad = fileLoad;
-    }
-    
+    /**
+     * This method loads the points that are contained in the settings of a csv file
+     * The method cannot be used by itself. It needs to be used in a method that will set the value of the settings[] attribute, corresponding
+     * to the settings that were loaded.
+     * From the settings[] attributes, it locates the indexes of the cooredinates, using the loop, and sets them on the canvas.
+     */
     private void loadPointsUtil() {
         int x,y;
             for(int counterIndex = 0; counterIndex<((settings.length-15)/2); counterIndex++){
@@ -1058,7 +1063,16 @@ public class FXMLMainAppController{
     
     /**
      * This method loads the settings from a csv file chosen by the user.
+     * The method uses a file chooser which allows the user to choose a file from his computer.
+     * Source to use file chooser: Redko, n.d.
      * The file needs to be csv, therefore, exception handling is used to verify the validity of the file chosen by the user.
+     * The indexes, prosition, of the data in the csv file is that which is used to determine what piece of data corresponds to what setting specifically
+     * For example, the first piece of data, the first value in the csv file, is always going to be the value of the damping, because it is saved that way, in
+     * the save settings feature.
+     * If not, then the file is invalid.
+     * In that case, the user is asked to try again, until the data contained inside the csv file is valid.
+     * @param simulation The simulation whose data will be adjusted based on the information retrieved from the csv file
+     * @throws FileNotFoundException
      */
     private void handleLoadItm(CellularLogic simulation) throws FileNotFoundException {
         animationRunning=false;
@@ -1148,6 +1162,11 @@ public class FXMLMainAppController{
             simulationsList[i].setFrameNumber(0);
         }
     }
+    /**
+     * This method shows an alert to the user.
+     * It is used in the save and load settings to show error.
+     * @param message This corresponds to a String which is the message that will be shown to the user
+     */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -1159,6 +1178,12 @@ public class FXMLMainAppController{
         }
         
     }
+    /**
+     * This method shows an alert to the user.
+     * The alert corresponds to an information, informing the user that the file has been validated
+     * It is used in the save settings to show confirmation.
+     * @param message This corresponds to a String which is the message that will be shown to the user
+     */
     private void showAlertInfo(String message){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Validation");
@@ -1166,6 +1191,13 @@ public class FXMLMainAppController{
         alert.setHeaderText(message);
         alert.showAndWait();
     }
+    /**
+     * This methd is used to ask the user of he wants to create a new file or not, for the saving of the settings.
+     * It contains two buttons, "Create New File" and "Choose Existing File", which, upon click by the user, returns a boolean which corresponds
+     * to whether or not a file needs to be created.
+     * @param message The message that will be shown to the user
+     * @return boolean which corresponds to whether or not a file needs to be created.
+     */
     private boolean askUserSaveSettingsDialog(String message){
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle("File Option");
@@ -1180,10 +1212,14 @@ public class FXMLMainAppController{
         else
             return false;
     }
-    
     /**
      * Verifies of the file chosen by the user is valid.
      * If not valid, the method shows an alert, displaying what is wrong with the file
+     * @param file The file that needs to be verified
+     * @return boolean of whether or not the file is valid
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws CsvException
      */
     private boolean verifyFileCSV(File file) throws FileNotFoundException, IOException, CsvException{
         boolean isValid =true; //Assume that the file is valid, then look for mistakes
@@ -1278,6 +1314,7 @@ public class FXMLMainAppController{
     }
     /**
      * This method creates a help dialog for the user.
+     * @param guideItm type MenuItm, which will be set disabled as long as the help dialog is being used
      */
     private void handleGuideItm(MenuItem guideItm) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
