@@ -90,7 +90,10 @@ public abstract class CellularLogic {
 
     }
     
-    /**TODO Docs*/
+    /**
+     * Set the width of the simulation
+     * @param width type int in pixels
+     */
     public void setWidth(int width){
         this.widthX = width;
         this.scaledX = width/this.scaling;
@@ -98,7 +101,10 @@ public abstract class CellularLogic {
         this.nextFrame = new float[widthX / this.scaling][heightY / this.scaling];
     }
     
-    /**TODO Docs*/
+    /**
+     * Set the height of the simulation
+     * @param height type int in pixels
+     */
     public void setHeight(int height){
         this.heightY = height;
         this.scaledY = height/this.scaling;
@@ -127,7 +133,7 @@ public abstract class CellularLogic {
     }
 
     /**
-     * TODO
+     * Return the boolean value if the simulation is set to render. 
      */
     public boolean getRenderFlag() {
         return renderFlag;
@@ -197,7 +203,7 @@ public abstract class CellularLogic {
     }
 
     /**
-     * TODO
+     * Set the frame limit for rendering this simulation
      * @param frameLimit
      */
     public void setFrameLimit(int frameLimit) {
@@ -207,7 +213,8 @@ public abstract class CellularLogic {
     
 
     /**
-     * TODO docs and error handling
+     * Set the directory path to render into - should only ever be set by its associated function
+     * @param renderPath type String file path
      */
     public void setRenderPath(String renderPath) {
         this.renderPath = renderPath;
@@ -305,7 +312,8 @@ public abstract class CellularLogic {
     }
     
     /**
-     * TODO
+     * Create a new Buffered Image in which to render a new image into. Follows the scaled grid size.
+     * THis sets the new buffer to the image instance variable 
      */
     public void createRenderContext() {
         image = new BufferedImage(scaledX,scaledY, BufferedImage.TYPE_INT_RGB);
@@ -313,7 +321,7 @@ public abstract class CellularLogic {
     }
     
     /**
-     * TODO
+     * Save a new frame as a bitmap .bmp file based on renderPath
      * @throws java.io.IOException
      */
     public void saveFrame() throws IOException {
