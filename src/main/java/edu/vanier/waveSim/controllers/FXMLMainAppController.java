@@ -73,7 +73,7 @@ public class FXMLMainAppController{
     
     private boolean animationRunning = false; // is the animation running?
     
-    private final Transition pause = new PauseTransition(Duration.millis(5)); // pause necessary for a workaround with rendering the canvas after resize
+    private final Transition pause = new PauseTransition(Duration.millis(50)); // pause necessary for a workaround with rendering the canvas after resize
     
     private boolean hasLoadedViewFolder = false; // boolean fo rif the viewing folder has been loaded to use
     
@@ -85,13 +85,17 @@ public class FXMLMainAppController{
     String[] settings;
 
     /**
-     * TODO documentation
+     * This getter returns the settings attribute of the FXML MainAppController object.
+     * It is set after using the save settings feature, which saves the settings of the simulation in a csv file.
+     * @return type String []
      */
     public String[] getSettings() {
         return settings;
     }
     /**
-     * TODO documentation
+     * This setter sets the settings attribute of the FXML MainAppController object.
+     * It is used when using the save settings feature, which saves the settings of the simulation in a csv file.
+     * @param settings
      */
     public void setSettings(String[] settings) {
         this.settings = settings;
@@ -160,24 +164,40 @@ public class FXMLMainAppController{
     private class Point{
         private int x;
         private int y;
-        
+        /**
+         * Constructor of a Point object on the screen.
+         * @param x the position of the point on the x-axis
+         * @param y the position of the point on the y-axis
+         */
         Point(int x, int y){
             this.x = x;
             this.y = y;
         }
-
+        /**
+         * Getter that returns the location of a point on the x-axis
+         * @return  an integer corresponding to the position of the point on the x-axis.
+         */
         public int getX() {
             return x;
         }
-
+        /**
+         * Getter that returns the location of a point on the y-axis
+         * @return  an integer corresponding to the position of the point on the y-axis.
+         */
         public int getY() {
             return y;
         }
-
+        /**
+         * Setter that sets the position of the point on the x-axis
+         * @param x the position of the point on the x-axis
+         */
         public void setX(int x) {
             this.x = x;
         }
-
+        /**
+         * Setter that sets the position of the point on the y-axis
+         * @param y the position of the point on the y-axis
+         */
         public void setY(int y) {
             this.y = y;
         }
@@ -215,10 +235,11 @@ public class FXMLMainAppController{
     private Integer viewRenderFrameDelay = 100; // delay for each frame of view render tab
     private EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame; // event handler for view render
     private Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay)); // timer fo runiform frame for view render tab
-    
     private List<String> folderFiles = new ArrayList<String>(); // list of all files to load view render images from selected folder
     private int imageSequenceIndex = 0; // index of current image in sequence for view render
-    
+    /**
+     * TODO
+     */
     private void nextViewRenderFrame(ActionEvent event) {
         if (!hasLoadedViewFolder) {
             return;
@@ -236,6 +257,7 @@ public class FXMLMainAppController{
     /**
      * Get and verify a list of files from a directory and save that curated list to
      * the instance variable. This will be used for the View Render animation
+     * @return boolean that corresponds to whether or not the folder chosen by the user is valid.
      */
     private boolean getFileList() {
         File folder;
@@ -250,7 +272,6 @@ public class FXMLMainAppController{
         if (folder == null || !folder.exists() || !folder.canRead()) {
             return false;
         }
-        
         int csvs = 0;
         //Find the .csn file here
         File[] temp = folder.listFiles();
@@ -280,9 +301,6 @@ public class FXMLMainAppController{
                     System.out.println(nFile.toString());
                     csvs++;
                     folderFiles.remove(nFile);
-                    if (csvs > 1) {
-                    }
-                    System.out.println(folder+"\\"+nFile.toString());
                 }
                 folderFiles.remove(nFile);
             }else {
@@ -291,6 +309,11 @@ public class FXMLMainAppController{
         }
         return !folderFiles.isEmpty();
     }
+    /**
+     * This method sets the size, the dimensions of the stage, and of the image view that is used to render the simulation.
+     * Since the image view has been bound to the stage, the method sets only the dimensions of the stage, which will automatically set the dimensions of the image view.
+     * @param path The path to the file containing the dimensions of the primary stage
+     */
     private void adjustSizeIV(String path){
         try(CSVReader reader = new CSVReader(new FileReader(path))){
             String[] stageDimensions = reader.readNext();
@@ -309,7 +332,7 @@ public class FXMLMainAppController{
         return new CellularAnimTimer(simulation, this);
     }
     
-//    get elements from FXML
+    //get elements from FXML
     @FXML private Canvas SimCanvas;
     @FXML private Button btnPlay;
     @FXML private Button btnPause;
@@ -336,12 +359,10 @@ public class FXMLMainAppController{
     @FXML private TextField txtBoxDLALimit;
     @FXML private TextField txtBoxSLALimit;
     @FXML private TextField txtBoxBrainFrameLimit;
-    @FXML private Label amplitudeLbl;
     @FXML private Slider amplitudeSldr;
     @FXML private ImageView imageViewSequence;
     @FXML private Button btnPlayRender;
     @FXML private Button btnLoad;
-    @FXML private AnchorPane viewRenderAnchorPane;
     @FXML private Slider fireSldr;
     @FXML private Slider treeSldr;
     
@@ -358,7 +379,6 @@ public class FXMLMainAppController{
     @FXML
     public void initialize() {
         // create simulation objects
-
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimBriansBrain Brain = new SimBriansBrain(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
@@ -463,8 +483,8 @@ public class FXMLMainAppController{
         btnLoad.setOnAction((event) -> {
             hasLoadedViewFolder = getFileList();
         });
-        // Source for understanding how the syntax would look like:
-        // https://stackoverflow.com/questions/22993550/how-to-resize-an-image-when-resizing-the-window-in-javafx
+        // Bind the dimensions of the primary stage to the image view
+        //Width
         primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -472,7 +492,7 @@ public class FXMLMainAppController{
                 imageViewSequence.setFitWidth(newValue.doubleValue()-167);
             }
         });
-
+        //Height
         primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -490,13 +510,6 @@ public class FXMLMainAppController{
             btnPlayRender.setDisable(true);
             btnPauseRender.setDisable(false);
             btnResetRender.setDisable(false);
-            System.out.println(primaryStage.getWidth()-imageViewSequence.getFitWidth());
-            /*
-            primaryStage.setHeight(250);
-            primaryStage.setWidth(250);
-            System.out.println(imageViewSequence.getFitHeight());
-            imageViewSequence.setFitHeight(200);
-            */
         });
         //handle pause view render button
         btnPauseRender.setOnAction((event) -> {
@@ -517,6 +530,7 @@ public class FXMLMainAppController{
         itmSave.setOnAction((event)->{
             try {
                 try {
+                    // handle the save item method
                     handleSaveItm(simulation);
                 } catch (FileNotFoundException | CsvException ex) {
                     java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
@@ -525,9 +539,10 @@ public class FXMLMainAppController{
                 System.out.println(ex.toString());
             }
         });
-        
+        // handle load settings button from top menu bar 
         itmLoad.setOnAction((event)->{
             try {
+                // handle the load item method
                 handleLoadItm(simulation);
             } catch (FileNotFoundException ex) {
                 java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
@@ -546,18 +561,24 @@ public class FXMLMainAppController{
                       WaveSim.setDamping(1-newValue.floatValue());
                   }
         });
+        // Add listener to the slider which controls the probability of a fire catching, in the simaultion "Forest Fire"
+        // Comes from (ukasp, JavaFX: Slider class 2022) see README
         fireSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
                 SLA.setFire(newValue.doubleValue()/1000);
             }
         });
+        // Add listener to the slider which controls the probability of a tree growing, in the simulation "Forest Fire"
+        // Comes from (ukasp, JavaFX: Slider class 2022) see README
         treeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
                 SLA.setTree(newValue.doubleValue()/100);
             }
         });
+        // Add listener to the slider which controls the amplitude of the waves, in the simulation "Wave Simulation"
+        // Comes from (ukasp, JavaFX: Slider class 2022) see README
         amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(
@@ -773,6 +794,10 @@ public class FXMLMainAppController{
         saveDimensions(path);
         handlePlayBtn(animation);
     }
+    /**
+     * This method save the dimensions of the stage in a csv file.
+     * @param path The path of the csv file
+     */
     public void saveDimensions(String path){
         File file = new File(path+"\\"+"dimensions.csv");
         System.out.println(file.getAbsolutePath());
@@ -797,14 +822,16 @@ public class FXMLMainAppController{
     private int frameLim; // TODO docs comment explain this
 
     /**
-     * TODO documentation
+     * Getter that returns the frame limit
+     * @return frameLim integer that corresponds to the frame limit
      */
     public int getFrameLim() {
         return frameLim;
     }
 
     /**
-     * TODO documentation
+     * Setter that sets the frame limit
+     * @param frameLim integer that corresponds to the frame limit
      */
     public void setFrameLim(int frameLim) {
         this.frameLim = frameLim;
@@ -814,6 +841,7 @@ public class FXMLMainAppController{
      * Validate integer from TextField as valid int
      * @param input the input String from the TextField
      * @param box the instance of the TextField
+     * @return the integer which corresponds to the frame limit
      */
     private int validateFrameLimit(String input, TextField box) {
         if ("max".equals(input)) return Integer.MAX_VALUE;
@@ -862,10 +890,10 @@ public class FXMLMainAppController{
         btnReset.setDisable(false);
         System.out.println("Animation stopped");
     }
-    String nameFile;
-
+    
+    //Corresponds to the name chosen by the user to name the csv file that will be created by the program, when using the save settings feature
+    private String nameFile;
     /**
-     * TODO
      * Return the value of nameFile
      * @return type String
      */
@@ -874,7 +902,6 @@ public class FXMLMainAppController{
     }
 
     /**
-     * TODO 
      * Set the value of nameFile
      * @param nameFile type String - new value
      */
@@ -886,7 +913,7 @@ public class FXMLMainAppController{
      * This method saves the settings of a simulation in a CSV File.
      * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
      * Source used as an example to learn how to use PrintWriter to write in a Csv File: 
-     * 2) - Putting conditions in paratheses of the try-catch: https://www.baeldung.com/java-csv
+     * 1) - Putting paratheses in the try-catch somehow makes the code work: https://www.baeldung.com/java-csv
      * Sources To use file chooser and directory chooser:
      * 1) https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
      * 2) https://docs.oracle.com/javase/8/javafx/api/javafx/stage/DirectoryChooser.html
@@ -1051,9 +1078,10 @@ public class FXMLMainAppController{
         }
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         settings = reader.readAll().get(0);
-        /*
-        verifyFileSettings(settings);
-        */
+        if(!verifyFileSettings(settings)){
+            handleLoadItm(simulation);
+            return;
+        }
         this.primaryStage.setAlwaysOnTop(true);
             // Set height and width
             setStageDimensions(Double.parseDouble(settings[4]),Double.parseDouble(settings[5]));
@@ -1167,17 +1195,8 @@ public class FXMLMainAppController{
         return isValid;
     }
     private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
-        /*
-        Damping
-        scale choice
-        sim type
-        speed
-        width and height of canvas and parimary stage
-        frame limit
-        points
-        */
         boolean isValid=true;
-        if(info.length<9){
+        if(info.length<15){
             showAlert("The file does not contain the minimum amount of information required to load a simulation.");
             isValid = false;
         }
@@ -1207,7 +1226,7 @@ public class FXMLMainAppController{
             isValid = false;
         }
         //Check simulation type
-        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Brian's Brain", "Forest Fire"};
+        String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Brian's Brain", "Forest Fire","Diffusion Limited Aggregation"};
         boolean isOneOfTypes = false;
         for(String element:simulationTypes)
             if(element.equals(info[2]))
@@ -1227,66 +1246,10 @@ public class FXMLMainAppController{
             showAlert("The fourth value inside the file, corresponding to the speed of the simulation is not a number. Please try again, using a valid file.");
             isValid = false;
         }
-        //Check how many points are in the file
-        int numOfCoordinates = (info.length-9);
-        if(numOfCoordinates%2==1){
-            showAlert("A coordinate is missing. Please try again, using a valid file.");
-            isValid=false;
-        }
-        // Verify canvas dimensions
-        // Width
-        double widthCanvas=0;
-        double heightCanvas=0;
-        try{
-            widthCanvas = Double.parseDouble(info[4]);
-            if(widthCanvas<1){
-                showAlert("The value at the "+(3)+"th position should be a number corresponding to the width of the canvas. It should be bigger than 0. However, it is inferior to 1.");
-            }
-        }catch(Exception e){
-            showAlert("The value at the "+(3)+"th position should be a number corresponding to the width of the canvas. However, it does not look like a number.");
-            isValid=false;
-        }
-        //Height
-        try{
-            heightCanvas = Double.parseDouble(info[5]);
-            if(heightCanvas<1){
-                showAlert("The value at the "+(4)+"th position should be a number corresponding to the height of the canvas. It should be bigger than 0. However, it is inferior to 1.");
-            }
-        }catch(Exception e){
-            showAlert("The value at the "+(4)+"th position should be a number corresponding to the height of the canvas. However, it does not look like a number.");
-            isValid=false;
-        }
-        // Go through every point to check if they are valid
-        if(numOfCoordinates!=0){
-            for(int counter=0; counter<numOfCoordinates; counter++){
-                try{
-                    int coordinate = Integer.parseInt(info[9+counter]);
-                    // Verify of the coordinates are within the proper bounds
-                    //x value
-                    if(counter%2==0){
-                        if((double)coordinate>(widthCanvas)||coordinate<0){
-                            showAlert("The x-coordinate at the "+(10+counter)+"th position is out of bounds. It should be between 0 and "+widthCanvas);
-                            isValid = false;
-                        }
-                    }
-                    //y value
-                    if(counter%2==1){
-                        if((double)coordinate>(heightCanvas)||coordinate<0){
-                            showAlert("The y-coordinate at the "+(10+counter)+"th position is out of bounds. It should be between 0 and "+heightCanvas);
-                            isValid = false;
-                        }
-                    }
-                }catch(Exception e){
-                    showAlert("The value at the "+(11+counter)+"th position should be an integer corresponding to a coordinate inside the canvas. However, it does not look like an integer. Please try again, using a valid file.");
-                    isValid=false;
-                }
-            }
-        }
-        
         // Verify stage dimensions
         // Width
         try{
-            double widthStage = Double.parseDouble(info[6]);
+            double widthStage = Double.parseDouble(info[4]);
             if(widthStage<1){
                 showAlert("The value at the "+(5)+"th position should be a number corresponding to the width of the window. It should be bigger than 0. However, it is inferior to 1.");
             }
@@ -1296,7 +1259,7 @@ public class FXMLMainAppController{
         }
         //Height
         try{
-            double heightStage = Double.parseDouble(info[7]);
+            double heightStage = Double.parseDouble(info[5]);
             if(heightStage<1){
                 showAlert("The value at the "+(6)+"th position should be a number corresponding to the height of the window. It should be bigger than 0. However, it is inferior to 1.");
             }
@@ -1304,18 +1267,12 @@ public class FXMLMainAppController{
             showAlert("The value at the "+(6)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
             isValid=false;
         }
-        //Verification for the frame limit here
-        try{
-            int frameLim = Integer.parseInt(info[8]);
-            if(frameLim<0){
-                showAlert("The value of the frame limit is invalid, because it is negative. Please try again with a file that has a positive value for the frame limit.");
-                System.out.println("Frame limit ="+info[8]);
-                isValid=false;
-            }
-        }catch(Exception e){
-            showAlert("The value corresponding to the frame limit is invalid. It does not appear to be a number. Please try again with a valid file.");
-            System.out.println("Frame limit ="+info[8]);
-            isValid = false;
+        // Don't need to check for frame limits, because if something illegal is entered, then it just automatically goes to 'max'
+        //Check how many points are in the file
+        int numOfCoordinates = (info.length-15);
+        if(numOfCoordinates%2==1){
+            showAlert("A coordinate is missing. Please try again, using a valid file.");
+            isValid=false;
         }
         return isValid;
     }

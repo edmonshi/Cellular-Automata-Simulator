@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
@@ -27,7 +28,7 @@
                            <children>
                               <TextFlow fx:id="howToUseAppTxtFlw" prefHeight="200.0" prefWidth="600.0">
                                  <children>
-                                    <Text fx:id="howUseAppTxt" strokeType="OUTSIDE" strokeWidth="0.0" text="Click on the screen to create new points to start the simulation from. Press &quot;play&quot; or &quot;render&quot; to run the simulation. Rendering will save image files into the root folder of the app in a new unique folder. Use the frme limit per simulation to modify the amount of frames rendred. Use the save settings feature to recreate an identical simulation starting point. Import settings to open a previously created simulation settings file. You can modify the frame speed for slower, heavier simualtions." wrappingWidth="594.9367179870605" />
+                                    <Text fx:id="howUseAppTxt" strokeType="OUTSIDE" strokeWidth="0.0" text="Click on the screen to create new points to start the simulation from. Press &quot;play&quot; or &quot;render&quot; to run the simulation. Rendering will save image files into the root folder of the app in a new unique folder. Use the frame limit per simulation to modify the amount of frames rendred. Use the save settings feature to recreate an identical simulation starting point. Import settings to open a previously created simulation settings file. You can modify the frame speed for slower, heavier simualtions." wrappingWidth="594.9367179870605" />
                                  </children>
                               </TextFlow>
                            </children></AnchorPane>
@@ -37,11 +38,19 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="303.0" prefWidth="693.0">
                            <children>
-                              <TextFlow fx:id="functTxtFlw" prefHeight="278.0" prefWidth="600.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application contains a wide range of functionalities.First and foremost, the application offers various simulations to choose from.After the simulation has been chosen, the options to set the scaling and the speed of the simulation is also offered.In the case of the &quot;Wave Simulation&quot;, the options to set the damping and the amplitude are also offered.The application is flexible enough to allow users to create origination points manually, by clicking on the screen, or by loading previously saved settings, by clicking on &quot;File&quot;-&gt;&quot;Load Settings&quot;.After the origination points have been set, the user can save them, and the settings in a new file, that is created by the application, or in an existing file, that is specified by the user.Once the origination points have been created, and once the application has started to play, the user can create new origination points by clicking on the screen.The application also offers the ability to render the simulation, which will save each frame of the simulation in a folder.To control the rendering, the user can specify the maximum number of frames he wants to be saved in the folder.He can also stop the rendering by himself.The simulation can be paused, and the &quot;Reset&quot; button can automatically clear the screen." textAlignment="JUSTIFY" wrappingWidth="449.8933868408203" />
-                                 </children>
-                              </TextFlow>
+                              <ScrollPane prefHeight="124.0" prefWidth="600.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <TextFlow fx:id="functTxtFlw" prefHeight="278.0" prefWidth="600.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First, the application offers various simulations to choose from. The options to set the scaling and the speed of the simulation is also offered. In the case of the &quot;Wave Simulation&quot;, the options to set the damping and the amplitude are given. The application allows users to create origination points manually, by clicking on the screen, or by loading previously saved settings, by clicking on &quot;File&quot;-&gt;&quot;Load Settings&quot;. After the origination points have been set, the user can save them, and the settings in a new file, that is created by the application, or in an existing file, that is specified by the user. Once the application has started to play, the user can create new origination points by clicking on the screen. The application also offers the ability to render the simulation, which will save each frame of the simulation in a folder: The user can specify the maximum number of frames he wants to be saved in the folder. He can also stop the rendering by himself. The simulation can be paused, and the &quot;Reset&quot; button can automatically clear the screen." textAlignment="JUSTIFY" wrappingWidth="602.958984375" />
+                                             </children>
+                                          </TextFlow>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
                            </children></AnchorPane>
                   </content>
                 </TitledPane>
@@ -49,11 +58,19 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextFlow fx:id="saveLoadTxtFlw" prefHeight="200.0" prefWidth="600.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application offers the option to save the settings of a simulation in a csv file.The settings saved include: the origination points, the simulation type, the speed of the simulation, the scaling used, the amplitude and the damping, and the frame limit.When saving the simulation, the user can choose to either save in an existing file, or in a new file that can be created by the application.If the latter is chosen, a file name will be asked and folder in which the file will be saved will have to be specified by the user.The application also offers the possiblity to load the settings of a simulation from a csv file.To do so, the user has to select the csv file, which will be validated by the system.If the file is invalid, the application will ask the user to start again, and will give indications as to what is wrong with the file.To save the settings of a simulation, click on &quot;File&quot;-&gt;&quot;Save Settings&quot;.To load the settings of a simulation, click on &quot;File&quot;-&gt;&quot;Load Settings&quot;." wrappingWidth="586.3800296783447" />
-                                 </children>
-                              </TextFlow>
+                              <ScrollPane prefHeight="125.0" prefWidth="600.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <TextFlow fx:id="saveLoadTxtFlw" prefHeight="200.0" prefWidth="600.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application offers the option to save the settings of a simulation in a csv file.The settings saved include: the origination points, the simulation type, the speed of the simulation, the scaling used, the amplitude and the damping, and the frame limit.When saving the simulation, the user can choose to either save in an existing file, or in a new file that can be created by the application.If the latter is chosen, a file name will be asked and folder in which the file will be saved will have to be specified by the user.The application also offers the possiblity to load the settings of a simulation from a csv file.To do so, the user has to select the csv file, which will be validated by the system.If the file is invalid, the application will ask the user to start again, and will give indications as to what is wrong with the file.To save the settings of a simulation, click on &quot;File&quot;-&gt;&quot;Save Settings&quot;.To load the settings of a simulation, click on &quot;File&quot;-&gt;&quot;Load Settings&quot;." wrappingWidth="586.3800296783447" />
+                                             </children>
+                                          </TextFlow>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
                            </children></AnchorPane>
                   </content>
                 </TitledPane>
@@ -63,7 +80,7 @@
                            <children>
                               <TextFlow fx:id="renderTxtFlw" prefHeight="200.0" prefWidth="600.0">
                                  <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application is capable of rendering a simulation- that is, to record a simulation, frame by frame, and to store the simulation in a folder. That folder is automatically created by the application. The frames are saved in ppm format.To control the rendering, the user can specify the total number of frames, the frame limit, for a simulation.In order to start a simulation, the user can click on &quot;Render&quot;-&gt;&quot;Stop&quot;.Then, to stop a simulation, the user can simply click on &quot;Render&quot;-&gt;&quot;Stop&quot;" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application is capable of rendering a simulation- that is, to record a simulation, frame by frame, and to store the simulation in a folder. That folder is automatically created by the application. To control the rendering, the user can specify the total number of frames, the frame limit, for a simulation. In order to start a simulation, the user can click on &quot;Render&quot;-&gt;&quot;Start&quot;. Then, to stop a simulation, the user can simply click on &quot;Render&quot;-&gt;&quot;Stop&quot;. To render the simulation click on the render tab, and click on &quot;Load&quot;. Then, just select the folder for the rendering." />
                                  </children>
                               </TextFlow>
                            </children>
@@ -74,11 +91,19 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextFlow prefHeight="200.0" prefWidth="600.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application offers a wide range of simulations. The first one a wave simulator. Clicking on the screen will create a wave at this exact location. The second simulation is Conway's Game of Life. It is a cellular automaton that consists of cells, created when pressing on the screen, that are either dead or elive, based on certain rules. The third one is called &quot;Rock-Paper-Scissors&quot;. Unlike Conway's Game of Life, the simulaion cannot be controlled by clicking on the screen, because the start of the simulation is completely arbitrary. The same goes for Forest Fire. The fifth simulation, Brian's Brain, is very similar to Conway's Game of Life. The origination points of Brain's Brain are entirely created by the user, by clicking on the screen." />
-                                 </children>
-                              </TextFlow>
+                              <ScrollPane prefHeight="98.0" prefWidth="600.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <TextFlow prefHeight="200.0" prefWidth="600.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The application offers a wide range of simulations. The first one is a wave simulator. Clicking on the screen will create a wave at this exact location. The second simulation is Conway's Game of Life. It is a cellular automaton that consists of cells, created when pressing on the screen, that are either dead or alive, based on certain rules. The third one is called &quot;Rock-Paper-Scissors&quot;. Unlike Conway's Game of Life, the simulaion cannot be controlled by clicking on the screen, because the start of the simulation is completely arbitrary. The same goes for Forest Fire. The fifth simulation, Brian's Brain, is very similar to Conway's Game of Life. The origination points of Brain's Brain are entirely created by the user, by clicking on the screen. Finally, the simulation &quot;Diffusion Limited Aggregation&quot; cannot be controlled by the user, since the movement of the cells are random." wrappingWidth="591.94921875" />
+                                             </children>
+                                          </TextFlow>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
                            </children>
                         </AnchorPane>
                     </content>
@@ -102,20 +127,7 @@
                            <children>
                               <TextFlow prefHeight="200.0" prefWidth="600.0">
                                  <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Conway's Game of Life, is one of the best examples of cellular automata. Each cell, created by the user by clicking on the screen, can be in one of two states: Dead or alive. A cell is alive if it had two or three neighbouring cells that were alive. If, at any instant, a cell has less than two neighbours that are live, or more than three, the cell dies in the next cycle of the simulation." />
-                                 </children>
-                              </TextFlow>
-                           </children>
-                        </AnchorPane>
-                    </content>
-                  </TitledPane>
-                  <TitledPane animated="false" text="Rock-Paper-Scissors">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TextFlow prefHeight="200.0" prefWidth="600.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Conway's Game of Life, is one of the best examples of cellular automata. Each cell, created by the user by clicking on the screen, can be in one of two states: Dead or alive. A cell is alive if it has two or three neighbouring cells that are also alive. If, at any instant, a cell has less than two neighbours that are live, or more than three, the cell dies in the next cycle of the simulation." />
                                  </children>
                               </TextFlow>
                            </children>
@@ -139,15 +151,40 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextFlow prefHeight="200.0" prefWidth="600.0">
-                                 <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Forest Fire is a simulation based on cellular automata that stimulates fires in forests, and how these former propagate over time. The simulation consists of three types of cells: Alive, burning, and dead. A cell that is alive is green, one that is burning is red, and one that is burnt (dead) is black. When the simulation starts, the forest, the screen, only consists of trees that are alive. But, like natural forests, there is a probability that a tree will burn. This probability is distated by the user, using the slider to the left. Once a fire catches, arbitrarily, it propagates by burning all the trees in its moore neighbourhood. A tree that has a burning tree in its moore neighbourhood, will be burning in the next frame, and a burning tree will die (be burnt), in the next iteration of the animation. When a tree is burnt (black), there is a probability that it grows back again. This probability is controlled by the second slider.">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
+                              <ScrollPane prefHeight="126.0" prefWidth="600.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <TextFlow prefHeight="200.0" prefWidth="600.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Forest Fire is a simulation based on cellular automata that stimulates fires in forests, and how these former propagate over time. The simulation consists of three types of cells: Alive, burning, and dead. A cell that is alive is green, one that is burning is red, and one that is burnt (dead) is black. When the simulation starts, the forest, the screen, only consists of trees that are alive. But, like natural forests, there is a probability that a tree will burn. This probability is controlled by the user, using the slider to the left. Once a fire catches, arbitrarily, it propagates by burning all the trees in its moore neighbourhood. A tree that has a burning tree in its moore neighbourhood, will be burning in the next frame, and a burning tree will die (be burnt), in the next iteration of the animation. When a tree is burnt (black), there is a probability that it grows back again. This probability is controlled by the second slider." wrappingWidth="601.86328125" />
+                                             </children>
+                                          </TextFlow>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <TitledPane animated="false" text="Diffusion Limited Aggregation">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ScrollPane prefHeight="98.0" prefWidth="600.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="98.0" prefWidth="597.0">
+                                       <children>
+                                          <TextFlow prefHeight="98.0" prefWidth="600.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This simulation creates a root somewhere on the screen. Then it creates blue cells that move randomly by one unit per frame. If the blue cell comes into contact with the yellow root, the former becomes part of the root." />
+                                             </children>
+                                          </TextFlow>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
                            </children>
                         </AnchorPane>
                     </content>
