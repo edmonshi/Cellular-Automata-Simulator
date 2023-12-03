@@ -64,14 +64,17 @@ public class SimLogicWave extends CellularLogic{
     public Color adjustColorAmplitude(Color initial){
         Color finColor = initial;
         // adjust based on amplitude
+        // if amplitude is the 'base' amplitude, keep it the same
         if(getAmplitude()==5){
             return finColor;
         }
+        // if the amplitude is bigger than the base, make it darker
         else if(getAmplitude()>5){
             for(int counter=0; counter<getAmplitude()-5; counter++){
                 finColor = finColor.darker();
             }
         }
+        // if the amplitude is smaller than the base, make it brighter
         else
             for(int counter=5;counter>getAmplitude(); counter--){
                 finColor = finColor.brighter();

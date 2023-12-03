@@ -972,8 +972,6 @@ public class FXMLMainAppController{
      */
     private void handleLoadItm(CellularLogic simulation) throws FileNotFoundException {
         animationRunning=false;
-        
-        System.out.println("Load button clicked");
         try{
             FileChooser f = new FileChooser();
         Stage stage  = new Stage();

@@ -41,15 +41,9 @@
                         <MenuItem fx:id="itmStopRender" mnemonicParsing="false" text="Stop" />
                      </items>
                   </Menu>
-                  <Menu mnemonicParsing="false" text="Edit">
-                     <items>
-                        <MenuItem fx:id="prefItm" mnemonicParsing="false" text="Preferences" />
-                     </items>
-                  </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                      <items>
                         <MenuItem fx:id="guideItm" mnemonicParsing="false" text="Guide" />
-                        <MenuItem mnemonicParsing="false" text="About" />
                      </items>
                   </Menu>
                </menus>
