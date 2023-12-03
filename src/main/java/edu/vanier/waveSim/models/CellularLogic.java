@@ -10,41 +10,51 @@ import javax.imageio.ImageIO;
 
 /**
  * The abstract class CellularLogic defines the basic structure and behavior for
- * cellular automata logic. It serves as a foundation for specific cellular
- * automata implementations.
+ * cellular automation logic. It serves as a foundation for specific cellular
+ * automation implementations.
  *
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
 public abstract class CellularLogic {
 
+    /**The grid for the current frame*/
     protected float[][] current;
+    /**The grid the the next frame to be modified in the loop*/
     protected float[][] nextFrame;
 
+    /**The canvas to draw the simulation onto*/
     protected final Canvas operatingCanvas;
 
+    /**The width of the simulation*/
     protected int widthX;
+    /**The height of the simulation measured form the top first*/
     protected int heightY;
 
+    /**Scaled value of width*/
     protected int scaledX;
+    /**Scaled value of height*/
     protected int scaledY;
     
+    /**Has the simulation been initialized? - Used for simulations with procedural starting conditions.*/
     protected boolean hasInitialized;
     // render variables
+    /**Number of current frame when rendering*/
     protected int frameNumber = 0;
+    /**Image instance to render into*/
     protected BufferedImage image;
+    /**Frame limit for simulation tat is defined by GUI*/
     protected int frameLimit = Integer.MAX_VALUE; // default is pseudo-indefinite but not forever
     
+    /**Is the simulation rendering frames to files?*/
     protected boolean renderFlag = false;
 
-
+    /**The color of the background/dead cells*/
     protected Color backgroundColor = Color.WHITE;
     
-    // create defaut render path
+    /**create default render path*/
     protected String renderPath = new File("").getAbsolutePath()+"/render"+System.currentTimeMillis();;
 
-    /**
-     * Must be an even integer, should be regulated by a dropdown menu in the GUI
-     */
+    /** Must be an even integer, should be regulated by a drop-down menu in the GUI*/
     protected int scaling = 1;
 
     /**

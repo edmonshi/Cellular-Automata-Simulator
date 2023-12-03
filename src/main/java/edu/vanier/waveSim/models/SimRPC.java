@@ -4,29 +4,33 @@
  */
 package edu.vanier.waveSim.models;
 
-import java.util.Arrays;
-import java.util.Random;
-import java.util.logging.Level;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author 2264570
+ * A WIP simulation for Rock-Paper-Scissors in which cells eat each other in sequence
+ * Rules are sequential as in paper->rock, rock->scissors, scissors->paper
+ * @author 2264570 - Dmitrii
  */
 public class SimRPC extends CellularLogic {
-
-    private int frameNumber = 0;
-    private int nreOfDifferentEntities = 3;
+    
+    /**Number of predators required for cell to be eaten*/
     private int nreOfNeededPredator = 2;
-    private int nreOfRandomPredator = 1;
+    /**List of colors*/
     Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
     private final static Logger logger = LoggerFactory.getLogger(SimRPC.class);
-    private Random random = new Random();
+    /**Instance of Perlin Noise for initial conditions*/
     private PerlinNoise perlin = new PerlinNoise();
 
+    /**
+     * Constructor to initialize the simulation
+     * @param operatingCanvas type Canvas (javaFX)
+     * @param widthX type int height of grid in pixels
+     * @param heightY type int height of grid in pixels
+     * @param scaling type int scaling of grid from GUI
+     */
     public SimRPC(Canvas operatingCanvas, int widthX, int heightY, int scaling) {
         super(operatingCanvas, widthX, heightY);
         if (scaling < 1 || scaling % 2 != 0) {
@@ -36,6 +40,10 @@ public class SimRPC extends CellularLogic {
         }
     }
 
+    /**
+     * Initialize the simulation for the very first frame.
+     * uses the Perlin noise to a more interesting start condition
+     */
     public void InitializeRandomColor() {
         for (int i = 0; i < scaledX; i++) {
             for (int j = 0; j < scaledY; j++) {
@@ -51,19 +59,14 @@ public class SimRPC extends CellularLogic {
                     color = 0;
                 }
                 current[i][j] = color;
-
             }
-        }
-        for(int i = 0; i < 3; i++){
-            System.out.println((i+1)%3);
         }
         nextFrame = current;
     }
 
     /*
-    To Modify for my 
-    verify scaled x and y
-     */
+    * Implementation of simulation called at every frame
+    */
     @Override
     public void simFrame() {
 
@@ -88,65 +91,38 @@ public class SimRPC extends CellularLogic {
     }
 
     /**
-     *
+     * Is the current cell remaining its color or switching?
      * @param x
      * @param y
      */
     public void devouredOrNot(int x, int y) {
-        /*
-        if (current[x][y] == 0) {
-            this.nextFrame[x][y] = 1;
-        }
-        else if (current[x][y] == 1) {
-            this.nextFrame[x][y] = 2;
-        }
-        else if (current[x][y] == 2) {
-            this.nextFrame[x][y] = 0;
-        }
-     */    
-
+ 
         int predators = 0;
-/*        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                // System.out.println((x+j-1)+", "+(y+i-1));
-                //Catches < 3; j++) {
-                if (i != 1 || j != 1) {
-                    //Catches all the index that will be out of bound and ignore them
-                    try {
-                        if (current[x + i - 1][y + j - 1] == ((current[x][y] + 1) % 3)) {
-                            predators++;
-                        }
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                    }
 
-                }
-            }
-        }
-*/
     try{
-        float greg = ((current[x][y] + 1) % 3);
-        if(current[x-1][y-1]==greg){
+        float myPredator = ((current[x][y] + 1) % 3);
+        if(current[x-1][y-1]==myPredator){
             predators++;
         }
-        if(current[x-1][y]==greg){
+        if(current[x-1][y]==myPredator){
             predators++;
         }
-        if(current[x-1][y+1]==greg){
+        if(current[x-1][y+1]==myPredator){
             predators++;
         }
-        if(current[x][y-1]==greg){
+        if(current[x][y-1]==myPredator){
             predators++;
         }
-        if(current[x][y+1]==greg){
+        if(current[x][y+1]==myPredator){
             predators++;
         }
-        if(current[x+1][y-1]==greg){
+        if(current[x+1][y-1]==myPredator){
             predators++;
         }
-        if(current[x+1][y]==greg){
+        if(current[x+1][y]==myPredator){
             predators++;
         }
-        if(current[x+1][y+1]==greg){
+        if(current[x+1][y+1]==myPredator){
             predators++;
         }
     }catch(ArrayIndexOutOfBoundsException e){
@@ -179,6 +155,7 @@ public class SimRPC extends CellularLogic {
 
     }
 
+    // color the canvas based on the values in the grid
     public void paintTheCanvas(int x, int y) {
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
@@ -187,12 +164,11 @@ public class SimRPC extends CellularLogic {
         }
     }
 
+    // check indices in the grid around the given point
     public int lookAround(int x, int y, int predatorInt) {
         int c = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                // System.out.println((x+j-1)+", "+(y+i-1));
-                //Catches < 3; j++) {
                 if (i != 1 || j != 1) {
                     //Catches all the index that will be out of bound and ignore them
                     try {
@@ -205,12 +181,14 @@ public class SimRPC extends CellularLogic {
                 }
             }
         }
-        // System.out.println(c);
 
         return c;
 
     }
-
+    
+    /**
+     * Override the setPoint method because it is not needed
+     */
     @Override
     public void setPoint(int x, int y) {
         //Do nothing
