@@ -367,6 +367,7 @@ public abstract class CellularLogic {
      * Clear the grid of simulation by resetting all grid cells to the background color.
      */
     public void clearScreen() {
+        // get canvas grphics context and clear it
         GraphicsContext Graphics = this.operatingCanvas.getGraphicsContext2D();
         Graphics.setFill(backgroundColor);
         Graphics.fillRect(0, 0, widthX, heightY);

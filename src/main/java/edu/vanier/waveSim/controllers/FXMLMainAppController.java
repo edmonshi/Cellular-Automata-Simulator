@@ -48,7 +48,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -61,7 +60,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Controller class of the MainApp's UI.
- * Contains the logic for most visual elements 
+ * Contains the logic for most visual elements
+ * The GUI also manages running the simulations and switching using the relevant controller classes
  *
  * @author William Carbonneau and Loovdrish Sujore
  */
@@ -69,19 +69,27 @@ public class FXMLMainAppController{
 
     private final static Logger logger = LoggerFactory.getLogger(FXMLMainAppController.class);
     
-    private Stage primaryStage; // instance of the stage which uses this controller
+    /**instance of the stage which uses this controller*/
+    private Stage primaryStage; 
     
-    private boolean animationRunning = false; // is the animation running?
+    /**Is the animation running?*/
+    private boolean animationRunning = false;
     
-    private final Transition pause = new PauseTransition(Duration.millis(50)); // pause necessary for a workaround with rendering the canvas after resize
+    /** pause necessary for a workaround with rendering the canvas after resize*/
+    private final Transition pause = new PauseTransition(Duration.millis(50));
     
-    private boolean hasLoadedViewFolder = false; // boolean fo rif the viewing folder has been loaded to use
+    /** boolean for if the viewing folder has been loaded to use*/
+    private boolean hasLoadedViewFolder = false;
     
-    
-    int scale = 1; // scale of canvas cells
-    int delayMillis = 1; // delay of animation to be set
+    /** scaleOld of canvas cells*/
+    int scale = 1; 
+    /** delay of animation to be set*/
+    int delayMillis = 1; 
+    /**height of scene*/
     int sceneHeight;
+    /**width of scene*/
     int sceneWidth;
+    /**list of settings to be saved*/
     String[] settings;
 
     /**
@@ -227,27 +235,39 @@ public class FXMLMainAppController{
         }
         
     }
+    /** list of origin points on screen*/
+    private HashSet<Point> pointList;
+    /** list of all simulations - active simulation is always instance 0*/
+    private final CellularLogic[] simulationsList = new CellularLogic[7];
+    /** the current active simulation*/
+    private CellularLogic simulation; 
+    /** the animation of the canvas*/
+    private CellularAnimTimer animation; 
+    /** delay for each frame of view render tab*/
+    private final Integer viewRenderFrameDelay = 100; 
+    /** event handler for view render animation loop*/
+    private final EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame; 
+    /** timer for uniform time between frames in view render tab*/
+    private final Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay)); 
+    /** list of all files to load view render images from selected folder*/
+    private final List<String> folderFiles = new ArrayList<>(); 
+    /** index of current image in sequence for view render*/
+    private int imageSequenceIndex = 0;
     
-    private HashSet<Point> pointList; // list of origin points on screen
-    private CellularLogic[] simulationsList = new CellularLogic[7]; // list of all simulations - active simulation is always instance 0
-    private CellularLogic simulation; // the current active simulation
-    private CellularAnimTimer animation; // the animation of the canvas
-    private Integer viewRenderFrameDelay = 100; // delay for each frame of view render tab
-    private EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame; // event handler for view render
-    private Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay)); // timer fo runiform frame for view render tab
-    private List<String> folderFiles = new ArrayList<String>(); // list of all files to load view render images from selected folder
-    private int imageSequenceIndex = 0; // index of current image in sequence for view render
     /**
-     * TODO
+     * This method displays the next frame based on the folderFiles array
+     * The animation will wrap the first image when it reaches the last one
      */
     private void nextViewRenderFrame(ActionEvent event) {
+        // if the folder has successfully been loaded
         if (!hasLoadedViewFolder) {
             return;
         }
-        
-        System.out.println(folderFiles.size());
+        // if the index of the image sequence is less than the amount of image files
         if (imageSequenceIndex < folderFiles.size()) {
+            // set the new image
             imageViewSequence.setImage(new Image(folderFiles.get(imageSequenceIndex)));
+            // increment the current index
             imageSequenceIndex++;
         }else {
             imageSequenceIndex = 0; // restart from beginning
@@ -260,54 +280,64 @@ public class FXMLMainAppController{
      * @return boolean that corresponds to whether or not the folder chosen by the user is valid.
      */
     private boolean getFileList() {
-        File folder;
-        Stage stage = new Stage();
+        // initialize variables
+        File folder; // new innstance of file
+        Stage stage = new Stage(); // create new stage for directory choser
         DirectoryChooser dc = new DirectoryChooser();
-        primaryStage.setAlwaysOnTop(false);
-        stage.setAlwaysOnTop(true);
-        dc.setInitialDirectory(dc.showDialog(stage));
-        stage.setAlwaysOnTop(false);
-        primaryStage.setAlwaysOnTop(true);
-        folder = dc.getInitialDirectory();
+        primaryStage.setAlwaysOnTop(false); // allow main window to be below
+        stage.setAlwaysOnTop(true); // set new stage choser to on top
+        dc.setInitialDirectory(dc.showDialog(stage)); // create directory choser and display to user, wait for input
+        stage.setAlwaysOnTop(false); // set stage to not always on top
+        primaryStage.setAlwaysOnTop(true); // view main window on top
+        folder = dc.getInitialDirectory(); // get the foolder form the directory choser
+        // check if folder & files exist & is able to read
         if (folder == null || !folder.exists() || !folder.canRead()) {
             return false;
         }
-        int csvs = 0;
-        //Find the .csn file here
-        File[] temp = folder.listFiles();
-        File[] files = new File[temp.length-1];
+        int csvs = 0; // number of csv files found
+        File[] temp = folder.listFiles(); // list of file in the folder
+        File[] files = new File[temp.length-1]; // new array of the same length as the temporary
         int counter=0;
+        
+        // loop over the files in temp
         for(File file: temp){
+            // if it is a csv
             if(file.toString().endsWith(".csv")){
-                System.out.println(file.getAbsolutePath());
                 adjustSizeIV(file.getAbsolutePath());
             }
             else{
-                files[counter] = file;
-                counter++;
+                // otherwise add to the list of valid files - increment the counter
+                if (file.toString().endsWith(".bmp")) {
+                    files[counter] = file;
+                    counter++;
+                }
             }
         }
+        // sort the list of files to make them in proper order for viewing - by modified date 
         Arrays.sort(files, Comparator.comparingLong(File::lastModified));
-        // get list of subfolders
+        // clear list of subfolders
         folderFiles.clear();
+        // add all valid files to instance variable
         for (File file:files) {
             folderFiles.add(file.getName());
         }
         
-        System.out.println(folderFiles.toString());
+        // loop over folderFiles instance variable - extra 
         for (String nFile:folderFiles) {
+            // verify - if not a bitmp file, but also a csv - increment csv counter 
             if (!nFile.endsWith(".bmp")) {
+                // deal with csv case
                 if (nFile.endsWith(".csv")) {
-                    System.out.println(nFile.toString());
                     csvs++;
                     folderFiles.remove(nFile);
                 }
                 folderFiles.remove(nFile);
             }else {
+                // modify value by file path
                 folderFiles.set(folderFiles.indexOf(nFile), folder + "\\" + nFile);
             }
         }
-        return !folderFiles.isEmpty();
+        return !folderFiles.isEmpty(); // return status
     }
     /**
      * This method sets the size, the dimensions of the stage, and of the image view that is used to render the simulation.
@@ -366,11 +396,11 @@ public class FXMLMainAppController{
     @FXML private Slider fireSldr;
     @FXML private Slider treeSldr;
     
-    // list of choices for scale factor, 1 and then multiples of 2 (for math reasons)
+    /**list of choices for scaleOld factor, 1 and then multiples of 2 (for math reasons)*/
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
     
-    //list of simulation types, simple wave, etc
-    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Forest Fire", "Diffusion Limited Aggregation", "Brian's Brain");
+    /**list of simulation types, simple wave, etc, for the drop-down menu*/
+    ObservableList<String> simTypeChoiceItems = FXCollections.observableArrayList("Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors - WIP", "Forest Fire", "Diffusion Limited Aggregation", "Brian's Brain");
     
     /**
      * Initialize the FXML file of the simulation, assignee events to the controllers and 
@@ -378,7 +408,7 @@ public class FXMLMainAppController{
      */
     @FXML
     public void initialize() {
-        // create simulation objects
+        /** create simulation objects*/
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimBriansBrain Brain = new SimBriansBrain(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
@@ -387,10 +417,10 @@ public class FXMLMainAppController{
         SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimBriansBrain SBB = new SimBriansBrain(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         
-        // initialize default simulation
+        /** initialize default simulation*/
         simulation = WaveSim;
         
-        // add simualtion objects to the list
+        /** add simulation objects to the list*/
         simulationsList[0] = simulation;
         simulationsList[1] = WaveSim;
         simulationsList[2] = Conway;
@@ -399,94 +429,103 @@ public class FXMLMainAppController{
         simulationsList[5] = DLA;
         simulationsList[6] = SBB;
         
-        // view render works indefinitely
+        /** view render works indefinitely*/
         viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
-        // initialize default animation object
+        /** initialize default animation object*/
         animation = newAnimationTimer();
-        simulation.clearScreen();
+        simulation.clearScreen(); // clear the canvas to start
         
+        /** hash-set of points from setPoint*/
         pointList = new HashSet<>();
         
-        // set ChoiceBox elements
+        /** set ChoiceBox elements*/
         scaleChoice.setValue(1);
         scaleChoice.setItems(scaleChoiceItems);
         
-        // default simulation
+        /** default simulation*/
         simTypeChoice.setValue("Simple Ripple");
-        simTypeChoice.setItems(simTypeChoiceItems); // create drop-down values
+        /** create drop-down values*/
+        simTypeChoice.setItems(simTypeChoiceItems); 
         
-        // set default btn disabled state
+        /** set default btn disabled state for pause and reset*/
         btnPause.setDisable(true);
         btnReset.setDisable(true);
         
-        // waiting util for load points
+        /** waiting utility for load points*/
         pause.setOnFinished((event) -> {
             loadPointsUtil();
         });
         
-        // bind height of simaultion to tab pane height
+        /** bind height of simulation to tab pane height*/
         SimTabPane.heightProperty().addListener((observable) -> {
             setHeight(SimTabPane.heightProperty().getValue().intValue(), simulation, animation, lblHi);
         });
-        // bind width of simaultion to tab pane width
+        /** bind width of simulation to tab pane width*/
         SimTabPane.widthProperty().addListener((observable) -> {
             setWidth(SimTabPane.widthProperty().getValue().intValue(), simulation, animation, lblWi);
         });
-        // handle render start from top menu bar
+        /** handle render start from top menu bar*/
         itmRenderStart.setOnAction((event) -> {
             handleRenderStart();
         });
-        // handle render stop from top menu bar
+        /** handle render stop from top menu bar*/
         itmStopRender.setOnAction((event) -> {
             handleRenderStop();
         });
-        // handle play simulation button
+        /** handle play simulation button*/
         btnPlay.setOnAction((event) -> {
             handlePlayBtn(animation);
         });
-        // handle pause simulation button
+        /** handle pause simulation button*/
         btnPause.setOnAction((event) -> {
             handlePauseBtn(animation);
         });
-        // handle reset simulation button
+        /** handle reset simulation button*/
         btnReset.setOnAction((event) -> {
             ResetScreenAndAnim(simulation, animation,simulation.getScaling());
         });
         
-        // handle text boxes for simulation limits
+        /** handle text box for Ripple simulation frame limit*/
         txtBoxRippleLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxRippleLimit);
             WaveSim.setFrameLimit(frameLimit);
         });
+        /** handle text box for Conway simulation frame limit*/
         txtBoxConwayLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxConwayLimit);
             Conway.setFrameLimit(frameLimit);
         });
+        /** handle text box for Rock-Paper-Scissors simulation frame limit*/
         txtBoxRPCLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxRPCLimit);
             RPC.setFrameLimit(frameLimit);
         });
+        /** handle text box for fire simulation frame limit*/
         txtBoxSLALimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxSLALimit);
             SLA.setFrameLimit(frameLimit);
         });
+        /** handle text box for Brian's Brain simulation frame limit*/
         txtBoxBrainFrameLimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxBrainFrameLimit);
             SBB.setFrameLimit(frameLimit);
         });
+        /** handle text box for aggregation simulation frame limit*/
         txtBoxDLALimit.textProperty().addListener((observable, previous, input) -> {
             int frameLimit = validateFrameLimit(input, txtBoxDLALimit);
             DLA.setFrameLimit(frameLimit);
         });
-        // handle load button in view render tab 
+        
+        /** handle load button in view render tab*/
         btnLoad.setOnAction((event) -> {
             hasLoadedViewFolder = getFileList();
         });
-        // Bind the dimensions of the primary stage to the image view
-        // Source used to understand the syntax: StackOverFlow 22993550, July 2017
-        // The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
-        //Width
+        /** Bind the dimensions of the primary stage to the image view
+         * Source used to understand the syntax: StackOverFlow 22993550, July 2017
+         * The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
+         * 
+         * Width property listener for primary stage*/
         primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -494,20 +533,23 @@ public class FXMLMainAppController{
                 imageViewSequence.setFitWidth(newValue.doubleValue()-167);
             }
         });
-        //Height
-        // Source used to understand the syntax: StackOverFlow 22993550, July 2017
-        // The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
+        /** Bind the dimensions of the primary stage to the image view
+         * Source used to understand the syntax: StackOverFlow 22993550, July 2017
+         * The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
+         * 
+         * height property listener for primary stage*/        
         primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 imageViewSequence.setFitHeight(newValue.doubleValue()-150);
             }
         });
-        // change activity of buttons by default view render tab
+        
+        /** change activity of buttons by default view render tab*/
         btnPauseRender.setDisable(true);
         btnResetRender.setDisable(true);
         
-        // handle play view render button
+        /** handle play view render button*/
         btnPlayRender.setOnAction((event) -> {
             
             viewRenderTimer.play();
@@ -515,14 +557,14 @@ public class FXMLMainAppController{
             btnPauseRender.setDisable(false);
             btnResetRender.setDisable(false);
         });
-        //handle pause view render button
+        /** handle pause view render button*/
         btnPauseRender.setOnAction((event) -> {
             viewRenderTimer.pause();
             btnPlayRender.setDisable(false);
             btnPauseRender.setDisable(true);
             btnResetRender.setDisable(true);
         });
-        // handle reset view render button 
+        /** handle reset view render button*/
         btnResetRender.setOnAction((event) -> {
             viewRenderTimer.stop();
             btnPlayRender.setDisable(false);
@@ -530,7 +572,7 @@ public class FXMLMainAppController{
             btnResetRender.setDisable(true);
             imageSequenceIndex = 0;
         });
-        // handle save settings button from top menu bar 
+        /** handle save settings button from top menu bar*/
         itmSave.setOnAction((event)->{
             try {
                 try {
@@ -543,7 +585,7 @@ public class FXMLMainAppController{
                 System.out.println(ex.toString());
             }
         });
-        // handle load settings button from top menu bar 
+        /** handle load settings button from top menu bar*/
         itmLoad.setOnAction((event)->{
             try {
                 // handle the load item method
@@ -553,7 +595,7 @@ public class FXMLMainAppController{
             }
         });
         
-        // add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        /** add listener to damping slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README*/
         sldrDamping.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -565,24 +607,24 @@ public class FXMLMainAppController{
                       WaveSim.setDamping(1-newValue.floatValue());
                   }
         });
-        // Add listener to the slider which controls the probability of a fire catching, in the simaultion "Forest Fire"
-        // Comes from (ukasp, JavaFX: Slider class 2022) see README
+        /**Add listener to the slider which controls the probability of a fire catching, in the simulation "Forest Fire"
+         * Comes from (ukasp, JavaFX: Slider class 2022) see README*/
         fireSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
                 SLA.setFire(newValue.doubleValue()/1000);
             }
         });
-        // Add listener to the slider which controls the probability of a tree growing, in the simulation "Forest Fire"
-        // Comes from (ukasp, JavaFX: Slider class 2022) see README
+        /** Add listener to the slider which controls the probability of a tree growing, in the simulation "Forest Fire"
+         * Comes from (ukasp, JavaFX: Slider class 2022) see README*/
         treeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
                 SLA.setTree(newValue.doubleValue()/100);
             }
         });
-        // Add listener to the slider which controls the amplitude of the waves, in the simulation "Wave Simulation"
-        // Comes from (ukasp, JavaFX: Slider class 2022) see README
+        /** Add listener to the slider which controls the amplitude of the waves, in the simulation "Wave Simulation"
+         * Comes from (ukasp, JavaFX: Slider class 2022) see README*/
         amplitudeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(
@@ -594,7 +636,7 @@ public class FXMLMainAppController{
             }
         });
         
-        // add listener to speed slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README
+        /** add listener to speed slider to change the damping during  simulation, Comes from (ukasp, JavaFX: Slider class 2022) see README*/
         sldrSpeed.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -608,7 +650,7 @@ public class FXMLMainAppController{
                   }
         });
         
-        // add listener to scaling choicebox to change the scaling. This clears the screen and stops the animation and clears the origin point list.
+        /** add listener to scaling choice-box to change the scaling. This clears the screen and stops the animation and clears the origin point list.*/
         scaleChoice.valueProperty().addListener(new ChangeListener<Number>() {
 
                 @Override
@@ -621,7 +663,7 @@ public class FXMLMainAppController{
                   }
         });
         
-        //add listener to simulation type choicebox to change the simulation type. This will change the simulation logic.
+        /** add listener to simulation type choice-box to change the simulation type. This will change the simulation logic.*/
         simTypeChoice.valueProperty().addListener(new ChangeListener<String>()  {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -633,16 +675,16 @@ public class FXMLMainAppController{
             }  
         });
         
-        // bind text property to the slider value damping
+        /** bind text property to the slider value damping*/
         lblDamping.textProperty().bind(Bindings.format("%.3f",sldrDamping.valueProperty()));
-        // bind text property to the slider value speed
+        /** bind text property to the slider value speed*/
         lblSpeed.textProperty().bind(Bindings.format("%1.0f",sldrSpeed.valueProperty()));
         
-        // get coordinates of mouse on click
+        /** get coordinates of mouse on click*/
         SimCanvas.setOnMouseClicked((event) -> {
             newPoint(event.getX(),event.getY(), simulation);
         });
-        // handle guide button in top menu bar
+        /** handle guide button in top menu bar*/
         guideItm.setOnAction((event)->{
             try {
                 handleGuideItm(guideItm);
@@ -715,6 +757,7 @@ public class FXMLMainAppController{
                 sim.setHeight(Height);
                 sim.setWidth(Width);
             }
+            // change simulation
             switch (newValue) {
                 case "Simple Ripple" -> {
                     simulation = simulations[1];
@@ -724,7 +767,7 @@ public class FXMLMainAppController{
                     simulation = simulations[2];
                     return simulation;
                 }
-                case "Rock-Paper-Scissors" ->{
+                case "Rock-Paper-Scissors - WIP" ->{
                     simulation = simulations[3];
                     return simulation;                    
                 }
@@ -755,6 +798,7 @@ public class FXMLMainAppController{
      * @param simulation The cellular logic that the point will follow
      */
     private void newPoint(double x, double y, CellularLogic simulation) {
+        // scaling logic
         int xFloor = (int)Math.floor(x);
         int yFloor = (int)Math.floor(y);
         int xFloorScaled = (int)Math.floor(x)/simulation.getScaling();
@@ -766,7 +810,7 @@ public class FXMLMainAppController{
                 // add the point to the ArrayList of current points.
                 pointList.add(clickPoint);
             }
-            if (simulation != simulationsList[3] && simulation != simulationsList[5]) {
+            if (simulation != simulationsList[3] && simulation != simulationsList[4] && simulation != simulationsList[5]) {
                 // set the point in the simulation
                 simulation.setPoint(xFloor, yFloor);
                 // add the point to the canvas as Color.RED
@@ -895,7 +939,7 @@ public class FXMLMainAppController{
         System.out.println("Animation stopped");
     }
     
-    //Corresponds to the name chosen by the user to name the csv file that will be created by the program, when using the save settings feature
+    /** Corresponds to the name chosen by the user to name the csv file that will be created by the program, when using the save settings feature*/
     private String nameFile;
     /**
      * Return the value of nameFile
@@ -972,7 +1016,7 @@ public class FXMLMainAppController{
             writer.flush();
             //Write damping
             writer.write(Double.toString(sldrDamping.getValue())+",");
-            //Write scale
+            //Write scaleOld
             writer.write(scaleChoice.getValue().toString()+",");
             //Write simulation type
             writer.write(simTypeChoice.getValue().toString()+",");
@@ -1043,18 +1087,20 @@ public class FXMLMainAppController{
      * This method loads the points that are contained in the settings of a csv file
      * The method cannot be used by itself. It needs to be used in a method that will set the value of the settings[] attribute, corresponding
      * to the settings that were loaded.
-     * From the settings[] attributes, it locates the indexes of the cooredinates, using the loop, and sets them on the canvas.
+     * From the settings[] attributes, it locates the indexes of the coordinates, using the loop, and sets them on the canvas.
      */
     private void loadPointsUtil() {
         int x,y;
-            for(int counterIndex = 0; counterIndex<((settings.length-15)/2); counterIndex++){
-                x=0;
-                y=0;
-                for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
-                    if(counterCoordinates==0)
-                        x=Integer.parseInt(settings[(counterIndex*2)+15]);
-                    else
-                        y=Integer.parseInt(settings[(counterIndex*2)+16]);
+        // loop over counter
+        for(int counterIndex = 0; counterIndex<((settings.length-15)/2); counterIndex++){
+            x=0;
+            y=0;
+            // loop over coordinates
+            for(int counterCoordinates=0; counterCoordinates<2; counterCoordinates++){
+                if(counterCoordinates==0)
+                    x=Integer.parseInt(settings[(counterIndex*2)+15]);
+                else
+                    y=Integer.parseInt(settings[(counterIndex*2)+16]);
                 }
                 
                 newPoint((double)x, (double)y, simulation);
@@ -1103,7 +1149,7 @@ public class FXMLMainAppController{
             simulation.setScaling(Integer.parseInt(settings[1]));
             // Set the damping
             sldrDamping.adjustValue(Double.parseDouble(settings[0]));
-            // Set scale
+            // Set scaleOld
             int scale = Integer.parseInt(settings[1]);
             scaleChoice.setValue(scale);
             // Set simulation type
@@ -1126,10 +1172,9 @@ public class FXMLMainAppController{
             //Set points, pause because the canvas needs to update its size
             pause.play();
             
-            System.out.println(settings.length);
             
         }catch(Exception e){
-            System.out.println(e.toString());
+            logger.error(e.toString());
         }
     }
     /**
@@ -1140,26 +1185,49 @@ public class FXMLMainAppController{
      * @param scaling scaling by which to reset the animation with
      */
     public void ResetScreenAndAnim(CellularLogic simulation, CellularAnimTimer animation ,int scaling) {
-        simulationsList[5].setHasInitialized(false);
-        this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation);
-        this.animation.stop();
-        this.animation = newAnimationTimer();
-        this.animation.setDelayMillis(delayMillis);
+        this.animation.stop(); // stop the animation
+        
+        // get old values of height, width and scaling
+        int h = simulation.getHeightY();
+        int w = simulation.getWidthX();
+        int scaleOld = simulation.getScaling();
+        
+        this.simulation = changeSim(simTypeChoice.getValue().toString(), simulationsList, simulation); // switch simulation to active box simulation
+        this.animation = newAnimationTimer(); // reset the animation object
+        this.animation.setDelayMillis(delayMillis); // set frame delay for animation
+        animationRunning = false; // set the running animation boolean to false
+        btnPlay.setDisable(false); // set the state of the play button
+        btnPause.setDisable(true); // set the state of the pause button
+        btnReset.setDisable(true); // set the state of the reset button
+            
+        // for every simualtion reset important values
         for (int i=1;i<this.simulationsList.length;i++) {
-            simulationsList[i].setScaling(scaling);
-            simulationsList[i].clearScreen();
-            pointList.clear();
-            animation.stop();
-            btnPlay.setDisable(false);
-            simulationsList[i].setHasInitialized(false);
-            btnPause.setDisable(true);
-            btnReset.setDisable(true);
-            animationRunning = false;
+            simulationsList[i].setScaling(scaling); // make sure scaling os set properly
+            simulationsList[i].clearScreen(); // clear grids
+            simulationsList[i].setHasInitialized(false); // set the initializtion conditions
+            
+            // if renderin set rendering to false
             if (simulationsList[i].getRenderFlag()){
                 simulationsList[i].setRenderFlag(false);
-
             }
+            // set the frame number to 0
             simulationsList[i].setFrameNumber(0);
+        }
+        // if the grid has not changed put the points back
+        if (h == simulation.getHeightY() && w == simulation.getWidthX() && scaleOld == simulation.getScaling()){
+            if (simulation != simulationsList[5]||simulation != simulationsList[4]||simulation != simulationsList[3]) {
+                HashSet<Point> pointListClone = new HashSet(pointList); // copy to avoid access errors
+                pointList.clear();
+                // loop over points to add them back
+                for (Point point:pointListClone) {
+                    // set point adjusting for scaling
+                    newPoint(point.getX()*simulation.getScaling(), point.getY()*simulation.getScaling(), simulation);
+                }
+                pointListClone = null; // remove variable
+            }
+        }else{
+            // clear pointlist
+            pointList.clear();
         }
     }
     /**
@@ -1230,6 +1298,10 @@ public class FXMLMainAppController{
         }
         return isValid;
     }
+    
+    /**
+     * Verify the settings file
+     */
     private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
         boolean isValid=true;
         if(info.length<15){

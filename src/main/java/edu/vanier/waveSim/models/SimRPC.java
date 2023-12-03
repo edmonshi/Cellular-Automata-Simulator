@@ -185,12 +185,4 @@ public class SimRPC extends CellularLogic {
         return c;
 
     }
-    
-    /**
-     * Override the setPoint method because it is not needed
-     */
-    @Override
-    public void setPoint(int x, int y) {
-        //Do nothing
-    }
 }
