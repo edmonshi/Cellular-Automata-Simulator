@@ -67,7 +67,7 @@ public abstract class CellularLogic {
      * bottom Must set scaling, but it is by default 1
      */
     public CellularLogic(Canvas operatingCanvas, int widthX, int heightY) {
-        this.operatingCanvas = operatingCanvas; // TODO handle error invalid
+        this.operatingCanvas = operatingCanvas;
 
         this.widthX = widthX;
         this.heightY = heightY;

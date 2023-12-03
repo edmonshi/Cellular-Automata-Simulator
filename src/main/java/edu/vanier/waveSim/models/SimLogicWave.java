@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
  * The class which contains the cellular logic of the simulated waves.
  * It extends the CellularLogic class
  * 
- * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
+ * @author William Carbonneau <2265724 at edu.vaniercollege.qc.ca>
  */
 public class SimLogicWave extends CellularLogic{
     
@@ -133,7 +133,7 @@ public class SimLogicWave extends CellularLogic{
                     color = backgroundColor;
                 }
                 // get colour update
-                colorCell(x,y,color);// TODO colour mapping
+                colorCell(x,y,color);
                 
             }
         }

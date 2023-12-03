@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * It extends the Application class and is responsible for initializing the JavaFX application, 
  * setting up the primary stage, and launching the application.
  * 
- * @author TODO
+ * @author Everyone
  */
 public class Driver extends Application {
 
@@ -52,6 +52,9 @@ public class Driver extends Application {
     }
     
     @Override
+    /**
+     * Optional stop method overridden to stop animations before exit.
+     */
     public void stop() throws Exception {
         super.stop();
         SDC.stopAnimation();

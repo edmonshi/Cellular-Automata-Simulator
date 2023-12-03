@@ -278,17 +278,33 @@
                      <children>
                         <VBox fx:id="SimVBox1" prefHeight="472.0" prefWidth="548.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <AnchorPane>
+                              <AnchorPane prefWidth="566.0">
                                  <children>
                                     <ImageView fx:id="imageViewSequence" fitHeight="386.0" fitWidth="548.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
-                              <HBox alignment="CENTER" prefHeight="202.0" prefWidth="548.0" spacing="30.0">
+                              <HBox fx:id="hboxViewButtons" alignment="CENTER" prefHeight="48.0" prefWidth="549.0" spacing="30.0">
                                  <children>
-                                    <Button fx:id="btnPlayRender" mnemonicParsing="false" text="Play" />
-                                    <Button fx:id="btnPauseRender" mnemonicParsing="false" text="Pause" />
-                                    <Button fx:id="btnResetRender" mnemonicParsing="false" text="Reset" />
-                                    <Button fx:id="btnLoad" mnemonicParsing="false" text="Load" />
+                                    <Button fx:id="btnPlayRender" mnemonicParsing="false" text="Play">
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnPauseRender" mnemonicParsing="false" text="Pause">
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnResetRender" mnemonicParsing="false" text="Reset">
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnLoad" mnemonicParsing="false" text="Load">
+                                       <HBox.margin>
+                                          <Insets top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
                                  </children>
                                  <VBox.margin>
                                     <Insets />

@@ -17,12 +17,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -48,6 +48,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -82,159 +83,18 @@ public class FXMLMainAppController{
     private boolean hasLoadedViewFolder = false;
     
     /** scaleOld of canvas cells*/
-    int scale = 1; 
+    private int scale = 1; 
     /** delay of animation to be set*/
-    int delayMillis = 1; 
+    private int delayMillis = 1;
+    /** the previous update frame time for view render*/
+    private long lastUpdate;
     /**height of scene*/
-    int sceneHeight;
+    private int sceneHeight;
     /**width of scene*/
-    int sceneWidth;
+    private int sceneWidth;
     /**list of settings to be saved*/
-    String[] settings;
+    private String[] settings;
 
-    /**
-     * This getter returns the settings attribute of the FXML MainAppController object.
-     * It is set after using the save settings feature, which saves the settings of the simulation in a csv file.
-     * @return type String []
-     */
-    public String[] getSettings() {
-        return settings;
-    }
-    /**
-     * This setter sets the settings attribute of the FXML MainAppController object.
-     * It is used when using the save settings feature, which saves the settings of the simulation in a csv file.
-     * @param settings
-     */
-    public void setSettings(String[] settings) {
-        this.settings = settings;
-    }
-    
-    /**
-     * Constructor of main controller 
-     */
-    public FXMLMainAppController(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
-    /**
-     * Get height of the scene
-     * @return type int
-     */
-    public int getSceneHeight() {
-        return sceneHeight;
-    }
-
-    /**
-     * Set height of the scene in pixels
-     * @param sceneHeight type int - new height of scene in pixels
-     */
-    public void setSceneHeight(int sceneHeight) {
-        this.sceneHeight = sceneHeight;
-    }
-
-    /**
-     * Get width of the scene
-     * @return type int
-     */
-    public int getSceneWidth() {
-        return sceneWidth;
-    }
-
-    /**
-     * Set width of the scene in pixels
-     * @param sceneWidth type int - new width of scene in pixels
-     */
-    public void setSceneWidth(int sceneWidth) {
-        this.sceneWidth = sceneWidth;
-    }
-
-    /**
-     * Get the instance of PrimaryStage
-     * @return type Stage (javaFX) 
-     */
-    public Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
-    /**
-     * Stop the running animation of the canvas and viewRender - to exit the application
-     */
-    public void stopAnimation() {
-        animation.stop();
-        viewRenderTimer.stop();
-    }
-
-    
-    /**
-     * Point class for use in array of origin points
-     * Only useful as a private class because nothing else uses this
-     */
-    private class Point{
-        private int x;
-        private int y;
-        /**
-         * Constructor of a Point object on the screen.
-         * @param x the position of the point on the x-axis
-         * @param y the position of the point on the y-axis
-         */
-        Point(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-        /**
-         * Getter that returns the location of a point on the x-axis
-         * @return  an integer corresponding to the position of the point on the x-axis.
-         */
-        public int getX() {
-            return x;
-        }
-        /**
-         * Getter that returns the location of a point on the y-axis
-         * @return  an integer corresponding to the position of the point on the y-axis.
-         */
-        public int getY() {
-            return y;
-        }
-        /**
-         * Setter that sets the position of the point on the x-axis
-         * @param x the position of the point on the x-axis
-         */
-        public void setX(int x) {
-            this.x = x;
-        }
-        /**
-         * Setter that sets the position of the point on the y-axis
-         * @param y the position of the point on the y-axis
-         */
-        public void setY(int y) {
-            this.y = y;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Point other = (Point) obj;
-            if (this.x != other.x) {
-                return false;
-            }
-            return this.y == other.y;
-        }
-        
-    }
     /** list of origin points on screen*/
     private HashSet<Point> pointList;
     /** list of all simulations - active simulation is always instance 0*/
@@ -245,10 +105,17 @@ public class FXMLMainAppController{
     private CellularAnimTimer animation; 
     /** delay for each frame of view render tab*/
     private final Integer viewRenderFrameDelay = 100; 
-    /** event handler for view render animation loop*/
-    private final EventHandler<ActionEvent> onFinishedFrameDelay = this::nextViewRenderFrame; 
-    /** timer for uniform time between frames in view render tab*/
-    private final Timeline viewRenderTimer = new Timeline(new KeyFrame(Duration.millis(viewRenderFrameDelay), onFinishedFrameDelay)); 
+    /**animation timer for frames in view render tab*/
+    private final AnimationTimer viewRenderTimer = new AnimationTimer() {
+        @Override
+        /** On each frame call based on frame delay -> unified with simulation to use the same slider*/
+        public void handle(long now) {
+            if (now - lastUpdate >= delayMillis * 1_000_000) {
+                nextViewRenderFrame();
+                lastUpdate = now;
+            }
+        }
+    };
     /** list of all files to load view render images from selected folder*/
     private final List<String> folderFiles = new ArrayList<>(); 
     /** index of current image in sequence for view render*/
@@ -258,7 +125,7 @@ public class FXMLMainAppController{
      * This method displays the next frame based on the folderFiles array
      * The animation will wrap the first image when it reaches the last one
      */
-    private void nextViewRenderFrame(ActionEvent event) {
+    private void nextViewRenderFrame() {
         // if the folder has successfully been loaded
         if (!hasLoadedViewFolder) {
             return;
@@ -272,94 +139,6 @@ public class FXMLMainAppController{
         }else {
             imageSequenceIndex = 0; // restart from beginning
         }
-    }
-    
-    /**
-     * Get and verify a list of files from a directory and save that curated list to
-     * the instance variable. This will be used for the View Render animation
-     * @return boolean that corresponds to whether or not the folder chosen by the user is valid.
-     */
-    private boolean getFileList() {
-        // initialize variables
-        File folder; // new innstance of file
-        Stage stage = new Stage(); // create new stage for directory choser
-        DirectoryChooser dc = new DirectoryChooser();
-        primaryStage.setAlwaysOnTop(false); // allow main window to be below
-        stage.setAlwaysOnTop(true); // set new stage choser to on top
-        dc.setInitialDirectory(dc.showDialog(stage)); // create directory choser and display to user, wait for input
-        stage.setAlwaysOnTop(false); // set stage to not always on top
-        primaryStage.setAlwaysOnTop(true); // view main window on top
-        folder = dc.getInitialDirectory(); // get the foolder form the directory choser
-        // check if folder & files exist & is able to read
-        if (folder == null || !folder.exists() || !folder.canRead()) {
-            return false;
-        }
-        int csvs = 0; // number of csv files found
-        File[] temp = folder.listFiles(); // list of file in the folder
-        File[] files = new File[temp.length-1]; // new array of the same length as the temporary
-        int counter=0;
-        
-        // loop over the files in temp
-        for(File file: temp){
-            // if it is a csv
-            if(file.toString().endsWith(".csv")){
-                adjustSizeIV(file.getAbsolutePath());
-            }
-            else{
-                // otherwise add to the list of valid files - increment the counter
-                if (file.toString().endsWith(".bmp")) {
-                    files[counter] = file;
-                    counter++;
-                }
-            }
-        }
-        // sort the list of files to make them in proper order for viewing - by modified date 
-        Arrays.sort(files, Comparator.comparingLong(File::lastModified));
-        // clear list of subfolders
-        folderFiles.clear();
-        // add all valid files to instance variable
-        for (File file:files) {
-            folderFiles.add(file.getName());
-        }
-        
-        // loop over folderFiles instance variable - extra 
-        for (String nFile:folderFiles) {
-            // verify - if not a bitmp file, but also a csv - increment csv counter 
-            if (!nFile.endsWith(".bmp")) {
-                // deal with csv case
-                if (nFile.endsWith(".csv")) {
-                    csvs++;
-                    folderFiles.remove(nFile);
-                }
-                folderFiles.remove(nFile);
-            }else {
-                // modify value by file path
-                folderFiles.set(folderFiles.indexOf(nFile), folder + "\\" + nFile);
-            }
-        }
-        return !folderFiles.isEmpty(); // return status
-    }
-    /**
-     * This method sets the size, the dimensions of the stage, and of the image view that is used to render the simulation.
-     * Since the image view has been bound to the stage, the method sets only the dimensions of the stage, which will automatically set the dimensions of the image view.
-     * @param path The path to the file containing the dimensions of the primary stage
-     */
-    private void adjustSizeIV(String path){
-        try(CSVReader reader = new CSVReader(new FileReader(path))){
-            String[] stageDimensions = reader.readNext();
-            System.out.println(stageDimensions.toString());
-            primaryStage.setWidth(Double.parseDouble(stageDimensions[0]));
-            primaryStage.setHeight(Double.parseDouble(stageDimensions[1]));
-        }catch(Exception e){
-            System.out.println("File not read");
-        }
-    }
-    
-    /**
-     * Utility for creating new refreshed animation timers
-     */
-    private CellularAnimTimer newAnimationTimer() {
-        return new CellularAnimTimer(simulation, this);
     }
     
     //get elements from FXML
@@ -395,6 +174,7 @@ public class FXMLMainAppController{
     @FXML private Button btnLoad;
     @FXML private Slider fireSldr;
     @FXML private Slider treeSldr;
+    @FXML private HBox hboxViewButtons;
     
     /**list of choices for scaleOld factor, 1 and then multiples of 2 (for math reasons)*/
     ObservableList<Integer> scaleChoiceItems = FXCollections.observableArrayList(1,2,4,6,8);
@@ -411,7 +191,6 @@ public class FXMLMainAppController{
         /** create simulation objects*/
         SimLogicWave WaveSim = new SimLogicWave(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         ConwayGameOfLifeLogic Conway = new ConwayGameOfLifeLogic(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
-        SimBriansBrain Brain = new SimBriansBrain(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimRPC RPC = new SimRPC(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimForestFire SLA = new SimForestFire(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
         SimDiffusionLimitedAggregation DLA = new SimDiffusionLimitedAggregation(SimCanvas, (int) SimCanvas.getWidth(), (int) SimCanvas.getHeight(), 1);
@@ -430,7 +209,7 @@ public class FXMLMainAppController{
         simulationsList[6] = SBB;
         
         /** view render works indefinitely*/
-        viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
+///////        viewRenderTimer.setCycleCount(Timeline.INDEFINITE);
         
         /** initialize default animation object*/
         animation = newAnimationTimer();
@@ -552,14 +331,14 @@ public class FXMLMainAppController{
         /** handle play view render button*/
         btnPlayRender.setOnAction((event) -> {
             
-            viewRenderTimer.play();
+            viewRenderTimer.start();
             btnPlayRender.setDisable(true);
             btnPauseRender.setDisable(false);
             btnResetRender.setDisable(false);
         });
         /** handle pause view render button*/
         btnPauseRender.setOnAction((event) -> {
-            viewRenderTimer.pause();
+            viewRenderTimer.stop();
             btnPlayRender.setDisable(false);
             btnPauseRender.setDisable(true);
             btnResetRender.setDisable(true);
@@ -582,7 +361,7 @@ public class FXMLMainAppController{
                     java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (IOException ex) {
-                System.out.println(ex.toString());
+                logger.error(ex.toString());
             }
         });
         /** handle load settings button from top menu bar*/
@@ -693,6 +472,97 @@ public class FXMLMainAppController{
             }
         });
 }
+    
+    /**
+     * Get and verify a list of files from a directory and save that curated list to
+     * the instance variable. This will be used for the View Render animation
+     * @return boolean that corresponds to whether or not the folder chosen by the user is valid.
+     */
+    private boolean getFileList() {
+        // initialize variables
+        File folder; // new innstance of file
+        Stage stage = new Stage(); // create new stage for directory choser
+        DirectoryChooser dc = new DirectoryChooser();
+        primaryStage.setAlwaysOnTop(false); // allow main window to be below
+        stage.setAlwaysOnTop(true); // set new stage choser to on top
+        dc.setInitialDirectory(dc.showDialog(stage)); // create directory choser and display to user, wait for input
+        stage.setAlwaysOnTop(false); // set stage to not always on top
+        primaryStage.setAlwaysOnTop(true); // view main window on top
+        folder = dc.getInitialDirectory(); // get the foolder form the directory choser
+        // check if folder & files exist & is able to read
+        if (folder == null || !folder.exists() || !folder.canRead()) {
+            return false;
+        }
+        int csvs = 0; // number of csv files found
+        File[] temp = folder.listFiles(); // list of file in the folder
+        ArrayList<File> files = new ArrayList<>(); // new array of the same length as the temporary
+
+        // loop over the files in temp
+        for(File file: temp){
+            // if it is a csv
+            if(file.toString().endsWith(".csv")){
+                adjustSizeIV(file.getAbsolutePath());
+            }
+            else{
+                // otherwise add to the list of valid files - increment the counter
+                if (file.toString().endsWith(".bmp")) {
+                    files.add(file);
+                }
+            }
+        }
+        
+        try{
+            // sort the list of files to make them in proper order for viewing - by modified date 
+            files.sort(Comparator.comparingLong(File::lastModified));
+        }catch(Exception e) {
+            return false;
+        }
+        // clear list of subfolders
+        folderFiles.clear();
+        // add all valid files to instance variable
+        for (File file:files) {
+            folderFiles.add(file.getName());
+        }
+        
+        // loop over folderFiles instance variable - extra 
+        for (String nFile:folderFiles) {
+            // verify - if not a bitmp file, but also a csv - increment csv counter 
+            if (!nFile.endsWith(".bmp")) {
+                // deal with csv case
+                if (nFile.endsWith(".csv")) {
+                    csvs++;
+                    folderFiles.remove(nFile);
+                }
+                folderFiles.remove(nFile);
+            }else {
+                // modify value by file path
+                folderFiles.set(folderFiles.indexOf(nFile), folder + "\\" + nFile);
+            }
+        }
+        return !folderFiles.isEmpty(); // return status
+    }
+    /**
+     * This method sets the size, the dimensions of the stage, and of the image view that is used to render the simulation.
+     * Since the image view has been bound to the stage, the method sets only the dimensions of the stage, which will automatically set the dimensions of the image view.
+     * @param path The path to the file containing the dimensions of the primary stage
+     */
+    private void adjustSizeIV(String path){
+        try(CSVReader reader = new CSVReader(new FileReader(path))){
+            String[] stageDimensions = reader.readNext();
+            // set new stage dimensions including hbox height
+            primaryStage.setWidth(Double.parseDouble(stageDimensions[0]));
+            primaryStage.setHeight(Double.parseDouble(stageDimensions[1])+hboxViewButtons.getHeight());
+        }catch(Exception e){
+            logger.warn("File not read");
+        }
+    }
+    
+    /**
+     * Utility for creating new refreshed animation timers
+     */
+    private CellularAnimTimer newAnimationTimer() {
+        return new CellularAnimTimer(simulation, this);
+    }
     
     /**
      * Set the width of the canvas for the simulation - also sets the width of the grid contained in the simulations
@@ -848,7 +718,6 @@ public class FXMLMainAppController{
      */
     public void saveDimensions(String path){
         File file = new File(path+"\\"+"dimensions.csv");
-        System.out.println(file.getAbsolutePath());
         try(FileWriter fw = new FileWriter(file);
             PrintWriter writer = new PrintWriter(fw);){
             writer.write(Double.toString(primaryStage.getWidth())+",");
@@ -865,24 +734,6 @@ public class FXMLMainAppController{
             sim.setRenderFlag(false);
         }
         ResetScreenAndAnim(simulation, animation, scale);
-    }
-    
-    private int frameLim; // TODO docs comment explain this
-
-    /**
-     * Getter that returns the frame limit
-     * @return frameLim integer that corresponds to the frame limit
-     */
-    public int getFrameLim() {
-        return frameLim;
-    }
-
-    /**
-     * Setter that sets the frame limit
-     * @param frameLim integer that corresponds to the frame limit
-     */
-    public void setFrameLim(int frameLim) {
-        this.frameLim = frameLim;
     }
     
     /**
@@ -1002,14 +853,13 @@ public class FXMLMainAppController{
             primaryStage.setAlwaysOnTop(true);
             try {
                 dc.getInitialDirectory().createNewFile();
-                System.out.println(dc.getInitialDirectory());
                 // Make a dialog appear for the user to choose a name for the file
                 this.setNameFile(chooseNameDialog());
                 // Create a file with the name
                 file = new File(dc.getInitialDirectory()+"\\"+this.getNameFile()+".csv");
-            } catch (IOException ex) {
-                System.out.println("Error in the program: "+ex.toString());
-       }
+            } catch (IOException | NullPointerException ex) {
+                logger.error(ex.toString());
+            }
         }
         try(FileWriter writer = new FileWriter(file.getAbsolutePath())){
             //Erase previous save settings
@@ -1047,7 +897,7 @@ public class FXMLMainAppController{
                 writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling())+",");
             }
         }catch(Exception e){
-            System.out.println(e.toString());
+            logger.error(e.toString());
         }
     }
     /**
@@ -1242,7 +1092,7 @@ public class FXMLMainAppController{
         alert.setHeaderText(message);
         alert.showAndWait();
         if(alert.getResult() == ButtonType.OK){
-            System.out.println("Error message seen.");
+            logger.warn("Error message seen.");
         }
         
     }
@@ -1292,7 +1142,7 @@ public class FXMLMainAppController{
     private boolean verifyFileCSV(File file) throws FileNotFoundException, IOException, CsvException{
         boolean isValid =true; //Assume that the file is valid, then look for mistakes
         //Verify .csv
-        if(!".csv".equals(file.getPath().substring(file.getPath().length()-4, file.getPath().length()))){
+        if(file != null && !".csv".equals(file.getPath().substring(file.getPath().length()-4, file.getPath().length()))){
             showAlert("The file is not a csv file. Please try again.");
             isValid=false;
         }
@@ -1405,5 +1255,148 @@ public class FXMLMainAppController{
         guideItm.setDisable(false);
         });
         guideDialog.showAndWait();
+    }
+     /**
+     * This getter returns the settings attribute of the FXML MainAppController object.
+     * It is set after using the save settings feature, which saves the settings of the simulation in a csv file.
+     * @return type String []
+     */
+    public String[] getSettings() {
+        return settings;
+    }
+    /**
+     * This setter sets the settings attribute of the FXML MainAppController object.
+     * It is used when using the save settings feature, which saves the settings of the simulation in a csv file.
+     * @param settings
+     */
+    public void setSettings(String[] settings) {
+        this.settings = settings;
+    }
+    
+    /**
+     * Constructor of main controller 
+     */
+    public FXMLMainAppController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    /**
+     * Get height of the scene
+     * @return type int
+     */
+    public int getSceneHeight() {
+        return sceneHeight;
+    }
+
+    /**
+     * Set height of the scene in pixels
+     * @param sceneHeight type int - new height of scene in pixels
+     */
+    public void setSceneHeight(int sceneHeight) {
+        this.sceneHeight = sceneHeight;
+    }
+
+    /**
+     * Get width of the scene
+     * @return type int
+     */
+    public int getSceneWidth() {
+        return sceneWidth;
+    }
+
+    /**
+     * Set width of the scene in pixels
+     * @param sceneWidth type int - new width of scene in pixels
+     */
+    public void setSceneWidth(int sceneWidth) {
+        this.sceneWidth = sceneWidth;
+    }
+
+    /**
+     * Get the instance of PrimaryStage
+     * @return type Stage (javaFX) 
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * Stop the running animation of the canvas and viewRender - to exit the application
+     */
+    public void stopAnimation() {
+        animation.stop();
+        viewRenderTimer.stop();
+    }
+
+    
+    /**
+     * Point class for use in array of origin points
+     * Only useful as a private class because nothing else uses this
+     */
+    private class Point{
+        private int x;
+        private int y;
+        /**
+         * Constructor of a Point object on the screen.
+         * @param x the position of the point on the x-axis
+         * @param y the position of the point on the y-axis
+         */
+        Point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+        /**
+         * Getter that returns the location of a point on the x-axis
+         * @return  an integer corresponding to the position of the point on the x-axis.
+         */
+        public int getX() {
+            return x;
+        }
+        /**
+         * Getter that returns the location of a point on the y-axis
+         * @return  an integer corresponding to the position of the point on the y-axis.
+         */
+        public int getY() {
+            return y;
+        }
+        /**
+         * Setter that sets the position of the point on the x-axis
+         * @param x the position of the point on the x-axis
+         */
+        public void setX(int x) {
+            this.x = x;
+        }
+        /**
+         * Setter that sets the position of the point on the y-axis
+         * @param y the position of the point on the y-axis
+         */
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Point other = (Point) obj;
+            if (this.x != other.x) {
+                return false;
+            }
+            return this.y == other.y;
+        }
+        
     }
 }
