@@ -186,7 +186,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                 //Updating the initial position of the particle to an empty one
                 colorCell(x, y, Color.BLACK);
                 Random random = new Random();
-                int direction = random.nextInt(4);
+                int direction = random.nextInt(8);
                 switch (direction >= 0 ? direction : -direction) {
                     case 0:
                         y--;
@@ -195,11 +195,26 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                         x++;
                         break;
                     case 2:
-                        
                         x--;
                         break;
                     case 3:
                         y++;
+                        break;
+                    case 4:
+                        y--;
+                        x++;
+                        break;
+                    case 5:
+                        y++;
+                        x++;
+                        break;
+                    case 6:
+                        y--;
+                        x--;
+                        break;
+                    case 7:
+                        y++;
+                        x--;
                         break;
                 }
 
