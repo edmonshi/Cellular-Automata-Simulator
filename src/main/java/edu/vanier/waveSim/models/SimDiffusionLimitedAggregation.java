@@ -175,7 +175,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     }
 
     /** 
-     * This function makes the particles move randomly in one of the four directions
+     * This function makes the particles move randomly to one of the eight cells around it.
      */
     private void move() {
         List<Point> moved = new ArrayList<>();
