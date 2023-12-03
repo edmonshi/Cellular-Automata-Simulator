@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package edu.vanier.waveSim.models;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import javafx.scene.canvas.Canvas;
@@ -14,16 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * A simulation of Diffusion-limited aggregation based on:
+ * Wikimedia Foundation. (2021, July 3)
+ * Computer-Kurzweil,  thomaswoehlke. (n.d.).
  * @author edmon
  */
 public class SimDiffusionLimitedAggregation extends CellularLogic {
-    //Diffusion Limited Aggregation https://en.wikipedia.org/wiki/Diffusion-limited_aggregation
-    //Code inspired from https://github.com/Computer-Kurzweil/computer_kurzweil
 
     private final static Logger logger = LoggerFactory.getLogger(SimDiffusionLimitedAggregation.class);
 
-    //Point class to use to keep track of points
+    /** 
+     * Point class to use to keep track of points
+     * This has subclasses so it is better if it stays private and is not merged with the other private point class in the main controller
+     */
     private class Point {
 
         private int x;
@@ -52,6 +50,9 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
 
     }
 
+    /**
+     * Subclass of point for particles
+     */
     private class Particle extends Point {
 
         public Particle(int x, int y) {
@@ -60,6 +61,9 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
 
     }
 
+    /**
+     * Subclass of point for dendrites
+     */
     private class Dendrite extends Point {
 
         public Dendrite(int x, int y) {
@@ -68,10 +72,13 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
         }
 
     }
-
+    
+    /**List of entities*/
     private List<Point> entities = new ArrayList<Point>();
+    /**List of dendrites*/
     private List<Dendrite> dendrites = new ArrayList<>();
 
+    /*Contructor to instantate the simulation*/
     public SimDiffusionLimitedAggregation(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
@@ -83,12 +90,16 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     }
 
     @Override
+    /**
+     * The main simulation method called every frame. Overrides from the superclass.
+     */
     public void simFrame() {
         //Initialize the simulation with particles and a root dendrite
         if (!hasInitialized) {
             entities.clear();
             dendrites.clear();
             hasInitialized = true;
+            // loops over the scaled width and height to see all cells
             for (int counterX = 1; counterX < scaledX - 1; counterX++) {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
                     Random random = new Random();
@@ -101,6 +112,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                     }
                 }
             }
+            // color current cell
             this.current[(scaledX - 2) / 2][(scaledY - 2) / 2] = 3;
             colorCell((scaledX - 2) / 2, (scaledY - 2) / 2, Color.ORANGE);
             entities.add(new Dendrite((scaledX - 2) / 2, (scaledY - 2) / 2));
@@ -108,11 +120,15 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
         }
         checkNeighbours();
         move();
+        // color all dendrites
         for (Dendrite dendrite : dendrites) {
             colorCell(dendrite.getX(), dendrite.getY(), Color.ORANGE);
         }
     }
 
+    /**
+     * Check neighboring points to update rules
+     */
     private void checkNeighbours() {
         List<Point> neighbours = new ArrayList<Point>();
         for (Dendrite dendrite : dendrites) {
@@ -145,6 +161,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
 
         }
         entities.removeAll(neighbours);
+        // for all neibours, modify dendrites
         for (Point neighbour : neighbours) {
             Dendrite newDendrite = new Dendrite(neighbour.getX(), neighbour.getY());
             if (!dendrites.contains(newDendrite)) {
@@ -154,6 +171,9 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
         neighbours.clear();
     }
 
+    /** 
+     * move random particles
+     */
     private void move() {
         List<Point> moved = new ArrayList<>();
         for (Point particle : entities) {

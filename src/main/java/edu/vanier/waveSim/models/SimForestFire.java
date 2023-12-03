@@ -1,7 +1,5 @@
-
 package edu.vanier.waveSim.models;
 
-import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -152,6 +150,7 @@ public class SimForestFire extends CellularLogic{
      * @return The boolean corresponding to whether that cell's moore neighbourhood is burning or not
      */
     private boolean mooreBurning(int x, int y) {
+        // check around cell
         if (this.current[x - 1][y - 1] == 1) {
             return true;
         }

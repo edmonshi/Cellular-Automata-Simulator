@@ -2,11 +2,8 @@ package edu.vanier.waveSim.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
@@ -33,7 +30,6 @@ public class FXMLHelpGuideController extends Stage{
     }
     /**
      * Initializes the controller
-     * @deprecated 
      */
     @FXML
     private void initialize(){

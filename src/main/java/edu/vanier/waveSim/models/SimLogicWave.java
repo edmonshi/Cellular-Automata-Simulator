@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package edu.vanier.waveSim.models;
 
 import javafx.scene.canvas.Canvas;
@@ -16,10 +12,11 @@ import org.slf4j.LoggerFactory;
  */
 public class SimLogicWave extends CellularLogic{
     
-    /**Some damping value 0 to 1 non-integer
-     */
+    /**Some damping value 0 to 1 non-integer*/
     private float damping = (float) 0.98;
+    /**Amplitude value*/
     private int amplitude = 1;
+    /**Color of the simulation*/
     private Color simColor = adjustColorAmplitude(Color.BLUE);
     
     private final static Logger logger = LoggerFactory.getLogger(SimLogicWave.class);
@@ -35,23 +32,38 @@ public class SimLogicWave extends CellularLogic{
     }
 
 
-    /** * Set damping for the waves.Some float value 0 to 1 non-integer.
+    /**
+     * Set damping for the waves.Some float value 0 to 1 non-integer.
      * @param damping, the damping value, must be a float between 0 and < 1
      */
     public void setDamping(float damping) {
         this.damping = damping;
     }
 
+    /**
+     * Get the amplitude value of the simulation
+     * @return type int
+     */
     public int getAmplitude() {
         return amplitude;
     }
 
+    /**
+     * Set the amplitude value of the simulation
+     * @param amplitude type int
+     */
     public void setAmplitude(int amplitude) {
         this.amplitude = amplitude;
         simColor = adjustColorAmplitude(Color.BLUE);
     }
+    /**
+     * Adjust the color based on the amplitude
+     * @param initial type Color (javFX)
+     * @return type Color (javaFX)
+     */
     public Color adjustColorAmplitude(Color initial){
         Color finColor = initial;
+        // adjust based on amplitude
         if(getAmplitude()==5){
             return finColor;
         }
@@ -73,7 +85,7 @@ public class SimLogicWave extends CellularLogic{
      * @param operatingCanvas The canvas to draw the simulation on. Must be accessible from calling thread.
      * @param widthX The width in pixels for the horizontal
      * @param heightY The height in pixels for the vertical, measured top to bottom
-     * @param scaling Scaling should be handled by the GUI as a dropdown menu, but it is checked here anyway.
+     * @param scale Scaling should be handled by the GUI as a drop-down menu, but it is checked here anyway.
      */
     public SimLogicWave(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
@@ -86,11 +98,11 @@ public class SimLogicWave extends CellularLogic{
     }
 
     
-    /**Simulation logic is here per frame, comes from: https://web.archive.org/web/20160418004149/http://freespace.virgin.net/hugo.elias/graphics/x_water.htm
+    /**
+     * Simulation logic is here per frame, comes from: Elias, H. (2016, April 18)
      * Use the simulation logic of the waves to create the next frame of the simulation.
      * Creates a new grid the that is filled up with points using the simulation logic of the waves
      * and the current frame. Then replace the current frame.
-     * 
      */
     @Override
     public void simFrame(){
@@ -125,13 +137,10 @@ public class SimLogicWave extends CellularLogic{
                 
             }
         }
+        // swap arrays to drive the automation
         float[][] temp = this.current;
         this.current = this.nextFrame;
         this.nextFrame = temp;
     }
-    
 
-    
-    
-    
 }

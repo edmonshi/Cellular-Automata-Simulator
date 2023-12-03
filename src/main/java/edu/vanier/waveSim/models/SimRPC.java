@@ -1,7 +1,3 @@
-/**
- * https://github.com/Gugubo/Rock-Paper-Scissor-Cellular-Automaton/blob/master/Panel.java
- * https://github.com/topics/cellular-automata?l=java
- */
 package edu.vanier.waveSim.models;
 
 import javafx.scene.canvas.Canvas;
@@ -12,6 +8,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A WIP simulation for Rock-Paper-Scissors in which cells eat each other in sequence
  * Rules are sequential as in paper->rock, rock->scissors, scissors->paper
+ * Gugubo. (2018, November 1)
+ * Build software better, together. GitHub. (n.d.).
  * @author 2264570 - Dmitrii
  */
 public class SimRPC extends CellularLogic {
@@ -155,7 +153,7 @@ public class SimRPC extends CellularLogic {
 
     }
 
-    // color the canvas based on the values in the grid
+    /**color the canvas based on the values in the grid*/
     public void paintTheCanvas(int x, int y) {
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
@@ -164,7 +162,7 @@ public class SimRPC extends CellularLogic {
         }
     }
 
-    // check indices in the grid around the given point
+    /** check indices in the grid around the given point*/
     public int lookAround(int x, int y, int predatorInt) {
         int c = 0;
         for (int i = 0; i < 3; i++) {

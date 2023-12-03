@@ -18,6 +18,10 @@
 - Anonymous. (2023, November 11). Brian's Brain. Wikipedia. https://en.wikipedia.org/wiki/Brian%27s_Brain
 - Vogel, A. (2018, April 3). Brian's Brain Cellular Automaton. Arne Vogel. https://www.arnevogel.com/brians-brain-cellular-automaton/#:~:text=Rules%3A%20There%20are%20three%20cell,dies%20in%20the%20next%20iteration
 - Dingeldein, L. (n.d.). A Cellular Automata Based Forest-Fire Model. University of Frankfurt. https://itp.uni-frankfurt.de/~gros/StudentProjects/Projects_2020/projekt_lars_dingeldein/
+- alksily. (n.d.). Perlin Noise (1D, 2D, 3D noise generator). GitHub Gist. https://gist.github.com/alksily/7a85a1898e65c936f861ee93516e397d 
+- Build software better, together. GitHub. (n.d.). https://github.com/topics/cellular-automata?l=java 
+- Wikimedia Foundation. (2021, July 3). Diffusion-limited aggregation. Wikipedia. https://en.wikipedia.org/wiki/Diffusion-limited_aggregation 
+- Computer-Kurzweil,  thomaswoehlke. (n.d.). Computer-Kurzweil/computer_kurzweil: Computer Science Infotainment. tribute to the article series in Scientific American and their German release Spektrum der wissenschaft. GitHub. https://github.com/Computer-Kurzweil/computer_kurzweil 
 
 ### FAQ
 >1. Where can I find instructions to use the app?

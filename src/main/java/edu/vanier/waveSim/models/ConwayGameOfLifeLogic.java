@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class ConwayGameOfLifeLogic extends CellularLogic{
     
     private final static Logger logger = LoggerFactory.getLogger(ConwayGameOfLifeLogic.class);
-    // The color of the simulation is green
+    /** The color of the simulation is green*/
     private final Color simColor = Color.GREEN;
     /**
      * Constructor for the simulation.
@@ -66,13 +66,16 @@ public class ConwayGameOfLifeLogic extends CellularLogic{
         this.nextFrame = temp;
     
     }
-    // isAlive returns 0 for dead and 255 for alive
-    // nextFrame and current
+    /** Check if a cell is alive or dead
+     * @param x type int horizontal coordinate in pixels
+     * @param y type int vertical coordinate in pixels (top to bottom)
+     * @return 0 (false) for dead and 255 (true) for alive*/
     public boolean isAlive(int x, int y){
         // setPoint sets a value of 255
         //counts the number of neighbours
         int neighbours = 0;
         boolean isAlive= false;
+        // check around
         if(this.current[x-1][y-1] == 255) {
             neighbours++;
         }

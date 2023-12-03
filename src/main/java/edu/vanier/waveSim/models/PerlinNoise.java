@@ -1,9 +1,13 @@
 package edu.vanier.waveSim.models;
 
 /**
- *
+ * A Perlin noise generator taken from GitHub (Used as-is from the source)
+ * This will be used for the Rock-Paper-Scissors simulation initial conditions.
+ * All that is needed from this is the 2d noise function and it is being used as if it were a library. (Hence the lack of javaDoc as we have not attempted to fully document it ourselves.)
+ * This code generates a noise map over n-dimensional space in the form of improved Perlin noise. This makes a really nice starting pattern for procedural simulations.
+ * This is an arbitrary choice of a noise function - we just thought this one looked nice.
  * 
- * source https://gist.github.com/alksily/7a85a1898e65c936f861ee93516e397d
+ * source alksily. (n.d.).
  *
  */
 
@@ -90,7 +94,7 @@ public final class PerlinNoise {
 
 		return value / initialSize;
 	}
-
+        
 	public double noise(double x, double y) {
 		double value = 0.0;
 		double size = default_size;
