@@ -48,4 +48,5 @@ application {
    //mainClass = 'edu.vanier.waveSim.ui.Driver'
    mainClass = 'edu.vanier.waveSim.MainApp'
    //mainClass = 'edu.vanier.waveSim.tests.PerlinTest'
+    //mainClass = 'edu.vanier.waveSim.tests.LoadTest'
 }

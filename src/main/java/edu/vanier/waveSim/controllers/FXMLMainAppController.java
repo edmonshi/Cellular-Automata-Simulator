@@ -989,7 +989,6 @@ public class FXMLMainAppController{
         CSVReader reader = new CSVReader(new FileReader(file.getPath()));
         settings = reader.readAll().get(0);
         if(!verifyFileSettings(settings)){
-            handleLoadItm(simulation);
             return;
         }
         this.primaryStage.setAlwaysOnTop(true);
@@ -1151,12 +1150,15 @@ public class FXMLMainAppController{
     
     /**
      * Verify the settings file
+     * @param info Array of Strings which crresponds to the data retrived from the CSV file
+     * @return boolean informing the user whether or not the data is valid for the operations done in load settings
+     * @throws IOException
+     * @throws CsvException
      */
-    private boolean verifyFileSettings(String[] info) throws IOException, CsvException{
-        boolean isValid=true;
+    public boolean verifyFileSettings(String[] info) throws IOException, CsvException{
         if(info.length<15){
             showAlert("The file does not contain the minimum amount of information required to load a simulation.");
-            isValid = false;
+            return false;
         }
             
         try{
@@ -1166,22 +1168,22 @@ public class FXMLMainAppController{
             if(dampVerification>0.150||dampVerification<0.001)
             {
                 showAlert("The first value is incorrect. The value of the damping should be between 0.001 and 0.150");
-                isValid = false;
+                return false;
             }
         }catch(Exception e){
             showAlert("The first value should be a number corresponding to the value of the damping. However, it does not seem like a numerical value.");
-            isValid = false;
+            return false;
         }
         //Check scaling
         try{
             int scaleVerification = Integer.parseInt(info[1]);
             if(scaleVerification>8||scaleVerification<1){
                 showAlert("The scaling should be a number between 1 and 8. However, it seems to be out of bounds");
-                isValid = false;
+                return false;
             }
         }catch(Exception e){
             showAlert("The second value should be an integer corresponding to the value of the scaling. However, it does seem like a number.");
-            isValid = false;
+            return false;
         }
         //Check simulation type
         String[] simulationTypes = {"Simple Ripple", "Conway's Game of Life", "Rock-Paper-Scissors", "Brian's Brain", "Forest Fire","Diffusion Limited Aggregation"};
@@ -1191,18 +1193,18 @@ public class FXMLMainAppController{
                 isOneOfTypes = true;
         if(isOneOfTypes==false){
             showAlert("The third value, corresponding to the simulation type is invalid. Please try again.");
-            isValid = false;
+            return false;
         }
         //Check speed: Between 1 and 500
         try{
             double speedVerification = Double.parseDouble(info[3]);
             if(speedVerification>500||speedVerification<1){
                 showAlert("The fourth value, corresponding to the speed of the simulation should be a value between 1 and 500. However, the value in the file seems to be out of bound. Please try again.");
-                isValid=false;
+                return false;
             }
         }catch(Exception e){
             showAlert("The fourth value inside the file, corresponding to the speed of the simulation is not a number. Please try again, using a valid file.");
-            isValid = false;
+            return false;
         }
         // Verify stage dimensions
         // Width
@@ -1213,7 +1215,7 @@ public class FXMLMainAppController{
             }
         }catch(Exception e){
             showAlert("The value at the "+(5)+"th position should be a number corresponding to the width of the window. However, it does not look like a number.");
-            isValid=false;
+            return false;
         }
         //Height
         try{
@@ -1223,20 +1225,21 @@ public class FXMLMainAppController{
             }
         }catch(Exception e){
             showAlert("The value at the "+(6)+"th position should be a number corresponding to the height of the window. However, it does not look like a number.");
-            isValid=false;
+            return false;
         }
         // Don't need to check for frame limits, because if something illegal is entered, then it just automatically goes to 'max'
         //Check how many points are in the file
         int numOfCoordinates = (info.length-15);
         if(numOfCoordinates%2==1){
             showAlert("A coordinate is missing. Please try again, using a valid file.");
-            isValid=false;
+            return false;
         }
-        return isValid;
+        return true;
     }
     /**
      * This method creates a help dialog for the user.
      * @param guideItm type MenuItm, which will be set disabled as long as the help dialog is being used
+     * @throws IOException
      */
     private void handleGuideItm(MenuItem guideItm) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
