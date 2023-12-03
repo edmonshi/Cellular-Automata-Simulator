@@ -40,7 +40,7 @@ public class SimRPC extends CellularLogic {
 
     /**
      * Initialize the simulation for the very first frame.
-     * uses the Perlin noise to a more interesting start condition
+     * uses the Perlin noise for a more interesting starting condition.
      */
     public void InitializeRandomColor() {
         for (int i = 0; i < scaledX; i++) {
@@ -89,14 +89,17 @@ public class SimRPC extends CellularLogic {
     }
 
     /**
-     * Is the current cell remaining its color or switching?
-     * @param x
-     * @param y
+     * Look around the neighbors cell for predators. If the numbers of predators found
+     * is bigger or equal than the required threshold, the cell would be "devoured"
+     * and become the predator.
+     * @param x The horizontal coordinate of the cell
+     * @param y The vertical coordinate of the cell
      */
     public void devouredOrNot(int x, int y) {
  
         int predators = 0;
 
+        //Look around each neighbors cell for predators.
     try{
         float myPredator = ((current[x][y] + 1) % 3);
         if(current[x-1][y-1]==myPredator){
@@ -123,26 +126,25 @@ public class SimRPC extends CellularLogic {
         if(current[x+1][y+1]==myPredator){
             predators++;
         }
+        //If it goes out of bounds for the corner of the grid. Ignore it.
     }catch(ArrayIndexOutOfBoundsException e){
     }
-
+    
         //Red -> 0, Blue -> 1, Green -> 2
+        //Change the cell to its predator if the number of neighbors predators
+        //exceed or equal the threshold.
         switch ((int) current[x][y]) {
             case 0 -> {
-                //predators = lookAround(x, y, 1);
-                //System.out.println(predators);
                 if (predators >= nreOfNeededPredator) {
                     this.nextFrame[x][y] = 1;
                 }
             }
             case 1 -> {
-                // predators = lookAround(x, y, 2);
                 if (predators >=nreOfNeededPredator) {
                     this.nextFrame[x][y] = 2;
                 }
             }
             case 2 -> {
-                // predators = lookAround(x, y, 0);
                 if (predators >= nreOfNeededPredator) {
                     this.nextFrame[x][y] = 0;
                 }
