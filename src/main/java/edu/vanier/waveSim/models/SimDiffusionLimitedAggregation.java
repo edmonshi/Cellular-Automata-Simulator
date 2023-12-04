@@ -19,7 +19,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     private final static Logger logger = LoggerFactory.getLogger(SimDiffusionLimitedAggregation.class);
 
     /** 
-     * Point class to use to keep track of points
+     * Point class to use to keep track of all the points on the screaan
      * This has subclasses so it is better if it stays private and is not merged with the other private point class in the main controller
      */
     private class Point {
@@ -74,11 +74,11 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     }
     
     /**List of entities*/
-    private List<Point> entities = new ArrayList<Point>();
+    private List<Point> entities = new ArrayList<>();
     /**List of dendrites*/
     private List<Dendrite> dendrites = new ArrayList<>();
 
-    /*Contructor to instantate the simulation*/
+    /*Contructor to instantiate the simulation*/
     public SimDiffusionLimitedAggregation(Canvas operatingCanvas, int widthX, int heightY, int scale) {
         super(operatingCanvas, widthX, heightY);
         // deal with scaling
@@ -102,6 +102,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
             // loops over the scaled width and height to see all cells
             for (int counterX = 1; counterX < scaledX - 1; counterX++) {
                 for (int counterY = 1; counterY < scaledY - 1; counterY++) {
+                    //Adding particles to random cells in the simulation
                     Random random = new Random();
                     int chance = random.nextInt(100);
                     if (chance >= 95) {
@@ -112,13 +113,15 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                     }
                 }
             }
-            // color current cell
+            //Adding a root dendrite to the middle of the simulation
             this.current[(scaledX - 2) / 2][(scaledY - 2) / 2] = 3;
             colorCell((scaledX - 2) / 2, (scaledY - 2) / 2, Color.ORANGE);
             entities.add(new Dendrite((scaledX - 2) / 2, (scaledY - 2) / 2));
             dendrites.add(new Dendrite((scaledX - 2) / 2, (scaledY - 2) / 2));
         }
+        //Calling the checkNeighours() function to see if any particle is turning into dendrites
         checkNeighbours();
+        //Calling the move() function to make every particle move by one position
         move();
         // color all dendrites
         for (Dendrite dendrite : dendrites) {
@@ -130,11 +133,11 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
      * Check neighboring points to update rules
      */
     private void checkNeighbours() {
-        List<Point> neighbours = new ArrayList<Point>();
+        List<Point> neighbours = new ArrayList<>();
         for (Dendrite dendrite : dendrites) {
-
             for (Point particle : entities) {
                 if (particle instanceof Particle) {
+                    //If a particle is within the 8 pixels around a dendrite, it get added a list called neighbours
                     if ((particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() - 1) || (particle.getX() == dendrite.getX() && particle.getY() == dendrite.getY() + 1)) {
                         if (!neighbours.contains(particle)) {
                             neighbours.add(particle);
@@ -158,10 +161,10 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                     }
                 }
             }
-
         }
+        // Removing the neighbours from the entities list
         entities.removeAll(neighbours);
-        // for all neibours, modify dendrites
+        // For all neighbours, modify to dendrites
         for (Point neighbour : neighbours) {
             Dendrite newDendrite = new Dendrite(neighbour.getX(), neighbour.getY());
             if (!dendrites.contains(newDendrite)) {
@@ -172,7 +175,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
     }
 
     /** 
-     * move random particles
+     * This function makes the particles move randomly to one of the eight cells around it.
      */
     private void move() {
         List<Point> moved = new ArrayList<>();
@@ -180,9 +183,10 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
             if (particle instanceof Particle) {
                 int x = particle.getX();
                 int y = particle.getY();
+                //Updating the initial position of the particle to an empty one
                 colorCell(x, y, Color.BLACK);
                 Random random = new Random();
-                int direction = random.nextInt(4);
+                int direction = random.nextInt(8);
                 switch (direction >= 0 ? direction : -direction) {
                     case 0:
                         y--;
@@ -191,11 +195,26 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                         x++;
                         break;
                     case 2:
-                        
                         x--;
                         break;
                     case 3:
                         y++;
+                        break;
+                    case 4:
+                        y--;
+                        x++;
+                        break;
+                    case 5:
+                        y++;
+                        x++;
+                        break;
+                    case 6:
+                        y--;
+                        x--;
+                        break;
+                    case 7:
+                        y++;
+                        x--;
                         break;
                 }
 
@@ -211,6 +230,7 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
                 if (y > scaledY - 2) {
                     y -= (scaledY - 2);
                 }
+                //Moving the particle to its new position
                 particle.setX(x);
                 particle.setY(y);
                 moved.add(particle);
@@ -220,13 +240,4 @@ public class SimDiffusionLimitedAggregation extends CellularLogic {
         entities = moved;
         entities.addAll(dendrites);
     }
-
-    private boolean isParticle(int x, int y) {
-        return true;
-    }
-
-    private boolean isDendrite(int x, int y) {
-        return true;
-    }
-
 }
