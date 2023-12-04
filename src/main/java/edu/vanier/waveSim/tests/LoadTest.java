@@ -2,7 +2,9 @@ package edu.vanier.waveSim.tests;
 
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
-
+/**
+ * @author Everyone
+ */
 public class LoadTest {
     public static void main(String[] args) throws IOException, CsvException {
             String[] settings = {"Illegal data that needs to be caught"};

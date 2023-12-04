@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
  * And once a tree has caugth fire, it is guaranteed that it will be burnt in the next frame.
  * Source for Rules:
  * Dingeldein, n.d.
+ * @author Loovdrish Sujore
  */
 public class SimForestFire extends CellularLogic{
     private final static Logger logger = LoggerFactory.getLogger(SimForestFire.class);

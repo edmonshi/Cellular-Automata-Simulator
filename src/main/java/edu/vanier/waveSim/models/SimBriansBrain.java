@@ -11,8 +11,9 @@ import org.slf4j.LoggerFactory;
  * Only a cell that is dead can be turned on (alive) again.
  * To do so, the cell must have 2 cells in the cell's moore neighborhood in order to be turned alive again.
  * Sources for rules:
- * Wikipedia, n.d.
+ * Wikipedia, 2023
  * Vogel, 2018
+ * @author Loovdrish Sujore
  */
 public class SimBriansBrain extends CellularLogic{
     private final static Logger logger = LoggerFactory.getLogger(SimBriansBrain.class);

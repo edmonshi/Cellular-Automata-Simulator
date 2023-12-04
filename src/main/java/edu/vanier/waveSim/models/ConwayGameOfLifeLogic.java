@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
  * A cell that has 0,1,4,5,6,7, or 8 cells that are alive in the present frame will be dead in the next frame.
  * A cell that is dead can come to life in the next frame if and only if it has 3 neighbouring cells in the present frame
  * The idea of checking whether the cells are going to be alive or dead in the next frame using methods comes from: Algosome, n.d.
- * Rules taken from: ConwayLife, n.d.
+ * Rules taken from: Johnson, n.d.
+ * @author Loovdrish Sujore
+ * @author William Carbonneau
  */
 public class ConwayGameOfLifeLogic extends CellularLogic{
     

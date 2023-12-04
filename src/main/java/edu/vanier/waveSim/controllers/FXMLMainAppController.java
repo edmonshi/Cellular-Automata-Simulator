@@ -301,7 +301,7 @@ public class FXMLMainAppController{
             hasLoadedViewFolder = getFileList();
         });
         /** Bind the dimensions of the primary stage to the image view
-         * Source used to understand the syntax: StackOverFlow 22993550, July 2017
+         * Source used to understand the syntax: StackOverFlow 22993550, July 2017 -> See README
          * The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
          * 
          * Width property listener for primary stage*/
@@ -313,7 +313,7 @@ public class FXMLMainAppController{
             }
         });
         /** Bind the dimensions of the primary stage to the image view
-         * Source used to understand the syntax: StackOverFlow 22993550, July 2017
+         * Source used to understand the syntax: jewelsea, 2014 -> See README
          * The rest has been inspired from the code in this implementation (sldrDamping on Line 555)-> (ukasp, JavaFX: Slider class 2022) see README
          * 
          * height property listener for primary stage*/        
@@ -358,9 +358,11 @@ public class FXMLMainAppController{
                     // handle the save item method
                     handleSaveItm(simulation);
                 } catch (FileNotFoundException | CsvException ex) {
+                    // Exception recommendended by Netbeans
                     java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (IOException ex) {
+                // Exception recommendended by Netbeans
                 logger.error(ex.toString());
             }
         });
@@ -370,6 +372,7 @@ public class FXMLMainAppController{
                 // handle the load item method
                 handleLoadItm(simulation);
             } catch (FileNotFoundException ex) {
+                // Exception recommendended by Netbeans
                 java.util.logging.Logger.getLogger(FXMLMainAppController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
@@ -391,6 +394,7 @@ public class FXMLMainAppController{
         fireSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
+                // Divide by 1000 to make the simulation less "agressive"
                 SLA.setFire(newValue.doubleValue()/1000);
             }
         });
@@ -399,6 +403,7 @@ public class FXMLMainAppController{
         treeSldr.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
+                // Divide by 100 to make the simulation less "agressive"
                 SLA.setTree(newValue.doubleValue()/100);
             }
         });
@@ -482,7 +487,7 @@ public class FXMLMainAppController{
         // initialize variables
         File folder; // new innstance of file
         Stage stage = new Stage(); // create new stage for directory choser
-        DirectoryChooser dc = new DirectoryChooser();
+        DirectoryChooser dc = new DirectoryChooser();// Create a directory chooser
         primaryStage.setAlwaysOnTop(false); // allow main window to be below
         stage.setAlwaysOnTop(true); // set new stage choser to on top
         dc.setInitialDirectory(dc.showDialog(stage)); // create directory choser and display to user, wait for input
@@ -544,7 +549,7 @@ public class FXMLMainAppController{
     /**
      * This method sets the size, the dimensions of the stage, and of the image view that is used to render the simulation.
      * Since the image view has been bound to the stage, the method sets only the dimensions of the stage, which will automatically set the dimensions of the image view.
-     * @param path The path to the file containing the dimensions of the primary stage
+     * @param path type String the path to the file containing the dimensions of the primary stage
      */
     private void adjustSizeIV(String path){
         try(CSVReader reader = new CSVReader(new FileReader(path))){
@@ -714,7 +719,7 @@ public class FXMLMainAppController{
     }
     /**
      * This method save the dimensions of the stage in a csv file.
-     * @param path The path of the csv file
+     * @param path String the path of the csv file
      */
     public void saveDimensions(String path){
         File file = new File(path+"\\"+"dimensions.csv");
@@ -793,15 +798,15 @@ public class FXMLMainAppController{
     /** Corresponds to the name chosen by the user to name the csv file that will be created by the program, when using the save settings feature*/
     private String nameFile;
     /**
-     * Return the value of nameFile
-     * @return type String
+     * Returns the value of nameFile
+     * @return type String the name of the file
      */
     public String getNameFile() {
         return nameFile;
     }
 
     /**
-     * Set the value of nameFile
+     * Sets the value of nameFile
      * @param nameFile type String - new value
      */
     public void setNameFile(String nameFile) {
@@ -810,8 +815,9 @@ public class FXMLMainAppController{
     
     /**
      * This method saves the settings of a simulation in a CSV File.
-     * The file can either be created by the method inside of a specified directory by the user, or the settings can be saved inside of an existing csv file.
-     * Source that gave the idea to initialize the file writer in the try-catch parentheses, which made the code work:  Baeldung, n.d.
+     * The file can either be created by the method inside of a specified directory chosen by the user, or the settings can be saved inside of an existing csv file.
+     * The settings values are saved in a specific order to simplify data extraction when loading the settings
+     * Source that gave the idea to initialize the file writer in the try-catch parentheses, which made the code work:  baeldung, 2023
      * Source to use file chooser: Redko, n.d.
      * Source to use directory chooser: Oracle, n.d.
      * @param simulation The simulation being used, which is necessary to get the scaling
@@ -823,7 +829,7 @@ public class FXMLMainAppController{
         System.out.println("Save button clicked");
         //Ask user if he already has a file in which he wants to save the settings, or if we create new file for him in give directory chosen by him
         primaryStage.setAlwaysOnTop(false);
-        boolean createNewFile = askUserSaveSettingsDialog("Choose an existing file or create new one?");
+        boolean createNewFile = askUserSaveSettingsDialog("Choose an existing file or create new one?");// Ask user if he wants to create a new file , or if he already has one
         primaryStage.setAlwaysOnTop(true);
         File file = new File("");
         Stage stage  = new Stage();
@@ -835,8 +841,9 @@ public class FXMLMainAppController{
             this.primaryStage.setAlwaysOnTop(false);
             file = f.showOpenDialog(stage);
             boolean fileValid = verifyFileCSV(file);
+            // If the file is not valid, stop the method and ask user to try again
+            // We do not call the method again, to prevent the user from being stuck in a loop of choosing wrong files
             if(fileValid==false){
-                handleSaveItm(simulation);
                 return;
             }
             showAlertInfo("File has been accepted.");
@@ -844,7 +851,7 @@ public class FXMLMainAppController{
         }
         // User does not have an existing file, and wants to create one
         else{
-            // 1- Choose the directory in which the user wants to save the settings
+            // Choose the directory in which the user wants to save the settings
             DirectoryChooser dc = new DirectoryChooser();
             primaryStage.setAlwaysOnTop(false);
             stage.setAlwaysOnTop(true);
@@ -861,6 +868,8 @@ public class FXMLMainAppController{
                 logger.error(ex.toString());
             }
         }
+        // Write the data using FileWriter
+        // Since the values are separated by commas, we need to write commas between values to  seaprate them
         try(FileWriter writer = new FileWriter(file.getAbsolutePath())){
             //Erase previous save settings
             writer.flush();
@@ -872,10 +881,10 @@ public class FXMLMainAppController{
             writer.write(simTypeChoice.getValue().toString()+",");
             // Write speed
             writer.write(Double.toString(sldrSpeed.getValue())+",");
-            //Write the properties of the canvas and the stage
+            //Write the properties of the stage
             writer.write(Double.toString(primaryStage.getWidth())+",");
             writer.write(Double.toString(primaryStage.getHeight())+",");
-            //Write the frame limit
+            //Write the frame limits
             writer.write(txtBoxRippleLimit.getText()+",");
             writer.write(txtBoxConwayLimit.getText()+",");
             writer.write(txtBoxRPCLimit.getText()+",");
@@ -890,6 +899,7 @@ public class FXMLMainAppController{
             //Write points
             for(Iterator<Point> points = pointList.iterator(); points.hasNext();){
                 Point currentPoint = points.next();
+                // If it is the last point, then do not put comma at the end
                 if(!points.hasNext()){
                     writer.write(Integer.toString(currentPoint.getX()*simulation.getScaling())+","+Integer.toString(currentPoint.getY()*simulation.getScaling()));
                     break;
@@ -904,7 +914,7 @@ public class FXMLMainAppController{
      * This method creates a dialog that is responsible of letting the user choose a name for the file he wants to create.
      * It returns the name of the csv file, and is meant to be used in the save settings method, if the user wants to create a new csv file.
      * It creates a new stage which will be used as a window to contain the text field used to write the name of the file.
-     * @return nameFile, which corresponds to the name of the file
+     * @return nameFile, String which corresponds to the name of the file
      */
     public String chooseNameDialog(){
         Stage stage = new Stage();
@@ -952,7 +962,7 @@ public class FXMLMainAppController{
                 else
                     y=Integer.parseInt(settings[(counterIndex*2)+16]);
                 }
-                
+                // Ceate new points with these coordinates
                 newPoint((double)x, (double)y, simulation);
           }
     }
@@ -1017,9 +1027,12 @@ public class FXMLMainAppController{
             //Set amplitude
             amplitudeSldr.setValue(Double.parseDouble(settings[14]));
             //Set points, pause because the canvas needs to update its size
+            // The pause takes care of loading the points and putting them on the canvas
+            // Normally, we would have loaded the points directly on the canvas in this method, but we realized that Java takes time to resize the primary stage and canvas
+            // Putting the pause in the middle solves the problem
             pause.play();
             
-            
+        // Very unlikely, because everything is controlled using verification
         }catch(Exception e){
             logger.error(e.toString());
         }
@@ -1107,7 +1120,7 @@ public class FXMLMainAppController{
         alert.showAndWait();
     }
     /**
-     * This methd is used to ask the user of he wants to create a new file or not, for the saving of the settings.
+     * This methd is used to ask the user if he wants to create a new file or not, for the saving of the settings.
      * It contains two buttons, "Create New File" and "Choose Existing File", which, upon click by the user, returns a boolean which corresponds
      * to whether or not a file needs to be created.
      * @param message The message that will be shown to the user
@@ -1128,7 +1141,8 @@ public class FXMLMainAppController{
             return false;
     }
     /**
-     * Verifies of the file chosen by the user is valid.
+     * Verifies if the file chosen by the user is valid. The file is valid if it is of type CSV. 
+     * No further verificatio needed, because the save settings will flush all the data that is contained in there, and the load settings has second verification logic after this one.
      * If not valid, the method shows an alert, displaying what is wrong with the file
      * @param file The file that needs to be verified
      * @return boolean of whether or not the file is valid
@@ -1147,7 +1161,9 @@ public class FXMLMainAppController{
     }
     
     /**
-     * Verify the settings file
+     * Verify the settings file. It is used in load settings to avoid exceptions.
+     * It goes through every piece of data in the settings[] array, and verifies their validity.
+     * If they are not valid, a custom message is shown to the user, using an alert.
      * @param info Array of Strings which crresponds to the data retrived from the CSV file
      * @return boolean informing the user whether or not the data is valid for the operations done in load settings
      * @throws IOException
@@ -1241,7 +1257,6 @@ public class FXMLMainAppController{
      */
     private void handleGuideItm(MenuItem guideItm) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/helpGuide.fxml"));
-        loader.setController(new FXMLHelpGuideController());
         Pane root = loader.load();
         guideItm.setDisable(true);
         
@@ -1267,8 +1282,7 @@ public class FXMLMainAppController{
     }
     /**
      * This setter sets the settings attribute of the FXML MainAppController object.
-     * It is used when using the save settings feature, which saves the settings of the simulation in a csv file.
-     * @param settings
+     * @param settings Array of Strings corresponding to the settings of the simulation being saved
      */
     public void setSettings(String[] settings) {
         this.settings = settings;
@@ -1276,6 +1290,7 @@ public class FXMLMainAppController{
     
     /**
      * Constructor of main controller 
+     * @param primaryStage The primary of the MainApp class
      */
     public FXMLMainAppController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -1374,13 +1389,19 @@ public class FXMLMainAppController{
         public void setY(int y) {
             this.y = y;
         }
-
+        /**
+         * @returns an integer
+         */
         @Override
         public int hashCode() {
             int hash = 5;
             return hash;
         }
-
+        /**
+         * This method compares two objects and returns whether they are equal or not
+         * @param obj The object being compared
+         * @returns boolean which indicates whether the objects are equal or not.
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
