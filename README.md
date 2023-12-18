@@ -2,6 +2,11 @@
 ## Simualtions:
 * ## Wave Simulation
 * ## Conway's Game of Life
+* ## Rock-paper-Scissors
+* ## Brian's Brain
+* ## Diffusion-Limited Aggregation
+* ## Forest Fire
+* ## Langton's Ant
 
 
 ### Works Cited
