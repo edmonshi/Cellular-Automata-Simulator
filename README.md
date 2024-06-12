@@ -1,5 +1,5 @@
 # Cellular Automation Simulator
-## Simualtions:
+## Simulations:
 * ## Wave Simulation
 * ## Conway's Game of Life
 * ## Rock-paper-Scissors
