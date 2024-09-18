@@ -1,4 +1,4 @@
-# Cellular Automation Simulator
+# Cellular Automaton Simulator
 ## Simulations:
 * ## Wave Simulation
 * ## Conway's Game of Life
