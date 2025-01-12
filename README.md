@@ -8,7 +8,11 @@
 * ## Forest Fire
 * ## Langton's Ant
 
-
+### Authors
+- William Carbonneau
+- Edmon Shi
+- Dmitrii Cazacu
+- Loovdrish Sujore
 ### Works Cited
 
 - ukasp. (2022, January 26). JavaFX: Slider class. GeeksforGeeks. https://www.geeksforgeeks.org/javafx-slider-class/ 
