@@ -1,12 +1,35 @@
 # Cellular Automaton Simulator
 ## Simulations:
 * ## Wave Simulation
+
+https://github.com/user-attachments/assets/1917fa44-8e83-4482-ae1b-83dbd8cc8f57
+
+
 * ## Conway's Game of Life
+
+https://github.com/user-attachments/assets/74890ef3-3ede-4dff-9252-d463390b3772
+
+
 * ## Rock-paper-Scissors
 * ## Brian's Brain
+
+https://github.com/user-attachments/assets/ecb5b6b5-7098-4dcd-ad6a-eadcd1a35858
+
+
 * ## Diffusion-Limited Aggregation
+
+https://github.com/user-attachments/assets/e8ad756c-e660-4cc6-a8f8-0787dc30417c
+
+
 * ## Forest Fire
+
+https://github.com/user-attachments/assets/baebd23f-a61e-48c6-aa15-18e7902c6d8d
+
+
 * ## Langton's Ant
+
+https://github.com/user-attachments/assets/ce6c4d60-a893-479a-8af1-a5cace69a6ae
+
 
 ### Authors
 - William Carbonneau
