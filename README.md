@@ -1,4 +1,4 @@
-# Cellular Automaton Simulator
+# Cellular Automata Simulator
 ## Simulations:
 * ## Wave Simulation
 
