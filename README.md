@@ -1,4 +1,6 @@
 # Cellular Automata Simulator
+A Java program that contains multiple cell-based simulations.
+
 ## Simulations:
 * ## Wave Simulation
 
